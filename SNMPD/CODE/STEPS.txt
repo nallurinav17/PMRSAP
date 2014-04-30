@@ -1,0 +1,10 @@
+1. put CPQHOST-MIB.txt and CPQRACK-MIB.txt into /usr/share/snmp/mibs/ and /usr/share/mibs/ietf/
+2. put FCMGMT-MIB.txt and MSA2000TRAPS-MIB.txt into /usr/share/snmp/mibs/ and /usr/share/mibs/ietf/
+3. put customsnmptt.conf /data/scripts/PMR/etc/
+4. perl -pi -e 's/\/platform_latest\/gms\/monitoring\/conf\/snmptt\.conf/\/platform_latest\/gms\/monitoring\/conf\/snmptt\.conf\n\/data\/scripts\/PMR\/etc\/customsnmptt.conf/g' /platform_latest/gms/monitoring/conf/snmptt.ini
+5. snmpttconvertmib --in=/tmp/MSA2000TRAPS-MIB.txt --out=/tmp/customsnmptt.conf --format=4 --no_variables
+6. edit /tmp/customsnmptt.conf
+7. %s/^FORMAT.*/FORMAT ZBXTRAP \$ar \$N \$+\*/g
+8. add updated /tmp/customsnmptt.conf to /data/scripts/PMR/etc/customsnmptt.conf
+9. generate OIDs from MIBS: snmptranslate -Tz -m "/usr/share/snmp/mibs/FCMGMT-MIB.txt:/usr/share/snmp/mibs/MSA2000TRAPS-MIB.txt:/usr/share/snmp/mibs/CPQHOST-MIB.txt:/usr/share/snmp/mibs/CPQRACK-MIB.txt" | sed -e 's/\"//g' | awk '{print "."$2", "$1}' >>oidMaps.csv
+10. copy oidMaps.csv to /data/scripts/PMR/etc/

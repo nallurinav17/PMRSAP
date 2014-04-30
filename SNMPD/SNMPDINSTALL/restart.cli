@@ -1,0 +1,10 @@
+
+   en
+   conf t
+
+   logging file snmptrapd path /var/log/snmptrapd.log
+   logging file snmptrapd rotation criteria frequency daily
+   pm process crond restart
+   write memory
+
+
