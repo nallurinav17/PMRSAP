@@ -6,13 +6,13 @@ source ${BASEPATH}/etc/PMRConfig.cfg
 if [[ $# -eq 0 ]] ; then TYPE='05m' ; else TYPE=$1; fi
 
 CURR=`date +%s`
-myY=`date +%Y`
-myM=`date +%m`
-myD=`date +%d`
 
 # Round off to next 5 minute
 ROUNDOFF=$(echo "(${CURR}-(${CURR}%300))+300" | bc)
 
+myY=`date -d @${ROUNDOFF} +%Y`
+myM=`date -d @${ROUNDOFF} +%m`
+myD=`date -d @${ROUNDOFF} +%d`
 PMDIR="$DATAPATH/$myY/$myM/$myD"
 PMFILE=`date -d @${ROUNDOFF} +"PM-%Y%m%d-%H%M-${TYPE}-0.csv"`
 PMPATH="$PMDIR/$PMFILE"

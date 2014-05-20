@@ -1,13 +1,28 @@
 BASEPATH="/data/scripts/PMR"
 SANDATA="/data/mgmt/pmr/data/pm"
+SANDATAALARMS="/data/mgmt/pmr/data/alarms"
 SANREPO="/data/mgmt/pmr/scripts/pm"
+#DATAPATH="${BASEPATH}/var/SAP"
 DATAPATH="${SANDATA}/SAP"
 SAPREPO="${SANREPO}/SAP/PMR"
 CLEANUPPATH="${BASEPATH}/var"
-# 13 months of SAN data to be retained
+CLIRAW='/opt/tms/bin/cli '
+
+# VZWIT Server credentials, passwordless/keys-based access to which we need to push PM files.
+PMDEST='172.30.6.12 172.30.6.13'
+PMDESTU='root'
+PMDESTPATH='/data/pmrdata'
+
+# 13 months of SAN PM data to be retained
 RETENTION="395"
 PMFILEWRITER="${BASEPATH}/pmfile_writer.sh"
 LOGFILE=/var/log/PMRLogger.log
+
+## Rotation of /tmp/zabbix_trap.log (snmptt) files (in Days)
+SNMPTTLOGROTATE='60'
+
+# 4 months of SAN ALARM data to be retained
+ALARMDATARETENTION='124'
 
 # Binaries
 SSH='/usr/bin/ssh -q -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -l root '
@@ -15,17 +30,11 @@ SADF=`which sadf`
 AWK=`which awk`
 DATE=`which date`
 CLI='/opt/tms/bin/cli -t "en" "conf t" '
-CLIRAW='/opt/tms/bin/cli '
 PMX='/opt/tps/bin/pmx.py'
 HADOOP='/opt/hadoop/bin/hadoop'
 RSYNC='/usr/bin/rsync'
 RSYNCOPT=' -azr '
 RSYNCEXCLUDEPMR=' --exclude=var --exclude=*.csv '
-
-# VZWIT Server credentials, passwordless/keys-based access to which we need to push PM files.
-PMDEST='172.30.6.12 172.30.6.13'
-PMDESTU='root'
-PMDESTPATH='/data/pmrdata'
 
 # Node Status return codes
    NAMENODE=2
