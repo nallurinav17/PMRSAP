@@ -34,9 +34,11 @@ mymo=`date "+%m" --date="2 days ago"`;
 myyr=`date "+%Y" --date="2 days ago"`;
 #
 write_log "  -- MIDM Aggregate"
-for dc in ${allDC};
+for dc in ${midmDC};
 do 
-$SSH $STANDBY "$HDFSCMD  /data/output/$dc/Midm/$myyr/$mymo/$myda/GVS.MIDM_Aggregate*" | awk '{print $5$8}'| awk -v "t1=$TIMESTAMP" -v "dc=$dc" -F "/" 'BEGIN{sum1=0} {sum1+= $1} END{printf "%s, MIDM, %s, MIDM_aggregated_data_DC_volume,%s\n", t1, dc, sum1}';
+str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+if [[ $str ]]; then dc=`echo $dc | sed $str`; fi
+$SSH $STANDBY "$HDFSCMD  /data/output/$dc/Midm/$myyr/$mymo/$myda/GVS.MIDM_Aggregate*" | awk '{print $5$8}'| awk -v "t1=$TIMESTAMP" -v "dc=$dc" -F "/" 'BEGIN{sum1=0} {sum1+= $1} END{printf "%s, MIDM, %s, MIDM_aggregated_data_DC_volume, %s\n", t1, dc, sum1}';
 done 2>/dev/null | tee -a ${TMPFILE}.midmagg
 
 # MIDM_aggregated_data_total_volume
@@ -49,7 +51,9 @@ write_log "  -- MIDM Enriched"
 # MidmEnr File Size -total bytes for each DC MidmEnr files which are sent to VIT
 for dc in ${midmDC};
 do
-$SSH $STANDBY "$HDFSCMD  /data/output/$dc/Midm/$myyr/$mymo/$myda/GVS.MIDM_Enriched*" | awk '{print $5$8}'| awk -v "t1=$TIMESTAMP" -v "dc=$dc" -F "/" 'BEGIN{sum1=0} {sum1+= $1} END{printf "%s, MIDM, %s, MIDM_enriched_data_DC_volume ,%s\n", t1, dc, sum1}';
+str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+if [[ $str ]]; then dc=`echo $dc | sed $str`; fi
+$SSH $STANDBY "$HDFSCMD  /data/output/$dc/Midm/$myyr/$mymo/$myda/GVS.MIDM_Enriched*" | awk '{print $5$8}'| awk -v "t1=$TIMESTAMP" -v "dc=$dc" -F "/" 'BEGIN{sum1=0} {sum1+= $1} END{printf "%s, MIDM, %s, MIDM_enriched_data_DC_volume, %s\n", t1, dc, sum1}';
 done 2>/dev/null | tee -a ${TMPFILE}.midmenr
 
 # MIDM_enriched_data_total_volume
@@ -72,12 +76,16 @@ write_log "  -- IPFIX Records"
 # IPFIX
 for dc in $cmdsDC
 do
+str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+if [[ $str ]]; then dc=`echo $dc | sed $str`; fi
 $SSH $STANDBY "$HDFSCMD /data/$dc/{1,2}/ipfix/$myyr1/$mymo1/$myda1/*/*/*IPFIX*.?" | awk '{print $5$8}'| awk -v "dc=$dc" -F "/" '{if ($9>6) subtot1 += $1} END {printf "%s;%13d",dc, subtot1}';
 $SSH $STANDBY "$HDFSCMD /data/$dc/{1,2}/ipfix/$myyr2/$mymo2/$myda2/*/*/*IPFIX*.? "| awk '{print $5$8}'| awk -F "/" '{if ($9<7) subtot2 += $1} END {print ";"subtot2}';
 done  2> /dev/null | awk -v "time=$TIMESTAMP" -F ";" '{printf "%s, SAP, %s, SAP_IPFIX_DC_volume, %s\n", time, $1, ($2+$3)}' 
 
 for dc in $pnsaDC;
 do
+str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+if [[ $str ]]; then dc=`echo $dc | sed $str`; fi
 $SSH $STANDBY "$HDFSCMD /data/$dc/ipfix/$myyr1/$mymo1/$myda1/*/*/*IPFIX*.? "      | awk '{print $5$8}'| awk -v "dc=$dc" -F "/" '{if ($8>6) subtot1 += $1} END {printf "%s;%13d",dc, subtot1}';
 $SSH $STANDBY "$HDFSCMD /data/$dc/ipfix/$myyr2/$mymo2/$myda2/*/*/*IPFIX*.? "      | awk '{print $5$8}'| awk -F "/" '{if ($8<7) subtot2 += $1} END {print ";"subtot2}';
 done 2> /dev/null | awk -v "time=$TIMESTAMP" -F ";" '{printf "%s, SAP, %s, SAP_IPFIX_DC_volume, %s\n", time, $1, ($2+$3)}'
@@ -87,14 +95,20 @@ write_log "  -- RADIUS Records"
 
 for dc in $cmdsDC;
 do
+str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+if [[ $str ]]; then dc=`echo $dc | sed $str`; fi
 $SSH $STANDBY "$HDFSCMD /data/$dc/1/pilotPacket/$myyr1/$mymo1/$myda1/*/*/*RADIUS*0" | awk '{print $5$8}'| awk -v "dc=$dc" -F "/" '{if ($9>6) subtot1a += $1} END {printf "%s;%13d",dc, subtot1a}';
 $SSH $STANDBY "$HDFSCMD /data/$dc/2/pilotPacket/$myyr1/$mymo1/$myda1/*/*/*RADIUS*0" | awk '{print $5$8}'| awk -F "/" '{if ($9>6) subtot1b += $1} END {printf ";%13d;", subtot1b}';
 $SSH $STANDBY "$HDFSCMD /data/$dc/1/pilotPacket/$myyr2/$mymo2/$myda2/*/*/*RADIUS*0" | awk '{print $5$8}'| awk -F "/" '{if ($9<7) subtot2a += $1} END {printf "%13d;", subtot2a}';
 $SSH $STANDBY "$HDFSCMD /data/$dc/2/pilotPacket/$myyr2/$mymo2/$myda2/*/*/*RADIUS*0" | awk '{print $5$8}'| awk -F "/" '{if ($9<7) subtot2b += $1} END {print subtot2b}';
-done 2> /dev/null | awk -v "time=$TIMESTAMP" -F ";" '{printf "%s, SAP, %s, SAP_PilotPacket_DC_volume; %s; %s", time, $1, ($2+$4), ($3+$5)}' | awk -F ";" '{if ($2>$3) print $1","$2;else if ($3>=$2) print $1","$3}' 
+#done 2> /dev/null | awk -v "time=$TIMESTAMP" -F ";" '{printf "%s, SAP, %s, SAP_PilotPacket_DC_volume, %s", time, $1, ($2+$4+$3+$5)}'
+#done 2> /dev/null | awk -v "time=$TIMESTAMP" -F ";" '{printf "%s, SAP, %s, SAP_PilotPacket_DC_volume; %s; %s", time, $1, ($2+$4), ($3+$5)}' | awk -F ";" '{if ($2>$3) print $1","$2;else if ($3>=$2) print $1","$3}' 
+done 2> /dev/null | awk -v "time=$TIMESTAMP" -F ";" '{printf "%s, SAP, %s, SAP_PilotPacket_DC_volume; %s; %s", time, $1, ($2+$4), ($3+$5)}' | awk -F ";" '{if ($2>$3) print $1", "$2+$3;else if ($3>=$2) print $1", "$3+$2}'
 
 for dc in $pnsaDC;
 do
+str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+if [[ $str ]]; then dc=`echo $dc | sed $str`; fi
 $SSH $STANDBY "$HDFSCMD  /data/$dc/pilotPacket/$myyr1/$mymo1/$myda1/*/*/*RADIUS*0" | awk '{print $5$8}'| awk -v "dc=$dc" -F "/" '{if ($8>6) subtot1 += $1} END {printf "%s;%13d",dc, subtot1}';
 $SSH $STANDBY "$HDFSCMD  /data/$dc/pilotPacket/$myyr2/$mymo2/$myda2/*/*/*RADIUS*0" | awk '{print $5$8}'| awk -F "/" '{if ($8<7) subtot2 += $1} END {print "; " subtot2}';
 done 2> /dev/null | awk -v "time=$TIMESTAMP" -F ";" '{printf "%s, SAP, %s, SAP_PilotPacket_DC_volume, %s\n", time, $1, ($2+$3)}' 
@@ -103,7 +117,9 @@ done 2> /dev/null | awk -v "time=$TIMESTAMP" -F ";" '{printf "%s, SAP, %s, SAP_P
 # SUBSCRIBER IB
 write_log "  -- SUBIB Records"
 for dc in $allDC;
-do 
+do
+str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+if [[ $str ]]; then dc=`echo $dc | sed $str`; fi
 $SSH $STANDBY "$HDFSCMD /data/$dc/SubscriberIB/$myyr1/$mymo1/$myda1/*/X.MAPREDUCE.0.0" | awk '{print $5$8}'| awk -v "dc=$dc" -F "/" '{if ($8>6) subtot1 += $1} END {printf "%s;%13d",dc, subtot1}';
 $SSH $STANDBY "$HDFSCMD /data/$dc/SubscriberIB/$myyr2/$mymo2/$myda2/*/X.MAPREDUCE.0.0" | awk '{print $5$8}'| awk -F "/" '{if ($8<7) subtot2 += $1} END {print "; " subtot2}';
 done 2> /dev/null | awk -v "time=$TIMESTAMP" -F ";" '{printf "%s, SAP, %s, SAP_SubscriberIB_DC_volume, %s\n", time, $1,($2+$3)}' 
