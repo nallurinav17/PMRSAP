@@ -41,8 +41,8 @@ subtot=0;
 for dc in ${midmDC}; do
   jobid=`grep $dc $TMPFILE.enrjobs | awk '{print $8'}`
  
-  grep 'map 0% reduce 0%' $OOZIEADMI/$jobid/mapredAction--ssh/*stderr 2>/dev/null | awk '{print $1" "$2}' | head -1 | sed 's/\//-/g' > $TMPFILE.startTime
-  grep 'map 100%' $OOZIEADMI/$jobid/mapredAction--ssh/*stderr 2>/dev/null | grep 'reduce 100%' | awk '{print $1" "$2}' | head -1 | sed 's/\//-/g' > ${TMPFILE}.endTime;
+  $SSH $NAMENODE "grep 'map 0% reduce 0%' $OOZIEADMI/$jobid/mapredAction--ssh/*stderr"  2>/dev/null | awk '{print $1" "$2}' | head -1 | sed 's/\//-/g' > $TMPFILE.startTime
+  $SSH $NAMENODE "grep 'map 100%' $OOZIEADMI/$jobid/mapredAction--ssh/*stderr" 2>/dev/null | grep 'reduce 100%' | awk '{print $1" "$2}' | head -1 | sed 's/\//-/g' > ${TMPFILE}.endTime;
 
   startTime=`cat $TMPFILE.startTime`;
   endTime=`cat ${TMPFILE}.endTime`;
@@ -51,13 +51,13 @@ for dc in ${midmDC}; do
     start=`date -d "$startTime" +%s`;
     end=`date -d "${endTime}" +%s`;
     elapsed=`expr $end - $start`;
+    let "subtot += $elapsed";
     ((sec=elapsed%60, elapsed/=60, min=elapsed%60, hrs=elapsed/60))
     timestring=$(printf "%02d%02d%02d" $hrs $min $sec)
-    let "subtot += $elapsed";
   else 
     timestring="000000"
   fi
-	
+
   echo "$TIMESTAMP, MIDM, $dc, MIDM_data_processing_DC_duration, $timestring" 
   rm -f ${TMPFILE}.endTime $TMPFILE.startTime
 done
@@ -76,13 +76,13 @@ subtot=0;
 for dc in ${midmDC}; do
 
   jobid=`grep $dc $TMPFILE.datajobs | awk '{print $8'}`
-  grep "DataTransferActionTime Taken" $OOZIEADMI/$jobid/invokeDataTransferScripts--ssh/*0.stdout 2>/dev/null | awk -F ":" '{print $7}' > ${TMPFILE}.dataTime
+  $SSH $NAMENODE "grep 'DataTransferActionTime Taken' $OOZIEADMI/$jobid/invokeDataTransferScripts--ssh/*0.stdout" 2>/dev/null | awk -F ":" '{print $7}' > ${TMPFILE}.dataTime
 
   dataTime=`cat ${TMPFILE}.dataTime | awk -F "." '{print $1}'`;
   if [[ -n $dataTime ]] ; then
+    let "subtot += $dataTime";
     ((sec=dataTime%60, dataTime/=60, min=dataTime%60, hrs=dataTime/60))
     xfertimestring=$(printf "%02d%02d%02d" $hrs $min $sec)
-    let "subtot += $dataTime";
   else 
     xfertimestring="000000"
   fi
@@ -107,9 +107,9 @@ endjobid=`grep $MIDMENDDC $TMPFILE.datajobs | awk '{print $NF'}`
 
 if [[ -n $startjobid && -n $endjobid ]]; then
 
-  grep "Setting output dir" $OOZIEADMI/$startjobid/mapredAction--ssh/*stderr 2>/dev/null | awk '{print $1" "$2}' | cut -c 2-17 > ${TMPFILE}.midmtotalstartTime;
+  $SSH $NAMENODE "grep 'Setting output dir' $OOZIEADMI/$startjobid/mapredAction--ssh/*stderr" 2>/dev/null | awk '{print $1" "$2}' | cut -c 2-17 > ${TMPFILE}.midmtotalstartTime;
 
-  tail -1 $OOZIEADMI/$endjobid/invokeDataTransferScripts--ssh/*stdout | awk -F "[" '{print $3}' | cut -c 1-17  > ${TMPFILE}.midmtotalendTime;
+  $SSH $NAMENODE "tail -1 $OOZIEADMI/$endjobid/invokeDataTransferScripts--ssh/*stdout" 2>/dev/null | awk -F "[" '{print $3}' | cut -c 1-17  > ${TMPFILE}.midmtotalendTime;
 
   startTime=`cat ${TMPFILE}.midmtotalstartTime`
   endTime=`cat ${TMPFILE}.midmtotalendTime`
