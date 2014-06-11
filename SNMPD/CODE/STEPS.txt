@@ -1,10 +1,63 @@
 1. put CPQHOST-MIB.txt and CPQRACK-MIB.txt into /usr/share/snmp/mibs/ and /usr/share/mibs/ietf/
 2. put FCMGMT-MIB.txt and MSA2000TRAPS-MIB.txt into /usr/share/snmp/mibs/ and /usr/share/mibs/ietf/
 3. put customsnmptt.conf /data/scripts/PMR/etc/
-4. perl -pi -e 's/\/platform_latest\/gms\/monitoring\/conf\/snmptt\.conf/\/platform_latest\/gms\/monitoring\/conf\/snmptt\.conf\n\/data\/scripts\/PMR\/etc\/customsnmptt.conf/g' /platform_latest/gms/monitoring/conf/snmptt.ini
-5. snmpttconvertmib --in=/tmp/MSA2000TRAPS-MIB.txt --out=/tmp/customsnmptt.conf --format=4 --no_variables
-6. edit /tmp/customsnmptt.conf
+4a. perl -pi -e 's/\/platform_latest\/gms\/monitoring\/conf\/snmptt\.conf/\/platform_latest\/gms\/monitoring\/conf\/snmptt\.conf\n\/data\/scripts\/PMR\/etc\/customsnmptt.conf/g' /platform_latest/gms/monitoring/conf/snmptt.ini
+4b. perl -pi -e 's/\/platform_latest\/gms\/monitoring\/conf\/guavus_snmptt\.conf/\/platform_latest\/gms\/monitoring\/conf\/guavus_snmptt\.conf\n\/data\/scripts\/PMR\/etc\/customsnmptt.conf/g' /platform_latest/gms/monitoring/conf/snmptt.ini
+5a. snmpttconvertmib --in=/tmp/MSA2000TRAPS-MIB.txt --out=/tmp/msa0.conf --format=4 --no_variables
+
+5b. Use following MIBS List in step 5a and 9: FCMGMT-MIB.txt,MSA2000TRAPS-MIB.txt,CPQHOST-MIB.txt,CPQRACK-MIB.txt,GNS-MIB.txt,GNS-MOB-SOL-MIB.txt,TMS-MIB,NET-SNMP-MIB(NILL TRAPS),NET-SNMP-AGENT-MIB,SNMP-FRAMEWORK-MIB(NILL TRAPS),IF-MIB,SNMPv2-MIB.txt   AND, Comment the header line in every output file.
+-------------------------------
+snmpttconvertmib --in=/tmp/mib-s/MSA2000TRAPS-MIB.txt --out=/tmp/msa.conf --format=4 --no_variables
+snmpttconvertmib --in=/tmp/mib-s/CPQHOST-MIB.txt --out=/tmp/msa1.conf --format=4 --no_variables
+snmpttconvertmib --in=/tmp/mib-s/CPQRACK-MIB.txt --out=/tmp/msa2.conf --format=4 --no_variables
+snmpttconvertmib --in=/tmp/mib-s/FCMGMT-MIB.txt --out=/tmp/msa3.conf --format=4 --no_variables
+snmpttconvertmib --in=/tmp/mib-s/GNS-MIB.txt --out=/tmp/msa4.conf --format=4 --no_variables
+snmpttconvertmib --in=/tmp/mib-s/GNS-MOB-SOL-MIB.txt --out=/tmp/msa5.conf --format=4 --no_variables
+snmpttconvertmib --in=/tmp/mib-s/TMS-MIB.txt --out=/tmp/msa6.conf --format=4 --no_variables
+snmpttconvertmib --in=/tmp/mib-s/NET-SNMP-MIB.txt --out=/tmp/msa7.conf --format=4 --no_variables
+snmpttconvertmib --in=/tmp/mib-s/NET-SNMP-AGENT-MIB.txt --out=/tmp/msa8.conf --format=4 --no_variables
+snmpttconvertmib --in=/tmp/mib-s/SNMP-FRAMEWORK-MIB.txt --out=/tmp/msa9.conf --format=4 --no_variables
+snmpttconvertmib --in=/tmp/mib-s/SNMPv2-MIB.txt --out=/tmp/msa10.conf --format=4 --no_variables
+snmpttconvertmib --in=/tmp/mib-s/IF-MIB.txt --out=/tmp/msa11.conf --format=4 --no_variables
+---------------------------------------
+
+6a. cat msa* >> ./customsnmptt.conf
+6b. edit customsnmptt.conf file to comment headers. %s/^MIB/#MIB/g
+6c. edit /tmp/customsnmptt.conf
 7. %s/^FORMAT.*/FORMAT ZBXTRAP \$ar \$N \$+\*/g
 8. add updated /tmp/customsnmptt.conf to /data/scripts/PMR/etc/customsnmptt.conf
-9. generate OIDs from MIBS: snmptranslate -Tz -m "/usr/share/snmp/mibs/FCMGMT-MIB.txt:/usr/share/snmp/mibs/MSA2000TRAPS-MIB.txt:/usr/share/snmp/mibs/CPQHOST-MIB.txt:/usr/share/snmp/mibs/CPQRACK-MIB.txt" | sed -e 's/\"//g' | awk '{print "."$2", "$1}' >>oidMaps.csv
+9. snmptranslate -Tz -m "/tmp/mib-s/FCMGMT-MIB.txt:/tmp/mib-s/MSA2000TRAPS-MIB.txt:/tmp/mib-s/CPQHOST-MIB.txt:/tmp/mib-s/CPQRACK-MIB.txt:/tmp/mib-s/GNS-MIB.txt:/tmp/mib-s/GNS-MOB-SOL-MIB.txt:/tmp/mib-s/IF-MIB.txt:/tmp/mib-s/NET-SNMP-AGENT-MIB.txt:/tmp/mib-s/NET-SNMP-MIB.txt:/tmp/mib-s/SNMP-FRAMEWORK-MIB.txt:/tmp/mib-s/SNMPv2-MIB.txt:/tmp/mib-s/TMS-MIB.txt" | sed -e 's/\"//g' | awk '{print "."$2", "$1}' >>oidMaps-new.csv
+10. sort -u oidMaps-new.csv >oidMaps.csv
 10. copy oidMaps.csv to /data/scripts/PMR/etc/
+--------------
+11. 11 June 2014 -
+intrnt:CODE root# for i in `cat text3 | awk '{print $1}' | sed 's/,//g'`; do grep -w "$i" oidMaps.csv 2>&1>/dev/null; if [[ $? -eq '0' ]]; then echo "$i : FOUND"; else echo "$i : NOTFOUND"; grep $i text3 ; fi ; done | grep -v FOUND
+.1.3.6.1.4.1.37140.3.0.43, inputDataNotUsableTaskFailed
+.1.3.6.1.4.1.37140.3.0.44, inputDataNotUsableTaskOk
+.1.3.6.1.4.1.37140.3.0.45, receiveDataValidationFail
+.1.3.6.1.4.1.37140.3.0.46, receiveDataValidationSuccess
+.1.3.6.1.4.1.37140.3.0.47, dataTransferStall
+.1.3.6.1.4.1.37140.3.0.48, dataTransferResume
+.1.3.6.1.4.1.37140.3.0.49, invalidRecordThresTrap
+.1.3.6.1.4.1.37140.3.0.50, invalidRecordThresCleared
+.1.3.6.1.4.1.37140.3.0.51, inputDataIncomplete
+.1.3.6.1.4.1.37140.3.0.52, inputDataAvailable
+.1.3.6.1.4.1.37140.3.0.53, lowThresholdInputDataRaise
+.1.3.6.1.4.1.37140.3.0.54, lowThresholdInputDataClear
+.1.3.6.1.4.1.37140.3.0.102, validIBAvailableTrap
+.1.3.6.1.4.1.37140.3.0.103, inputFileReceivedAlarm
+.1.3.6.1.4.1.37140.3.0.68, instaAdaptorUpTrap
+.1.3.6.1.4.1.37140.3.0.69, lunPathsdown
+.1.3.6.1.4.1.37140.3.0.70, lunPathsOK
+.1.3.6.1.4.1.37140.3.0.73, inputSequenceNumMissed
+.1.3.6.1.4.1.37140.3.0.74, inputSequenceNumMissedClear
+.1.3.6.1.4.1.37140.3.0.75, inputFileRecordCountMismatch
+.1.3.6.1.4.1.37140.3.0.76, inputFileRecordCountMismatchClear
+.1.3.6.1.4.1.37140.3.0.71, inputFileUnzipError
+.1.3.6.1.4.1.37140.3.0.72, inputFileUnzipErrorClear
+.1.3.6.1.4.1.37140.3.0.61, clJoin
+.1.3.6.1.4.1.37140.3.0.62, clLeave
+.1.3.6.1.4.1.37140.3.0.63, clMaster
+.1.3.6.1.4.1.37140.3.0.64, clNonMaster
+intrnt:CODE root#
+-------------------

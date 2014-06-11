@@ -32,7 +32,6 @@ if (-f $snmpLogs) {
 
 # Read last EOF
 my $last='';
-my $rm=`/bin/rm -rf $tmp 2>&1>/dev/null`;
 if (-f $tmp) { #Identify fresh run
 	my $LF=opnFile($tmp,"A");
 
