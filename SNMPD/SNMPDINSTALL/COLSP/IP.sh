@@ -13,6 +13,6 @@ ccp0="155"
 sgp0="148"
 uip0="154"
 mgmt0="161"
-#dclist="Azusa Branchburg Charlotte HickoryHills Marina Nashville NewBerlin Ontario PlymouthMeeting Vista Wall Wilmington"
+dclist="Azusa Branchburg Charlotte HickoryHills Marina Nashville NewBerlin Ontario PlymouthMeeting Vista Wall Wilmington"
 
 
