@@ -18,8 +18,8 @@ MAILTO=kiran.subash@guavus.com,supreet.singh@guavus.com
 # Clean up older than 5 days files
 55 23 * * * 	root	/data/scripts/PMR/bin/Cleanup.sh
 
-# Capture SNMP alarms every hour
-59 * * * *	root	/data/scripts/PMR/bin/snmp-alarm.sh
+# Capture SNMP alarms every day, once.
+59 23 * * *	root	/data/scripts/PMR/bin/snmp-alarm.sh
 
 # Monitor SNMPTRAPD and SNMPTT. Run every minute
 */1 * * * *     root    /data/scripts/PMR/bin/monitor-trapd.sh

@@ -44,6 +44,8 @@ function identifyCustomSnmpttIniEntry {
 if [[ -f /etc/snmp/snmptt.ini ]]; then 
   /bin/grep "customsnmptt.conf" ${INIF}
    if [[ $? -ne '0' ]]; then
+	/usr/bin/perl -pi -e 's/\/platform_latest\/gms\/monitoring\/conf\/guavus_snmptt\.conf/\/platform_latest\/gms\/monitoring\/conf\/guavus_snmptt\.conf\n\/data\/scripts\/PMR\/etc\/customsnmptt.conf/g' ${INIF}
+	sleep 1
 	/usr/bin/perl -pi -e 's/\/platform_latest\/gms\/monitoring\/conf\/snmptt\.conf/\/platform_latest\/gms\/monitoring\/conf\/snmptt\.conf\n\/data\/scripts\/PMR\/etc\/customsnmptt.conf/g' ${INIF}
 	sleep 1
 	perl -pi -e 's/^\s*wildcard_expansion_separator.*$/wildcard_expansion_separator = ";"/' ${INIF}
