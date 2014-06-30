@@ -21,8 +21,8 @@ for i in $cnp $mgmt
 do
         echo "Restoring configuration at ${prefix}${i}"
         $SSH ${prefix}${i} "mount -o remount,rw /"
-  	$SSH ${prefix}${i} '/opt/tms/bin/cli -t "en" "conf t" "configuration switch-to pre-snmp-config" "configuration delete initial" "wr mem"'
-  	$SSH ${prefix}${i} '/opt/tms/bin/cli -t "en" "conf t" "configuration write to initial" "configuration delete pre-snmp-config" "wr mem"'
+  	$SSH ${prefix}${i} '/opt/tms/bin/cli -t "en" "conf t" "configuration switch-to pre-nbi-config" "configuration delete initial" "wr mem"'
+  	$SSH ${prefix}${i} '/opt/tms/bin/cli -t "en" "conf t" "configuration write to initial" "configuration delete pre-nbi-config" "wr mem"'
 done
 
 

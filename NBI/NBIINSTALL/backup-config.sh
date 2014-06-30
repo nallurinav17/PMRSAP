@@ -22,8 +22,8 @@ for i in $cnp $mgmt
 do
 	echo "Backing up configuration at ${prefix}${i}"
     	$SSH ${prefix}${i} "mount -o remount,rw /"
-	$SSH ${prefix}${i} "/opt/tms/bin/cli -t 'en' 'conf t' 'configuration delete pre-snmp-config' 'wr mem'" > /dev/null
-  	$SSH ${prefix}${i} "/opt/tms/bin/cli -t 'en' 'conf t' 'configuration write to pre-snmp-config no-switch' 'wr mem'"
+	$SSH ${prefix}${i} "/opt/tms/bin/cli -t 'en' 'conf t' 'configuration delete pre-nbi-config' 'wr mem'" > /dev/null
+  	$SSH ${prefix}${i} "/opt/tms/bin/cli -t 'en' 'conf t' 'configuration write to pre-nbi-config no-switch' 'wr mem'"
 done
 
 

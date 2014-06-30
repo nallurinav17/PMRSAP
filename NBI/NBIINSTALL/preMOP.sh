@@ -82,4 +82,24 @@ read -p "Continue (y): "
 [ "$REPLY" != "y" ] && exit 0
 clear
 
+echo "------- VERIFYING JOBS ---------"
 
+echo " ---- Verifying on Master Namenode ---- "
+for i in $cnp0 ; do
+  echo -n "Currently RUNNING Jobs :  "
+  $SSH ${prefix}${i} '/opt/tps/bin/pmx.py subshell oozie show coordinator RUNNING jobs' | awk '{ print $2 }' | grep -v ID | grep -v Jobs | grep -v "^$" | sort | wc -l
+  echo -n "Currently PREP Jobs    :  "
+  $SSH ${prefix}${i} '/opt/tps/bin/pmx.py subshell oozie show coordinator PREP jobs' | awk '{ print $2 }' | grep -v ID | grep -v Jobs | grep -v "^$" | sort | wc -l
+done
+echo ""
+echo " ---- Verifying on Master SG Node ---- "
+for i in $sgp0 ; do
+  echo -n "Currently RUNNING Jobs :  "
+  $SSH ${prefix}${i} '/opt/tps/bin/pmx.py subshell oozie show coordinator RUNNING jobs' | awk '{ print $2 }' | grep -v ID | grep -v Jobs | grep -v "^$" | sort | wc -l
+  echo -n "Currently PREP Jobs    :  "
+  $SSH ${prefix}${i} '/opt/tps/bin/pmx.py subshell oozie show coordinator PREP jobs' | awk '{ print $2 }' | grep -v ID | grep -v Jobs | grep -v "^$" | sort | wc -l
+done
+
+read -p "Continue (y): "
+[ "$REPLY" != "y" ] && exit 0
+clear

@@ -1,29 +1,37 @@
 # nbiName (MUST)
-nbiName="vzw1"
+nbiName='vzw1'
 
 # nbiSwitch (MUST)
-nbiSwitch="on"
+nbiSwitch='on'
 
 # nbiHostname (OPTIONAL)
-nbiHostname="visp-dc-1"
+nbiHostname='visp-dc-1'
 
 # IP Address (MUST)
-nbiIpAddr="10.10.21.66"
+nbiIpAddr='10.10.21.66'
 
 # User (MUST)
-nbiUser="root"
+nbiUser='root'
 
 # Password (Default:KeysBased/PasswordLess)
-nbiPassword="Gu@vu$!!"
+nbiPassword='Gu@vu$!!'
 
 # DestPath (Default:/tmp/nbi)
-nbiDestPath="/tmp"
+nbiDestPath='/tmp'
 
 # Sync Days (Default:2)
-nbiSyncDays="3"
+nbiSyncDays='3'
 
-# DC Include List (OPTIONAL But higher in precedence than 'ExcludeDc')
-nbiIncludeDc="Bloomington Chantily WMTPPAAA"
+# DC Include List (OPTIONAL But higher in precedence than 'ExcludeDc') - Defaults to include all.
+nbiIncludeDc=''
 
-# DC Exclude List (OPTIONAL But lower in precedence than 'IncludeDc')
-nbiExcludeDc=""
+# DC Exclude List (OPTIONAL But lower in precedence than 'IncludeDc') - Defaults to exclude none.
+nbiExcludeDc=''
+
+# DC TYPE Include List - VISP/PNSA/CMDS (OPTIONAL But higher in precedence than 'ExcludeType') - Defaults to include all.
+nbiIncludeType=''
+
+# DC TYPE Exclude List - VISP/PNSA/CMDS (OPTIONAL But lower in precedence than 'IncludeType') - Defaults to exclude none.
+nbiExcludeType=''
+
+

@@ -23,3 +23,7 @@ MAILTO=kiran.subash@guavus.com,supreet.singh@guavus.com
 
 # Monitor SNMPTRAPD and SNMPTT. Run every minute
 */1 * * * *     root    /data/scripts/PMR/bin/monitor-trapd.sh
+
+# NBI - PM data transfer script. Runs every 15 minutes.
+*/15 * * * *     root    /data/scripts/PMR/bin/nbiPmDataTx.sh
+

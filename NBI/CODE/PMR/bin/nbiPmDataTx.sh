@@ -43,15 +43,15 @@ fi
 }
 
 function raiseTrap {
-  /usr/bin/snmptrap -v 2c -c public ${PMRMASTER} "" .1.3.6.1.4.1.37140.3.0.24 .1.3.6.1.4.1.37140.1.2.6.1 string 'PM' .1.3.6.1.4.1.37140.1.2.6.2 string "$*" .1.3.6.1.4.1.37140.1.2.6.3 string "`date`"
+  /usr/bin/snmptrap -v 2c -c public ${PMRMASTER} "" .1.3.6.1.4.1.37140.3.0.24 .1.3.6.1.4.1.37140.1.2.6.1 string 'PM' .1.3.6.1.4.1.37140.1.2.6.2 string "$1" .1.3.6.1.4.1.37140.1.2.6.3 string "`date`"
 }
 
 function calibrateDays {
  DAYS='';DT=''
  while [[ $nbiSyncDays -ne '-1' ]]; do
-  DT=`date -d "$nbiSyncDays day ago" +%Y%m%d`
+  DT=`date -d "$nbiSyncDays day ago" +%Y/%m/%d`
   DAYS="$DAYS $DT"
-  nbiSyncDays=`expr $sync - 1`
+  nbiSyncDays=`expr $nbiSyncDays - 1`
  done
 }
 
@@ -61,26 +61,26 @@ function sanitizeNbiFile {
  if [[ $nbiSyncDays == '' ]]; then nbiSyncDays=2; sanityFlag=`expr $sanityFlag + 0`; fi
 
  # IP Address (MUST)
- if [[ $nbiIpAddr == '' || $nbiIpAddr !~ /\d+.\d+.\d+.\d+/ ]]; then sanityFlag=`expr $sanityFlag + 1`; fi
+ if [[ $nbiIpAddr == '' ]] ; then sanityFlag=`expr $sanityFlag + 1`; fi
+ #$nbiIpAddr ]]; then sanityFlag=`expr $sanityFlag + 1`; fi
 
  # User (MUST)
  if [[ $nbiUser == '' ]]; then sanityFlag=`expr $sanityFlag + 2`; fi
 
  # Password (Default:KeysBased/PasswordLess)
- if [[ $nbiPassword == '' ]]; then ; sanityFlag=`expr $sanityFlag + 0`; fi
+ if [[ $nbiPassword == '' ]]; then sanityFlag=`expr $sanityFlag + 0`; fi
 
  # DestPath (Default:/tmp/nbi)
  if [[ $nbiDestPath == '' ]]; then nbiDestPath="/tmp/nbi"; sanityFlag=`expr $sanityFlag + 0`; fi
 
  # nbiSwitch (MUST)
- if [[ $nbiSwitch == '' ]]; then sanityFlag=`expr $sanityFlag + 4` fi 
+ if [[ $nbiSwitch == '' ]]; then sanityFlag=`expr $sanityFlag + 4`; fi 
 
  # nbiName (MUST)
  if [[ $nbiName == '' ]]; then sanityFlag=`expr $sanityFlag + 8`; fi
 
  # nbiHostname 
- if [[ $nbiHostname ]]; then sanityFlag=`expr $sanityFlag + 0`; fi
-
+ if [[ $nbiHostname == '' ]]; then sanityFlag=`expr $sanityFlag + 0`; fi
 }
 
 function calibrateIncludeDc {
@@ -90,43 +90,68 @@ function calibrateIncludeDc {
 
 function calibrateExcludeDc {
  nbiExcludeDc=`echo $nbiExcludeDc | sed 's/\s/|/g'`
- DCLIST=`/bin/ls -ld ${SANDATA}/${DCT}/* | grep ^d | egrep "$nbiExcludeDc" | awk -F/ '{print $NF}'`
+ DCLIST=`/bin/ls -ld ${SANDATA}/${DCT}/* | grep ^d | egrep -v "$nbiExcludeDc" | awk -F/ '{print $NF}'`
+}
+
+function calibrateIncludeType {
+ nbiIncludeType=`echo $nbiIncludeType | sed 's/\s/|/g'`
+ DCTYPE=`/bin/ls -ld ${SANDATA}/* | grep ^d | egrep "$nbiIncludeType" | awk -F/ '{print $NF}'`
+}
+
+function calibrateExcludeType {
+ nbiExcludeType=`echo $nbiExcludeType | sed 's/\s/|/g'`
+ DCTYPE=`/bin/ls -ld ${SANDATA}/* | grep ^d | egrep -v "$nbiExcludeType" | awk -F/ '{print $NF}'`
 }
 
 function syncPMData {
- DCTYPE=''; 
- DCTYPE=`/bin/ls -ld ${SANDATA}/* | grep ^d | awk -F/ '{print $NF}'`
+
  for file in `/bin/ls $BASEPATH/etc/NBI/nbi.*.prop`; do
 
+ 
    # Reset NBI properties before loading next file.
-   nbiSyncDays='';nbiIpAddr='';nbiName='';nbiSwitch='';nbiHostname='';nbiUser='';nbiPassword='';nbiDestPath='';nbiIncludeDc='';nbiExcludeDc='';
+   DCTYPE='';nbiSyncDays='';nbiIpAddr='';nbiName='';nbiSwitch='';nbiHostname='';nbiUser='';nbiPassword='';nbiDestPath='';nbiIncludeDc='';nbiExcludeDc='';
 
    source ${file}
    if [[ $? -ne 0 ]]; then write_nbi_event "Error: Unable to load source : $file Skipping...!"; continue; fi
 
+   # Measure Include/Exclude DC types (VISP/PNSA/CMDS) - DCTYPE
+   if [[ "${nbiIncludeType}" != '' ]]; then calibrateIncludeType;
+   elif [[ "${nbiExcludeType}" != '' ]]; then calibrateExcludeType;
+   else
+      DCTYPE=`/bin/ls -ld ${SANDATA}/* | grep ^d | awk -F/ '{print $NF}'`
+   fi
+   
    # Perform sanity checks on loaded NBI properties file.
    sanityFlag=0 ; sanitizeNbiFile;
    if [[ $sanityFlag -ne 0 ]]; then write_nbi_event "Error (code:$sanityFlag) : Malformed NBI property file : $file Skipping...!"; continue; fi
+
+   # Switch to skip NBI target data send
+   if [[ $nbiSwitch == 'off' ]]; then write_nbi_event "NBI host : $nbiName : $nbiIpAddr transfer turned OFF. Skipping...!"; continue; fi
 
    # Calculate days to be sync'ed
    calibrateDays
 
    for DCT in ${DCTYPE}; do
-    count=0;flag=0;
     # SAP has one level lesser of directory than other DCs, which defines type of DC (VISP/PNSA/CMDS).
     if [[ ${DCT} == 'SAP' ]]; then
        write_nbi_event "Transferring data for ${DCT} to NBI host : $nbiIpAddr"
        for D in $DAYS; do
+       count=0
+       if [[ ! -e ${SANDATA}/${DCT}/${D} ]]; then write_nbi_event "Source ${SANDATA}/${DCT}/${D} does not exists. Skipping...!"; continue; fi 
        while [[ ${count} -lt '3' ]]; do
-          write_nbi_log "`$SRSYNC ${SANDATA}/${DCT}/${D} ${nbiUser}@${nbiIpAddr}:${nbiDestPath}/`"  
-	  if [[ $? -ne '0' ]]; then 
+
+	  write_nbi_log "Sending ${SANDATA}/${DCT}/${D} TO ${nbiUser}@${nbiIpAddr} UNDER ${nbiDestPath} "
+          $SRSYNC ${SANDATA}/${DCT}/${D} ${nbiUser}@${nbiIpAddr}:${nbiDestPath}/ 2>&1 | tr '\n' ' ' >> ${NBITRXLOGF} 
+
+	  if [[ ${PIPESTATUS[0]} -ne '0' || $? -ne '0' ]]; then 
                 count=`expr $count + 1`
  	        write_nbi_event "Failed to transfer data for ${DCT} ${D} to NBI host : $nbiIpAddr Transfer attempt $count."
 		raiseTrap "${nbiIpAddr}"
 	  else 
 		write_nbi_event "Successfully transferred data for ${DCT} ${D} to NBI host : ${nbiIpAddr} Transfer attempt $count."
-	        count=0
+	        count=3
           fi
+	  echo "" >> ${NBITRXLOGF}
        done
        done
     else
@@ -134,24 +159,33 @@ function syncPMData {
 
          # Measure Include/Exclude DC List among DC types (VISP/PNSA/CMDS)
          DCLIST=''; 
-         if [[ $nbiIncludeDc -ne '' ]]; then calibrateIncludeDc;
-         elif [[ $nbiExcludeDc -ne '' ]]; then calibrateExcludeDc;
+         if [[ "${nbiIncludeDc}" != '' ]]; then calibrateIncludeDc;
+         elif [[ "${nbiExcludeDc}" != '' ]]; then calibrateExcludeDc;
          else 
            DCLIST=`/bin/ls -ld ${SANDATA}/${DCT}/* | grep ^d | awk -F/ '{print $NF}'`
          fi       
 
          for DC in $DCLIST; do 
 	    write_nbi_event "Transferring data for ${DCT} DC : ${DC} to NBI host : $nbiIpAddr"
+	    count=0
+
+	    if [[ ! -e ${SANDATA}/${DCT}/${DC}/${D} ]]; then write_nbi_event "Source ${SANDATA}/${DCT}/${DC}/${D} does not exists. Skipping...!"; continue; fi
+	    write_nbi_log "------------------------------------------------------------------------"
+
             while [[ ${count} -lt '3' ]]; do
-              write_nbi_log "`$SRSYNC ${SANDATA}/${DCT}/${DC}/${D} ${nbiUser}@${nbiIpAddr}:${nbiDestPath}/`"
-  	      if [[ $? -ne '0' ]]; then
+
+	      write_nbi_log "Sending ${SANDATA}/${DCT}/${DC}/${D} TO ${nbiUser}@${nbiIpAddr} UNDER ${nbiDestPath} "
+              $SRSYNC ${SANDATA}/${DCT}/${DC}/${D} ${nbiUser}@${nbiIpAddr}:${nbiDestPath}/ 2>&1 | tr '\n' ' ' >> ${NBITRXLOGF}
+
+              if [[ ${PIPESTATUS[0]} -ne '0' || $? -ne '0' ]]; then
                 count=`expr $count + 1`
                 write_nbi_event "Failed to transfer data for ${DCT} DC : ${DC} ${D} to NBI host : $nbiIpAddr Transfer attempt $count."
 		raiseTrap "${nbiIpAddr}"
               else
                 write_nbi_event "Successfully transferred data for ${DCT} DC : ${DC} ${D} to NBI host : $nbiIpAddr Transfer attempt $count."
-		count=0
+		count=3
               fi
+	      echo "" >> ${NBITRXLOGF}
 	    done
          done
        done
@@ -159,7 +193,15 @@ function syncPMData {
    write_nbi_log "------------------------------------------------------------------------"
    done
  done
+write_nbi_event "------------------------------------------------------------------------ Execution Completed!"
+
 }
 
+
+### MAIN
+
+rotateEventLog
+rotateTrxLog
+syncPMData
 
 
