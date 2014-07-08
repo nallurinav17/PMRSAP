@@ -71,7 +71,7 @@ function sanitizeNbiFile {
  if [[ $nbiUser == '' ]]; then sanityFlag=`expr $sanityFlag + 2`; fi
 
  # Password (Default:KeysBased/PasswordLess)
- if [[ $nbiPassword == '' ]]; then sanityFlag=`expr $sanityFlag + 0`; fi
+ if [[ $nbiPassword == '' ]]; then sanityFlag=`expr $sanityFlag + 0`; nbiPassword="NULL"; fi
 
  # DestPath (Default:/tmp/nbi)
  if [[ $nbiDestPath == '' ]]; then nbiDestPath="/tmp/nbi"; sanityFlag=`expr $sanityFlag + 0`; fi
