@@ -19,7 +19,7 @@ SSH='ssh -q -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -l root '
 
 
 DEST="/data/mgmt/pmr/scripts/pm/SAP/PMR"
-FILE="pmr-nbi-code-v01.tgz"
+FILE="pmr-nbi-code-v02.tgz"
 SRC="/tmp"
 
 #  MGMT

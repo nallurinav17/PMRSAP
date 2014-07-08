@@ -5,7 +5,10 @@ cd /data/scripts/PMR
 . /data/scripts/PMR/etc/PMRConfig.cfg
 
 #/data/mgmt/pmr/data/pm/SAP/ guavusv@10.194.103.254:/u06/apps/ehealth565/publishStats/guavus_visp/SAP/
-SRSYNC="/usr/bin/rsync -avzre ssh" 
+#SRSYNC="/usr/bin/rsync -avzre ssh" 
+
+#/usr/bin/rsync -ravz --rsh="/usr/bin/sshpass -p $PASS ssh -o StrictHostKeyChecking=no -l $USER" /data/mgmt/pmr/data/pm/VISP/SMLAB/2014/07/08 10.10.21.66:/tmp
+SRSYNC="/usr/bin/rsync -avzr" 
 
 if [[ `am_i_master` -ne 0 ]] ; then exit 0; fi
 
@@ -141,7 +144,11 @@ function syncPMData {
        while [[ ${count} -lt '3' ]]; do
 
 	  write_nbi_log "Sending ${SANDATA}/${DCT}/${D} TO ${nbiUser}@${nbiIpAddr} UNDER ${nbiDestPath} "
-          $SRSYNC ${SANDATA}/${DCT}/${D} ${nbiUser}@${nbiIpAddr}:${nbiDestPath}/ 2>&1 | tr '\n' ' ' >> ${NBITRXLOGF} 
+          #$SRSYNC ${SANDATA}/${DCT}/${D} ${nbiUser}@${nbiIpAddr}:${nbiDestPath}/ 2>&1 | tr '\n' ' ' >> ${NBITRXLOGF} 
+
+          #/usr/bin/rsync -ravz --rsh="/usr/bin/sshpass -p $PASS ssh -o StrictHostKeyChecking=no -l $USER" /data/mgmt/pmr/data/pm/VISP/SMLAB/2014/07/08 10.10.21.66:/tmp
+	  RSH='';RSH="/data/scripts/PMR/bin/sshpass -p $nbiPassword ssh -o StrictHostKeyChecking=no -l $nbiUser"
+	  $SRSYNC --rsh="${RSH}" ${SANDATA}/${DCT}/${D} ${nbiIpAddr}:${nbiDestPath}/ 2>&1 | tr '\n' ' ' >> ${NBITRXLOGF}
 
 	  if [[ ${PIPESTATUS[0]} -ne '0' || $? -ne '0' ]]; then 
                 count=`expr $count + 1`
@@ -175,7 +182,9 @@ function syncPMData {
             while [[ ${count} -lt '3' ]]; do
 
 	      write_nbi_log "Sending ${SANDATA}/${DCT}/${DC}/${D} TO ${nbiUser}@${nbiIpAddr} UNDER ${nbiDestPath} "
-              $SRSYNC ${SANDATA}/${DCT}/${DC}/${D} ${nbiUser}@${nbiIpAddr}:${nbiDestPath}/ 2>&1 | tr '\n' ' ' >> ${NBITRXLOGF}
+              #$SRSYNC ${SANDATA}/${DCT}/${DC}/${D} ${nbiUser}@${nbiIpAddr}:${nbiDestPath}/ 2>&1 | tr '\n' ' ' >> ${NBITRXLOGF}
+	      RSH='';RSH="/data/scripts/PMR/bin/sshpass -p $nbiPassword ssh -o StrictHostKeyChecking=no -l $nbiUser"
+              $SRSYNC --rsh="${RSH}" ${SANDATA}/${DCT}/${DC}/${D} ${nbiIpAddr}:${nbiDestPath}/ 2>&1 | tr '\n' ' ' >> ${NBITRXLOGF}
 
               if [[ ${PIPESTATUS[0]} -ne '0' || $? -ne '0' ]]; then
                 count=`expr $count + 1`
