@@ -1,10 +1,11 @@
 
 version: Phase 2 SAP PMR NBI : 18 June 2014
 Feature additions:
+manual-nbiPmDataTx.sh	= Utility to synchronize the PM data manually with the NBI servers.
 nbiPmDataTx.sh		= Utility to send PMR data to the NBI sources.
 sshpass			= Compiled binary from the pelican build, tested for cherry as well to be used with nbiPmDataTx.sh
-Since the login is required to be password based, we had to include sshpass and utilize the --rsh parameter for rsync to work over the ssh protocol with password.
-(Sample: /usr/bin/rsync -avzr '--rsh=/data/scripts/PMR/bin/sshpass -p Guavu$!! ssh -o StrictHostKeyChecking=no -l root' /data/mgmt/pmr/data/pm/VISP/SMLAB/2014/07/08 10.10.21.67:/tmp/ )
+Since the login is required to be password based, we had to include sshpass and utilize the --rsh parameter for rsync to work over the ssh protocol with password as environment variable SSHPASS. We needed to put -R option for rsyc to enable creation of directory structure at remote destination.
+(Sample: /usr/bin/rsync -avzrR '--rsh=/data/scripts/PMR/bin/sshpass -e ssh -o StrictHostKeyChecking=no -l root' /data/mgmt/pmr/data/pm/./VISP/SMLAB/2014/07/09 10.10.21.67:/tmp/nbi/ )
 
 Bug fixes:
 

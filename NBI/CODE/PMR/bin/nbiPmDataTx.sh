@@ -4,11 +4,8 @@
 cd /data/scripts/PMR
 . /data/scripts/PMR/etc/PMRConfig.cfg
 
-#/data/mgmt/pmr/data/pm/SAP/ guavusv@10.194.103.254:/u06/apps/ehealth565/publishStats/guavus_visp/SAP/
-#SRSYNC="/usr/bin/rsync -avzre ssh" 
-
 #/usr/bin/rsync -ravz --rsh="/usr/bin/sshpass -p $PASS ssh -o StrictHostKeyChecking=no -l $USER" /data/mgmt/pmr/data/pm/VISP/SMLAB/2014/07/08 10.10.21.66:/tmp
-SRSYNC="/usr/bin/rsync -avzr" 
+SRSYNC="/usr/bin/rsync -avzrR" 
 
 if [[ `am_i_master` -ne 0 ]] ; then exit 0; fi
 
@@ -70,8 +67,9 @@ function sanitizeNbiFile {
  # User (MUST)
  if [[ $nbiUser == '' ]]; then sanityFlag=`expr $sanityFlag + 2`; fi
 
- # Password (Default:KeysBased/PasswordLess)
+ # Password (Default:KeysBased/PasswordLess). Exported the password variable for RSYNC using SSHPASS utility.
  if [[ $nbiPassword == '' ]]; then sanityFlag=`expr $sanityFlag + 0`; nbiPassword="NULL"; fi
+ export SSHPASS="${nbiPassword}"
 
  # DestPath (Default:/tmp/nbi)
  if [[ $nbiDestPath == '' ]]; then nbiDestPath="/tmp/nbi"; sanityFlag=`expr $sanityFlag + 0`; fi
@@ -87,42 +85,34 @@ function sanitizeNbiFile {
 }
 
 function calibrateIncludeDc {
- nbiIncludeDc=`echo $nbiIncludeDc | sed 's/\s/|/g'`
- DCLIST=`/bin/ls -ld ${SANDATA}/${DCT}/* | grep ^d | egrep "$nbiIncludeDc" | awk -F/ '{print $NF}'`
+ nbiIncludeDc=`echo $nbiIncludeDc | sed 's/,/|/g' | sed 's/\s//g'`
+ DCLIST=`/bin/ls -ld ${SANDATA}/${DCT}/* | grep ^d | awk -F/ '{print $NF}' | egrep -w "$nbiIncludeDc"`
 }
 
 function calibrateExcludeDc {
- nbiExcludeDc=`echo $nbiExcludeDc | sed 's/\s/|/g'`
- DCLIST=`/bin/ls -ld ${SANDATA}/${DCT}/* | grep ^d | egrep -v "$nbiExcludeDc" | awk -F/ '{print $NF}'`
+ nbiExcludeDc=`echo $nbiExcludeDc | sed 's/,/|/g' | sed 's/\s//g'`
+ DCLIST=`/bin/ls -ld ${SANDATA}/${DCT}/* | grep ^d | awk -F/ '{print $NF}' | egrep -vw "$nbiExcludeDc"`
 }
 
 function calibrateIncludeType {
- nbiIncludeType=`echo $nbiIncludeType | sed 's/\s/|/g'`
- DCTYPE=`/bin/ls -ld ${SANDATA}/* | grep ^d | egrep "$nbiIncludeType" | awk -F/ '{print $NF}'`
+ nbiIncludeType=`echo $nbiIncludeType | sed 's/,/|/g' | sed 's/\s//g'`
+ DCTYPE=`/bin/ls -ld ${SANDATA}/* | grep ^d | awk -F/ '{print $NF}' | egrep -w "$nbiIncludeType"`
 }
 
 function calibrateExcludeType {
- nbiExcludeType=`echo $nbiExcludeType | sed 's/\s/|/g'`
- DCTYPE=`/bin/ls -ld ${SANDATA}/* | grep ^d | egrep -v "$nbiExcludeType" | awk -F/ '{print $NF}'`
+ nbiExcludeType=`echo $nbiExcludeType | sed 's/,/|/g' | sed 's/\s//g'`
+ DCTYPE=`/bin/ls -ld ${SANDATA}/* | grep ^d | awk -F/ '{print $NF}' | egrep -vw "$nbiExcludeType"`
 }
 
 function syncPMData {
 
  for file in `/bin/ls $BASEPATH/etc/NBI/nbi.*.prop`; do
-
  
    # Reset NBI properties before loading next file.
-   DCTYPE='';nbiSyncDays='';nbiIpAddr='';nbiName='';nbiSwitch='';nbiHostname='';nbiUser='';nbiPassword='';nbiDestPath='';nbiIncludeDc='';nbiExcludeDc='';
+   DCTYPE='';nbiSyncDays='';nbiIpAddr='';nbiName='';nbiSwitch='';nbiHostname='';nbiUser='';nbiPassword='';nbiDestPath='';nbiIncludeDc='';nbiExcludeDc='';nbiIncludeType='';nbiExcludeType='';
 
    source ${file}
    if [[ $? -ne 0 ]]; then write_nbi_event "Error: Unable to load source : $file Skipping...!"; continue; fi
-
-   # Measure Include/Exclude DC types (VISP/PNSA/CMDS) - DCTYPE
-   if [[ "${nbiIncludeType}" != '' ]]; then calibrateIncludeType;
-   elif [[ "${nbiExcludeType}" != '' ]]; then calibrateExcludeType;
-   else
-      DCTYPE=`/bin/ls -ld ${SANDATA}/* | grep ^d | awk -F/ '{print $NF}'`
-   fi
    
    # Perform sanity checks on loaded NBI properties file.
    sanityFlag=0 ; sanitizeNbiFile;
@@ -130,6 +120,14 @@ function syncPMData {
 
    # Switch to skip NBI target data send
    if [[ $nbiSwitch == 'off' ]]; then write_nbi_event "NBI host : $nbiName : $nbiIpAddr transfer turned OFF. Skipping...!"; continue; fi
+
+   # Measure Include/Exclude DC types (VISP/PNSA/CMDS/PNSA) - DCTYPE
+   if [[ "${nbiIncludeType}" != '' ]]; then calibrateIncludeType;
+   elif [[ "${nbiExcludeType}" != '' ]]; then calibrateExcludeType;
+   else
+      DCTYPE=`/bin/ls -ld ${SANDATA}/* | grep ^d | awk -F/ '{print $NF}'`
+   fi
+
 
    # Calculate days to be sync'ed
    calibrateDays
@@ -145,10 +143,11 @@ function syncPMData {
 
 	  write_nbi_log "Sending ${SANDATA}/${DCT}/${D} TO ${nbiUser}@${nbiIpAddr} UNDER ${nbiDestPath} "
           #$SRSYNC ${SANDATA}/${DCT}/${D} ${nbiUser}@${nbiIpAddr}:${nbiDestPath}/ 2>&1 | tr '\n' ' ' >> ${NBITRXLOGF} 
-
-          #/usr/bin/rsync -ravz --rsh="/usr/bin/sshpass -p $PASS ssh -o StrictHostKeyChecking=no -l $USER" /data/mgmt/pmr/data/pm/VISP/SMLAB/2014/07/08 10.10.21.66:/tmp
-	  RSH='';RSH="/data/scripts/PMR/bin/sshpass -p $nbiPassword ssh -o StrictHostKeyChecking=no -l $nbiUser"
-	  $SRSYNC --rsh="${RSH}" ${SANDATA}/${DCT}/${D} ${nbiIpAddr}:${nbiDestPath}/ 2>&1 | tr '\n' ' ' >> ${NBITRXLOGF}
+	  #RSH='';RSH="/data/scripts/PMR/bin/sshpass -p $nbiPassword ssh -o StrictHostKeyChecking=no -l $nbiUser"
+	 
+  	  # Used ./ with rsync -R option in order to create the dctype directory structure at remote server, in following rsync command. 
+	  RSH='';RSH="/data/scripts/PMR/bin/sshpass -e ssh -o StrictHostKeyChecking=no -l $nbiUser"
+	  $SRSYNC --rsh="${RSH}" ${SANDATA}/./${DCT}/${D} ${nbiIpAddr}:${nbiDestPath}/ 2>&1 | tr '\n' ' ' >> ${NBITRXLOGF}
 
 	  if [[ ${PIPESTATUS[0]} -ne '0' || $? -ne '0' ]]; then 
                 count=`expr $count + 1`
@@ -183,8 +182,11 @@ function syncPMData {
 
 	      write_nbi_log "Sending ${SANDATA}/${DCT}/${DC}/${D} TO ${nbiUser}@${nbiIpAddr} UNDER ${nbiDestPath} "
               #$SRSYNC ${SANDATA}/${DCT}/${DC}/${D} ${nbiUser}@${nbiIpAddr}:${nbiDestPath}/ 2>&1 | tr '\n' ' ' >> ${NBITRXLOGF}
-	      RSH='';RSH="/data/scripts/PMR/bin/sshpass -p $nbiPassword ssh -o StrictHostKeyChecking=no -l $nbiUser"
-              $SRSYNC --rsh="${RSH}" ${SANDATA}/${DCT}/${DC}/${D} ${nbiIpAddr}:${nbiDestPath}/ 2>&1 | tr '\n' ' ' >> ${NBITRXLOGF}
+	      #RSH='';RSH="/data/scripts/PMR/bin/sshpass -p $nbiPassword ssh -o StrictHostKeyChecking=no -l $nbiUser"
+
+  	      # Used ./ with rsync -R option in order to create the dctype directory structure at remote server, in following rsync command. 
+	      RSH='';RSH="/data/scripts/PMR/bin/sshpass -e ssh -o StrictHostKeyChecking=no -l $nbiUser"
+              $SRSYNC --rsh="${RSH}" ${SANDATA}/./${DCT}/${DC}/${D} ${nbiIpAddr}:${nbiDestPath}/ 2>&1 | tr '\n' ' ' >> ${NBITRXLOGF}
 
               if [[ ${PIPESTATUS[0]} -ne '0' || $? -ne '0' ]]; then
                 count=`expr $count + 1`

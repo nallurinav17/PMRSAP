@@ -2,7 +2,7 @@
 nbiName='vzw2'
 
 # nbiSwitch (MUST)
-nbiSwitch='on'
+nbiSwitch='off'
 
 # nbiHostname (OPTIONAL)
 nbiHostname='visp-dc-2'
@@ -22,16 +22,16 @@ nbiDestPath='/tmp'
 # Sync Days (Default:2)
 nbiSyncDays='3'
 
-# DC Include List (OPTIONAL But higher in precedence than 'ExcludeDc') - Defaults to include all.
+# DC Include Comma Separated  List (OPTIONAL But higher in precedence than 'ExcludeDc') - Defaults to include all.
 nbiIncludeDc=''
 
-# DC Exclude List (OPTIONAL But lower in precedence than 'IncludeDc') - Defaults to exclude none.
+# DC Exclude Comma Separated List (OPTIONAL But lower in precedence than 'IncludeDc') - Defaults to exclude none.
 nbiExcludeDc=''
 
-# DC TYPE Include List - VISP/PNSA/CMDS (OPTIONAL But higher in precedence than 'ExcludeType') - Defaults to include all.
+# DC TYPE Include Comma Separated List - VISP/PNSA/CMDS/SAP (OPTIONAL But higher in precedence than 'ExcludeType') - Defaults to include all.
 nbiIncludeType=''
 
-# DC TYPE Exclude List - VISP/PNSA/CMDS (OPTIONAL But lower in precedence than 'IncludeType') - Defaults to exclude none.
+# DC TYPE Exclude Comma Separated List - VISP/PNSA/CMDS/SAP (OPTIONAL But lower in precedence than 'IncludeType') - Defaults to exclude none.
 nbiExcludeType=''
 
 

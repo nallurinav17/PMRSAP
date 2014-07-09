@@ -1,23 +1,23 @@
 # nbiName (MUST)
-nbiName='perfcenter'
+nbiName='vzw3'
 
 # nbiSwitch (MUST)
-nbiSwitch='on'
+nbiSwitch='off'
 
 # nbiHostname (OPTIONAL)
-nbiHostname='njcwhlthp40v.nss.vzwnet.com'
+nbiHostname='visp-dc-1'
 
 # IP Address (MUST)
-nbiIpAddr='10.194.103.254'
+nbiIpAddr='10.10.21.66'
 
 # User (MUST)
-nbiUser='guavusv'
+nbiUser='root'
 
 # Password (Default:KeysBased/PasswordLess)
-nbiPassword='Vi$pF1l'
+nbiPassword='Gu@vu$!!'
 
 # DestPath (Default:/tmp/nbi)
-nbiDestPath='/u06/apps/ehealth565/publishStats/guavus_visp'
+nbiDestPath='/tmp'
 
 # Sync Days (Default:2)
 nbiSyncDays='3'
@@ -29,7 +29,7 @@ nbiIncludeDc=''
 nbiExcludeDc=''
 
 # DC TYPE Include Comma Separated List - VISP/PNSA/CMDS/SAP (OPTIONAL But higher in precedence than 'ExcludeType') - Defaults to include all.
-nbiIncludeType='SAP'
+nbiIncludeType=''
 
 # DC TYPE Exclude Comma Separated List - VISP/PNSA/CMDS/SAP (OPTIONAL But lower in precedence than 'IncludeType') - Defaults to exclude none.
 nbiExcludeType=''
