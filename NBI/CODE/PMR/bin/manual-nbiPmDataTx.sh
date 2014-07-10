@@ -232,7 +232,7 @@ printf "Provide password for the outbound destination server : "; /bin/stty -ech
 sanityFlag=0 ; sanitizeNbiFile;
 if [[ $sanityFlag -ne 0 ]]; then echo "--------- Error (code:$sanityFlag) : Malformed NBI properties supplied. Skipping...!"; exit; fi
 
-echo "--------- Synchronizing last 3 days of data including today, with properties; user:$nbiUser, ip:$nbiIpAddr, destPath:$nbiDestPath"
+echo "--------- Synchronizing last ${nbiSyncDays} days of data till date, with properties; user:$nbiUser, ip:$nbiIpAddr, destPath:$nbiDestPath"
 
 # Calculate days to be sync'ed.
 calibrateDays
