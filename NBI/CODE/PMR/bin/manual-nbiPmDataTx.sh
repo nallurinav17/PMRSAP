@@ -156,6 +156,8 @@ Usage:
 	--ip 		(Mandatory)	=>	IP address of the target NBI server. 
 	--user		(Mandatory)	=>	Username to transfer PM data.
 	--destPath	(Optional)	=>	Destination path to stage data in.
+	--syncDays	(Optional)	=>	Number of days in past, for which data to be sync'ed. Today's data 'll be transfered irrespective of the number of days specified. 
+						Defaults to 3 days of data to be transfered, including today.
 	--includeDC	(Optional)	=>	Comma separated list of DC names to be included, higher in precedence than excludeDC. Defaults to include all.
 	--excludeDC	(Optional)	=>	Comma separated list of DC names to be excluded, lower in precedence than includeDC. Defaults to exclude none.
 	--includeType	(Optional)	=>	Comma separated list of source data type to be included (PNSA/CMDS/VISP/SAP), higher in precedence than excludeType. Defaults to include all.
@@ -195,6 +197,10 @@ do
 		nbiDestPath=`echo $option | cut -d '=' -f2`
 	;;
 
+	--syncDays)
+		nbiSyncDays=`echo $option | cut -d '=' -f2`
+	;;
+	
 	--includeDC)
 		nbiIncludeDc=`echo $option | cut -d '=' -f2`
 	;;
