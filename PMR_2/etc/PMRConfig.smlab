@@ -6,12 +6,6 @@ SANREPO="/data/mgmt/pmr/scripts/pm"
 DATAPATH="${SANDATA}/SAP"
 SAPREPO="${SANREPO}/SAP/PMR"
 CLEANUPPATH="${BASEPATH}/var"
-CLIRAW='/opt/tms/bin/cli '
-
-# VZWIT Server credentials, passwordless/keys-based access to which we need to push PM files.
-PMDEST='172.30.6.12 172.30.6.13'
-PMDESTU='root'
-PMDESTPATH='/data/pmrdata'
 
 # 13 months of SAN PM data to be retained
 RETENTION="395"
@@ -21,6 +15,14 @@ LOGFILE=/var/log/PMRLogger.log
 ## Rotation of /tmp/zabbix_trap.log (snmptt) files (in Days)
 SNMPTTLOGROTATE='60'
 
+## PM data transfer parameters.
+## Rotation of /var/log/NBIEvents.log files (in Days)
+VLOG='/var/log'
+NBIEVENTLOGF="${VLOG}/NBIEvents.log"
+NBIEVENTLOGROTATE='30'
+NBITRXLOGF="${VLOG}/NBIDataTransfer.log"
+NBITRXLOGROTATE='2'
+
 # 4 months of SAN ALARM data to be retained
 ALARMDATARETENTION='124'
 
@@ -29,6 +31,7 @@ SSH='/usr/bin/ssh -q -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -l root
 SADF=`which sadf`
 AWK=`which awk`
 DATE=`which date`
+CLIRAW='/opt/tms/bin/cli '
 CLI='/opt/tms/bin/cli -t "en" "conf t" '
 PMX='/opt/tps/bin/pmx.py'
 HADOOP='/opt/hadoop/bin/hadoop'

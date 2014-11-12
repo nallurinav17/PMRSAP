@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<pmr>
+  <nbi name="vzw1" switch="on">
+    <hostname>visp-dc-1</hostname>
+    <ipAddr>10.10.21.66</ipAddr>
+    <user>root</user>
+    <password>Gu@vu$!!</password>
+    <destPath>/tmp</destPath>
+    <syncDays>3</syncDays>
+    <includeDc>SMLAB</includeDc>
+    <excludeDc>SMLAB</excludeDc>
+  </nbi>
+  <nbi name="vzw2" switch="on">
+    <hostname>visp-dc-2</hostname>
+    <ipAddr>10.10.21.67</ipAddr>
+    <user>root</user>
+    <password>Gu@vu$!!</password>
+    <destPath>/tmp</destPath>
+    <syncDays>3</syncDays>
+    <includeDc>SMLAB</includeDc>
+    <excludeDc>SMLAB</excludeDc>
+  </nbi>
+</pmr>
