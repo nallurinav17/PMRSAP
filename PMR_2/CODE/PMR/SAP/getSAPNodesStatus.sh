@@ -48,8 +48,8 @@ fi
 rm -f $TMPFILE
 rm -f $TMPFILE.dfsreport
 # Write Data
-printf "%s, %s, %s, Hadoop_status, %s\n" "$TIMESTAMP" "$ENTITY" "$SUBENTITY" "$HADOOPSTATUS" 
-printf "%s, %s, %s, HDFS_utilization, %s\n" "$TIMESTAMP" "$ENTITY" "$SUBENTITY" "$DFSUSED" 
+printf "%s,%s,%s,Hadoop_status,%s\n" "$TIMESTAMP" "$ENTITY" "$SUBENTITY" "$HADOOPSTATUS" 
+printf "%s,%s,%s,HDFS_utilization,%s\n" "$TIMESTAMP" "$ENTITY" "$SUBENTITY" "$DFSUSED" 
 
 # Get Collector Status
 for node in $CNP ; do
@@ -68,7 +68,7 @@ for node in $CNP ; do
   fi
 
   # Write Data
-    printf "%s, %s, %s, Node_status, %s\n" "$TIMESTAMP" "$ENTITY" "$SUBENTITY" "$STATUS" 
+    printf "%s,%s,%s,Node_status,%s\n" "$TIMESTAMP" "$ENTITY" "$SUBENTITY" "$STATUS" 
   # Clean up
     rm -f $TMPFILE
 done
@@ -93,7 +93,7 @@ for node in $CMP ; do
   fi
 
   # Write Data
-    printf "%s, %s, %s, Node_status, %s\n" "$TIMESTAMP" "$ENTITY" "$SUBENTITY" "$STATUS" 
+    printf "%s,%s,%s,Node_status,%s\n" "$TIMESTAMP" "$ENTITY" "$SUBENTITY" "$STATUS" 
   # Clean up
     rm -f $TMPFILE
 done
@@ -117,7 +117,7 @@ for node in $UIP ; do
   fi
 
   # Write data
-    printf "%s, %s, %s, Node_status, %s\n" "$TIMESTAMP" "$ENTITY" "$SUBENTITY" "$STATUS" 
+    printf "%s,%s,%s,Node_status,%s\n" "$TIMESTAMP" "$ENTITY" "$SUBENTITY" "$STATUS" 
   # Clean up
     rm -f $TMPFILE
 done
@@ -144,7 +144,7 @@ for node in $SGW ; do
   fi
 
   # Write data
-    printf "%s, %s, %s, Node_status, %s\n" "$TIMESTAMP" "$ENTITY" "$SUBENTITY" "$STATUS" 
+    printf "%s,%s,%s,Node_status,%s\n" "$TIMESTAMP" "$ENTITY" "$SUBENTITY" "$STATUS" 
   # Clean up
     rm -f $TMPFILE
 done
@@ -155,7 +155,7 @@ for node in $CCP ; do
   SUBENTITY=`$SSH $NETWORK.$node 'hostname'`
   if [[ $? -eq '0' ]] ; then STATUS=0 ; else STATUS=1 ; SUBENTITY=`/bin/grep $NETWORK.$node /etc/hosts | awk '{print $2}'` ; fi
   # Write data
-  printf "%s, %s, %s, Node_status, %s\n" "$TIMESTAMP" "$ENTITY" "$SUBENTITY" "$STATUS" 
+  printf "%s,%s,%s,Node_status,%s\n" "$TIMESTAMP" "$ENTITY" "$SUBENTITY" "$STATUS" 
 done
 
 
@@ -169,13 +169,42 @@ INSTASTATUS=0
   if ! egrep -q "Module pm2    ACTIVE" $TMPFILE ; then let INSTASTATUS+=1 ; fi
 
 # write data
-  printf "%s, %s, %s, Insta_status, %s\n" "$TIMESTAMP" "$ENTITY" "$SUBENTITY" "$INSTASTATUS" 
+  printf "%s,%s,%s,Insta_status,%s\n" "$TIMESTAMP" "$ENTITY" "$SUBENTITY" "$INSTASTATUS" 
 
 # Clean up
   rm -f $TMPFILE
 
+write_log "Completed SAP Node status check"
+write_log "Starting SAP Nodes disk stats"
 
+# Get Disk Stats - SAP PMR V2
+#-----
+# Disk Monitoring
+for node in $CNP $UIP $CMP $SGW $CCP; do
+  #-----
+  hostn='';hostn=`/bin/grep -w "$NETWORK.$node" /etc/hosts | awk '{print $2}' | sed 's/ //g'`
+  if [[ ! ${hostn} ]]; then hostn=`$SSH $NETWORK.$node "hostname"`; fi
+  if [[ ! ${hostn} ]]; then hostn="$NETWORK.$node"; fi
+  #-----
+  val='';
+  for value in `$SSH $NETWORK.$node "/bin/df -P | tail -n+3 | tr -s ' ' | sed 's/%//g'" | awk '{print $6";"$2";"$5}'`; do
+     disk='';disk=`echo $value | awk -F ";" '{print $1}' | sed 's/\//_/g'`
+     valSize=`echo $value | awk -F ";" '{print $2}'`
+     val=`echo $value | awk -F ";" '{print $3}'`
+    if [[ $val && $disk && $valSize ]]; then
+     echo "$TIMESTAMP,SAP/$hostn//$disk,,Disk_partition_size,$valSize"
+     echo "$TIMESTAMP,SAP/$hostn//$disk,,Disk_partition_utilization,$val"
+    else
+     echo "$TIMESTAMP,SAP/$hostn//$disk,,Disk_partition_size,0"
+     echo "$TIMESTAMP,SAP/$hostn//$disk,,Disk_partition_utilization,0"
+    fi
+  done 2>/dev/null
+#  if [[ ! $val ]] ; then
+#     echo "$TIMESTAMP,SAP/$hostn//$disk,Disk_partition_size,0"
+#     echo "$TIMESTAMP,SAP/$hostn//$disk,Disk_partition_utilization,0"
+#  fi
+done 2>/dev/null
 
-write_log "Completed SAP Node status Check"
+write_log "Completed SAP Nodes disk stats"
 exit 0
 

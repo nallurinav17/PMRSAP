@@ -1,0 +1,8 @@
+
+   en
+   conf t
+
+   pm process crond restart
+   write memory
+
+
