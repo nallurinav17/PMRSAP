@@ -39,13 +39,14 @@ ipfixIdealFlexibility='25'
 pilotIdealFlexibility='15'
 subibIdealFlexibility='120'
 
-# Window epoch to lower 5 minute boundary.
-windowd=`date -d "$window hours ago" +%s`; curd=`date +%s`;
-diff=`echo "$windowd % 300" | bc`; windowd=`echo "$windowd - $diff" | bc`;
-y1=`date -d @$windowd +%Y/%m/%d`
-
 # Current epoch to lower 5 minute bin boundary.
 curd=`date +%s`; diff=`echo "$curd % 300" | bc`; curd=`echo "$curd - $diff" | bc`;
+
+# Window epoch to lower 5 minute boundary.
+#windowd=`date -d "$window hours ago" +%s`;
+#diff=`echo "$windowd % 300" | bc`; windowd=`echo "$windowd - $diff" | bc`;
+windowd=`echo "$curd - ($window * 60 * 60)" | bc`
+y1=`date -d @$windowd +%Y/%m/%d`
 
 # Ideal time to start backwards in epoch
 curdI=`echo "$curd - ($ipfixIdealFlexibility * 60)" | bc`
