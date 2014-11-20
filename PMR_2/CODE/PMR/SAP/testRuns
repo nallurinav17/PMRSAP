@@ -1,0 +1,11 @@
+getDcBackLog
+[admin@smlabgvsgp1 SAP]# ./getDcBacklog.sh
+20141120-1905,SAP/FSLAB/1,,IPFIX_data_transfer_backlog,24:00:00
+20141120-1905,SAP/FSLAB/3,,IPFIX_data_transfer_backlog,24:00:00
+20141120-1905,SAP/ANJTMDAH/0,,IPFIX_data_transfer_backlog,23:20:00
+20141120-1905,SAP/FSLAB/1,,PilotPacket_data_transfer_backlog,24:00:00
+20141120-1905,SAP/FSLAB/3,,PilotPacket_data_transfer_backlog,24:00:00
+20141120-1905,SAP/ANJTMDAH/0,,PilotPacket_data_transfer_backlog,23:30:00
+20141120-1905,SAP/ANJTMDAH/0,,SubscriberIB_data_transfer_backlog,24:00:00
+20141120-1905,SAP/FSLAB/0,,SubscriberIB_data_transfer_backlog,24:00:00
+[admin@smlabgvsgp1 SAP]#

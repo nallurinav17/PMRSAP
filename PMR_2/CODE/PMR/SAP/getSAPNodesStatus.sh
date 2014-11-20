@@ -187,21 +187,21 @@ for node in $CNP $UIP $CMP $SGW $CCP; do
   if [[ ! ${hostn} ]]; then hostn="$NETWORK.$node"; fi
   #-----
   val='';
-  for value in `$SSH $NETWORK.$node "/bin/df -P | tail -n+3 | tr -s ' ' | sed 's/%//g'" | awk '{print $6";"$2";"$5}'`; do
+  for value in `$SSH $NETWORK.$node "/bin/df -P | tail -n+3 | tr -s ' ' | sed 's/%//g'" | awk '{print $6";"$2*1024";"$5}'`; do
      disk='';disk=`echo $value | awk -F ";" '{print $1}' | sed 's/\//_/g'`
      valSize=`echo $value | awk -F ";" '{print $2}'`
      val=`echo $value | awk -F ";" '{print $3}'`
     if [[ $val && $disk && $valSize ]]; then
-     echo "$TIMESTAMP,SAP/$hostn//$disk,,Disk_partition_size,$valSize"
-     echo "$TIMESTAMP,SAP/$hostn//$disk,,Disk_partition_utilization,$val"
+     echo "$TIMESTAMP,SAP/$hostn://$disk,,Disk_partition_size,$valSize"
+     echo "$TIMESTAMP,SAP/$hostn://$disk,,Disk_partition_utilization,$val"
     else
-     echo "$TIMESTAMP,SAP/$hostn//$disk,,Disk_partition_size,0"
-     echo "$TIMESTAMP,SAP/$hostn//$disk,,Disk_partition_utilization,0"
+     echo "$TIMESTAMP,SAP/$hostn://$disk,,Disk_partition_size,0"
+     echo "$TIMESTAMP,SAP/$hostn://$disk,,Disk_partition_utilization,0"
     fi
   done 2>/dev/null
 #  if [[ ! $val ]] ; then
-#     echo "$TIMESTAMP,SAP/$hostn//$disk,Disk_partition_size,0"
-#     echo "$TIMESTAMP,SAP/$hostn//$disk,Disk_partition_utilization,0"
+#     echo "$TIMESTAMP,SAP/$hostn://$disk,Disk_partition_size,0"
+#     echo "$TIMESTAMP,SAP/$hostn://$disk,Disk_partition_utilization,0"
 #  fi
 done 2>/dev/null
 
