@@ -15,6 +15,9 @@ LOGFILE=/var/log/PMRLogger.log
 ## Rotation of /tmp/zabbix_trap.log (snmptt) files (in Days)
 SNMPTTLOGROTATE='60'
 
+## SNMP Community String
+COMMUNITY="2Y2LHTZP31"
+
 ## PM data transfer parameters.
 ## Rotation of /var/log/NBIEvents.log files (in Days)
 VLOG='/var/log'

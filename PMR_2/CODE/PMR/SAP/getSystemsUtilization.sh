@@ -29,7 +29,7 @@ do
   if [[ ! ${hostn} ]]; then hostn=`$SSH $NETWORK.${element} "hostname"`; fi
   if [[ ! ${hostn} ]]; then hostn="$NETWORK.${element}"; fi
 
-  # Get MEM Utilization and interpolate for 5 minute
+  # Detailed CPU and Memory stats.
 
   val1='';val1=`${SSH} ${NETWORK}.${element} "/usr/bin/free -o 2>/dev/null | tail -n+2 | egrep ^'Mem' 2>/dev/null; /usr/bin/free -o 2>/dev/null | tail -n+2 | egrep ^'Swap' 2>/dev/null; echo -n 'CPU:'; /usr/bin/iostat -c 2>/dev/null | egrep -A1 avg-cpu 2>/dev/null | tail -1;  echo -e '\n'" 2>/dev/null`
   bk=$IFS; IFS="`echo ''`";
@@ -50,6 +50,8 @@ do
     write_log "----- Unable to calculate detailed CPU & Mem Utilization."
   fi
   
+  # Disk IO operations stats.
+
   val1=''; val1=`/usr/bin/ssh -q -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -l root ${NETWORK}.${element} "/usr/bin/iostat -x -d 1 1  2>/dev/null | tail -n+4 | sed 's/ +/ /g' 2>/dev/null" 2>/dev/null`
   if [[ $val1 ]];  then
   for line in $val1; do
@@ -62,6 +64,37 @@ do
   fi
   IFS=$bk;
 
+  # SNMP systemUptime and interface stats.
+  snmpNames="/tmp/snmp-if-names.${element}"
+  snmpValues="/tmp/snmp-if-values.${element}"
+
+  /usr/bin/snmpwalk -c ${COMMUNITY} -v2c ${NETWORK}.${element} -m IF-MIB ifName -OQ 2>/dev/null | awk -F '.' '{print $NF}' | sed 's/ //g' 2>/dev/null >${snmpNames}
+  if [[ -s $snmpNames && $? -eq '0' ]]; then
+
+    #for COUNTERS in "IF-MIB::ifInOctets" "IF-MIB::ifInOctets" "IF-MIB::ifInOctets" "IF-MIB::ifInOctets"; do
+
+    /usr/bin/snmpwalk -c ${COMMUNITY} -v2c ${NETWORK}.${element} -m IF-MIB -OQ 2>/dev/null | egrep 'ifHCInOctets|ifInErrors|ifInDiscards|ifHCOutOctets|ifOutErrors|ifOutDiscards' | grep -v "ifHCInOctets|ifInErrors|ifInDiscards|ifHCOutOctets|ifOutErrors|ifOutDiscards" | awk -F ':' '{print $NF}' | sed 's/ //g' 2>/dev/null >${snmpValues}
+
+    for interface in `/bin/cat $snmpNames`; do
+       ifId=''; ifId=`echo $interface | awk -F '=' '{print $1}'`; 
+       ifName=''; ifName=`echo $interface | awk -F '=' '{print $2}'`
+       for COUNTERS in `/bin/egrep "*\.${ifId}" ${snmpValues} 2>/dev/null`; do
+         index='';index=`echo $COUNTERS | awk -F '.' '{print $1}' 2>/dev/null`;
+         value='';value=`echo $COUNTERS | awk -F '=' '{print $NF}' 2>/dev/null`;
+         echo "$TIMESTAMP,SAP/$hostn/${ifName},,${index},${value}"
+       done
+    done
+
+  else
+    write_log "----- Unable to determine the host interface list." 
+  fi
+  /bin/rm -f ${snmpNames} ${snmpValues} 2>/dev/null
+
+  # Poll System Uptime 
+  value=`/usr/bin/snmpget -c ${COMMUNITY} -v2c ${NETWORK}.${element} hrSystemUptime.0 -Otv 2>/dev/null`
+  if [[ $? -eq '0' ]]; then
+  echo "$TIMESTAMP,SAP/$hostn,,hrSystemUptime,${value%??}"
+  fi
 done
 
 write_log "Completed Poller for detailed CPU & Mem Utilization and Disk IO stats"

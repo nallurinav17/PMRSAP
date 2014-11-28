@@ -464,6 +464,25 @@ getSystemsUtilization.sh
 20141126-1221,SAP/smlabgvsgp2/sde,,IO_svctm,0.14
 20141126-1221,SAP/smlabgvsgp2/dm-0,,IO_svctm,0.11
 20141126-1221,SAP/smlabgvsgp2/dm-1,,IO_svctm,0.11
+20141126-2152,SAP/smlabgvsgp2/lo,,ifInDiscards,0
+20141126-2152,SAP/smlabgvsgp2/lo,,ifInErrors,0
+20141126-2152,SAP/smlabgvsgp2/lo,,ifOutDiscards,0
+20141126-2152,SAP/smlabgvsgp2/lo,,ifOutErrors,0
+20141126-2152,SAP/smlabgvsgp2/lo,,ifHCInOctets,2110797626
+20141126-2152,SAP/smlabgvsgp2/lo,,ifHCOutOctets,2110797626
+20141126-2152,SAP/smlabgvsgp2/eth0,,ifInDiscards,0
+20141126-2152,SAP/smlabgvsgp2/eth0,,ifInErrors,0
+20141126-2152,SAP/smlabgvsgp2/eth0,,ifOutDiscards,0
+20141126-2152,SAP/smlabgvsgp2/eth0,,ifOutErrors,0
+20141126-2152,SAP/smlabgvsgp2/eth0,,ifHCInOctets,35006842435
+20141126-2152,SAP/smlabgvsgp2/eth0,,ifHCOutOctets,1493174383
+20141126-2152,SAP/smlabgvsgp2/eth1,,ifInDiscards,0
+20141126-2152,SAP/smlabgvsgp2/eth1,,ifInErrors,0
+20141126-2152,SAP/smlabgvsgp2/eth1,,ifOutDiscards,0
+20141126-2152,SAP/smlabgvsgp2/eth1,,ifOutErrors,0
+20141126-2152,SAP/smlabgvsgp2/eth1,,ifHCInOctets,0
+20141126-2152,SAP/smlabgvsgp2/eth1,,ifHCOutOctets,0
+[admin@smlabgvsgp1 SAP]#
 [admin@smlabgvsgp1 SAP]#
 
 getCollectorStats.sh
@@ -496,40 +515,88 @@ getVolumeStats.sh
 20141126-1743,SAP,ANJTMDAH,SAP_PilotPacket_DC_volume,1656
 20141126-1743,SAP,ANJTMDAH,SAP_SubscriberIB_DC_volume,0
 20141126-1743,SAP,FSLAB,SAP_SubscriberIB_DC_volume,0
-20141126-1743,SAP/smlabgvcnp1,,SW_version,atlas2.5.0.rc4
-20141126-1743,SAP/smlabgvcnp1,,SW_patches,atlas2.5.0.rc4.p1
-20141126-1743,SAP/smlabgvcnp2,,SW_version,atlas2.4.0.rc9
-20141126-1743,SAP/smlabgvcnp2,,SW_patches,atlas2.4.0.rc9.p3 atlas2.4.0.rc9.p1
-20141126-1743,SAP/smlabgvuip1,,SW_version,atlas2.4.0.rc9
-20141126-1743,SAP/smlabgvuip1,,SW_patches,atlas2.4.0.rc9.p3 atlas2.4.0.rc9.p2 atlas2.4.0.rc9.p1
-20141126-1743,SAP/smlabgvuip2,,SW_version,atlas2.4.0.rc9
-20141126-1743,SAP/smlabgvuip2,,SW_patches,atlas2.4.0.rc9.p3 atlas2.4.0.rc9.p2 atlas2.4.0.rc9.p1
-20141126-1743,SAP/smlabgvcmp1,,SW_version,atlas2.4.0.rc9
-20141126-1743,SAP/smlabgvcmp1,,SW_patches,atlas2.4.0.rc9.p3 atlas2.4.0.rc9.p2 atlas2.4.0.rc9.p1
-20141126-1743,SAP/smlabgvcmp2,,SW_version,atlas2.4.0.rc9
-20141126-1743,SAP/smlabgvcmp2,,SW_patches,atlas2.4.0.rc9.p3 atlas2.4.0.rc9.p2 atlas2.4.0.rc9.p1
-20141126-1743,SAP/smlabgvsgp1,,SW_version,atlas2.4.0.rc9
-20141126-1743,SAP/smlabgvsgp1,,SW_patches,atlas2.4.0.rc9.p3 atlas2.4.0.rc9.p2 atlas2.4.0.rc9.p1
-20141126-1743,SAP/smlabgvsgp2,,SW_version,atlas2.4.0.rc9
-20141126-1743,SAP/smlabgvsgp2,,SW_patches,atlas2.4.0.rc9.p3 atlas2.4.0.rc9.p2 atlas2.4.0.rc9.p1
-20141126-1743,SAP/smlabgvccp1,,SW_version,atlas2.4.0.rc9
-20141126-1743,SAP/smlabgvccp1,,SW_patches,atlas2.4.0.rc9.p3 atlas2.4.0.rc9.p2 atlas2.4.0.rc9.p1
-20141126-1743,SAP/smlabgvccp2,,SW_version,atlas2.4.0.rc9
-20141126-1743,SAP/smlabgvccp2,,SW_patches,atlas2.4.0.rc9.p3 atlas2.4.0.rc9.p2 atlas2.4.0.rc9.p1
-20141126-1743,SAP/FSLAB/1,,SAP_missing_IPFIX_DC_bin_count,288
-20141126-1743,SAP/FSLAB/1,,SAP_missing_IPFIX_DC_bins,ALL
-20141126-1743,SAP/FSLAB/3,,SAP_missing_IPFIX_DC_bin_count,288
-20141126-1743,SAP/FSLAB/3,,SAP_missing_IPFIX_DC_bins,ALL
-20141126-1743,SAP/ANJTMDAH/0,,SAP_missing_IPFIX_DC_bin_count,288
-20141126-1743,SAP/ANJTMDAH/0,,SAP_missing_IPFIX_DC_bins,ALL
-20141126-1743,SAP/FSLAB/1,,SAP_missing_PilotPacket_DC_bin_count,288
-20141126-1743,SAP/FSLAB/1,,SAP_missing_PilotPacket_DC_bins,ALL
-20141126-1743,SAP/FSLAB/3,,SAP_missing_PilotPacket_DC_bin_count,288
-20141126-1743,SAP/FSLAB/3,,SAP_missing_PilotPacket_DC_bins,ALL
-20141126-1743,SAP/ANJTMDAH/0,,SAP_missing_PilotPacket_DC_bin_count,288
-20141126-1743,SAP/ANJTMDAH/0,,SAP_missing_PilotPacket_DC_bins,ALL
-20141126-1743,SAP/ANJTMDAH/0,,SAP_missing_SubscriberIB_DC_bin_count,24
-20141126-1743,SAP/ANJTMDAH/0,,SAP_missing_SubscriberIB_DC_bins,ALL
-20141126-1743,SAP/FSLAB/0,,SAP_missing_SubscriberIB_DC_bin_count,24
-20141126-1743,SAP/FSLAB/0,,SAP_missing_SubscriberIB_DC_bins,ALL
+[admin@smlabgvsgp1 SAP]#
+
+getDCBinStats.sh
+[admin@smlabgvsgp1 SAP]# ./getDCBinStats.sh
+20141128-1114,SAP/smlabgvcnp1,,SW_version,atlas2.5.0.rc4
+20141128-1114,SAP/smlabgvcnp1,,SW_patches,atlas2.5.0.rc4.p1
+20141128-1114,SAP/smlabgvcnp1,,max_file_descriptors,13129974
+20141128-1114,SAP/smlabgvcnp2,,SW_version,atlas2.4.0.rc9
+20141128-1114,SAP/smlabgvcnp2,,SW_patches,atlas2.4.0.rc9.p3 atlas2.4.0.rc9.p1
+20141128-1114,SAP/smlabgvcnp2,,max_file_descriptors,13129975
+20141128-1114,SAP/smlabgvuip1,,SW_version,atlas2.4.0.rc9
+20141128-1114,SAP/smlabgvuip1,,SW_patches,atlas2.4.0.rc9.p3 atlas2.4.0.rc9.p2 atlas2.4.0.rc9.p1
+20141128-1114,SAP/smlabgvuip1,,max_file_descriptors,9839683
+20141128-1114,SAP/smlabgvuip2,,SW_version,atlas2.4.0.rc9
+20141128-1114,SAP/smlabgvuip2,,SW_patches,atlas2.4.0.rc9.p3 atlas2.4.0.rc9.p2 atlas2.4.0.rc9.p1
+20141128-1114,SAP/smlabgvuip2,,max_file_descriptors,9839683
+20141128-1114,SAP/smlabgvcmp1,,SW_version,atlas2.4.0.rc9
+20141128-1114,SAP/smlabgvcmp1,,SW_patches,atlas2.4.0.rc9.p3 atlas2.4.0.rc9.p2 atlas2.4.0.rc9.p1
+20141128-1114,SAP/smlabgvcmp1,,max_file_descriptors,13129975
+20141128-1114,SAP/smlabgvcmp2,,SW_version,atlas2.4.0.rc9
+20141128-1114,SAP/smlabgvcmp2,,SW_patches,atlas2.4.0.rc9.p3 atlas2.4.0.rc9.p2 atlas2.4.0.rc9.p1
+20141128-1114,SAP/smlabgvcmp2,,max_file_descriptors,13129975
+20141128-1114,SAP/smlabgvsgp1,,SW_version,atlas2.4.0.rc9
+20141128-1114,SAP/smlabgvsgp1,,SW_patches,atlas2.4.0.rc9.p3 atlas2.4.0.rc9.p2 atlas2.4.0.rc9.p1
+20141128-1114,SAP/smlabgvsgp1,,max_file_descriptors,19709374
+20141128-1114,SAP/smlabgvsgp2,,SW_version,atlas2.4.0.rc9
+20141128-1114,SAP/smlabgvsgp2,,SW_patches,atlas2.4.0.rc9.p3 atlas2.4.0.rc9.p2 atlas2.4.0.rc9.p1
+20141128-1114,SAP/smlabgvsgp2,,max_file_descriptors,9840275
+20141128-1114,SAP/smlabgvccp1,,SW_version,atlas2.4.0.rc9
+20141128-1114,SAP/smlabgvccp1,,SW_patches,atlas2.4.0.rc9.p3 atlas2.4.0.rc9.p2 atlas2.4.0.rc9.p1
+20141128-1114,SAP/smlabgvccp1,,max_file_descriptors,13129975
+20141128-1114,SAP/smlabgvccp2,,SW_version,atlas2.4.0.rc9
+20141128-1114,SAP/smlabgvccp2,,SW_patches,atlas2.4.0.rc9.p3 atlas2.4.0.rc9.p2 atlas2.4.0.rc9.p1
+20141128-1114,SAP/smlabgvccp2,,max_file_descriptors,13129975
+20141128-1114,SAP/FSLAB/1,,SAP_missing_IPFIX_DC_bin_count,288
+20141128-1114,SAP/FSLAB/1,,SAP_missing_IPFIX_DC_bins,ALL
+20141128-1114,SAP/FSLAB/3,,SAP_missing_IPFIX_DC_bin_count,288
+20141128-1114,SAP/FSLAB/3,,SAP_missing_IPFIX_DC_bins,ALL
+20141128-1114,SAP/SANMATEO/0,,SAP_missing_IPFIX_DC_bin_count,0
+20141128-1114,SAP/SANMATEO/0,,SAP_missing_IPFIX_DC_bins,NONE
+20141128-1114,SAP/FSLAB/1,,SAP_missing_PilotPacket_DC_bin_count,288
+20141128-1114,SAP/FSLAB/1,,SAP_missing_PilotPacket_DC_bins,ALL
+20141128-1114,SAP/FSLAB/3,,SAP_missing_PilotPacket_DC_bin_count,288
+20141128-1114,SAP/FSLAB/3,,SAP_missing_PilotPacket_DC_bins,ALL
+20141128-1114,SAP/SANMATEO/0,,SAP_missing_PilotPacket_DC_bin_count,0
+20141128-1114,SAP/SANMATEO/0,,SAP_missing_PilotPacket_DC_bins,NONE
+20141128-1114,SAP/SANMATEO/0,,SAP_missing_SubscriberIB_DC_bin_count,0
+20141128-1114,SAP/SANMATEO/0,,SAP_missing_SubscriberIB_DC_bins,NONE
+20141128-1114,SAP/FSLAB/0,,SAP_missing_SubscriberIB_DC_bin_count,24
+20141128-1114,SAP/FSLAB/0,,SAP_missing_SubscriberIB_DC_bins,ALL
+[admin@smlabgvsgp1 SAP]#
+
+getFDUtilization.sh
+[admin@smlabgvsgp1 SAP]# ./getFDUtilization.sh
+20141128-1148,SAP/smlabgvcnp1,,used_allocated_file_descriptors,1664
+20141128-1148,SAP/smlabgvcnp1,,unused_allocated_file_descriptors,0
+20141128-1148,SAP/smlabgvcnp1,,file_descriptor_utilization,1664
+20141128-1148,SAP/smlabgvcnp2,,used_allocated_file_descriptors,3328
+20141128-1148,SAP/smlabgvcnp2,,unused_allocated_file_descriptors,0
+20141128-1148,SAP/smlabgvcnp2,,file_descriptor_utilization,3328
+20141128-1148,SAP/smlabgvuip1,,used_allocated_file_descriptors,1296
+20141128-1148,SAP/smlabgvuip1,,unused_allocated_file_descriptors,0
+20141128-1148,SAP/smlabgvuip1,,file_descriptor_utilization,1296
+20141128-1148,SAP/smlabgvuip2,,used_allocated_file_descriptors,1200
+20141128-1148,SAP/smlabgvuip2,,unused_allocated_file_descriptors,0
+20141128-1148,SAP/smlabgvuip2,,file_descriptor_utilization,1200
+20141128-1148,SAP/smlabgvcmp1,,used_allocated_file_descriptors,1664
+20141128-1148,SAP/smlabgvcmp1,,unused_allocated_file_descriptors,0
+20141128-1148,SAP/smlabgvcmp1,,file_descriptor_utilization,1664
+20141128-1148,SAP/smlabgvcmp2,,used_allocated_file_descriptors,1472
+20141128-1148,SAP/smlabgvcmp2,,unused_allocated_file_descriptors,0
+20141128-1148,SAP/smlabgvcmp2,,file_descriptor_utilization,1472
+20141128-1148,SAP/smlabgvsgp1,,used_allocated_file_descriptors,2432
+20141128-1148,SAP/smlabgvsgp1,,unused_allocated_file_descriptors,0
+20141128-1148,SAP/smlabgvsgp1,,file_descriptor_utilization,2432
+20141128-1148,SAP/smlabgvsgp2,,used_allocated_file_descriptors,1920
+20141128-1148,SAP/smlabgvsgp2,,unused_allocated_file_descriptors,0
+20141128-1148,SAP/smlabgvsgp2,,file_descriptor_utilization,1920
+20141128-1148,SAP/smlabgvccp1,,used_allocated_file_descriptors,2304
+20141128-1148,SAP/smlabgvccp1,,unused_allocated_file_descriptors,0
+20141128-1148,SAP/smlabgvccp1,,file_descriptor_utilization,2304
+20141128-1148,SAP/smlabgvccp2,,used_allocated_file_descriptors,2240
+20141128-1148,SAP/smlabgvccp2,,unused_allocated_file_descriptors,0
+20141128-1148,SAP/smlabgvccp2,,file_descriptor_utilization,2240
 [admin@smlabgvsgp1 SAP]#
