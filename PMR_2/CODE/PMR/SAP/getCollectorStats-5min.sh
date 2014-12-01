@@ -117,10 +117,10 @@ done
 # Second collector - SGW adaptor stats.
 # ------------------------------------------------------------------------------------------
 STANDBY_SG=`$SSH $NETWORK.$SGW0 "$CLI 'show cluster standby'" 2>/dev/null | grep external | awk {'print $NF'}`
-if [[ -z ${STANDBY} ]] ; then write_log "Could not determine standby service gateway, exiting"; exit 127 ; fi
+if [[ -z ${STANDBY_SG} ]] ; then write_log "Could not determine standby service gateway, exiting"; exit 127 ; fi
 
 MASTER_SG=`$SSH $NETWORK.$SGW0 "$CLI 'show cluster master'" 2>/dev/null | grep external | awk {'print $NF'}`
-if [[ -z ${MASTER} ]] ; then write_log "Could not determine master service gateway, exiting"; exit 127 ; fi
+if [[ -z ${MASTER_SG} ]] ; then write_log "Could not determine master service gateway, exiting"; exit 127 ; fi
 
 hostn='';hostn=`/bin/grep -w "${MASTER_SG}" /etc/hosts | awk '{print $2}' | sed 's/ //g'`
 if [[ ! ${hostn} ]]; then hostn=`$SSH $NETWORK.$SGW0 "hostname"`; fi

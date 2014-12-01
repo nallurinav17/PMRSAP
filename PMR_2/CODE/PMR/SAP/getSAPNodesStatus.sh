@@ -123,24 +123,32 @@ for node in $UIP ; do
 done
 
 
+# ------------------------------------------------------------------------------------------
+STANDBY_SG=`$SSH $NETWORK.$SGW0 "$CLI 'show cluster standby'" 2>/dev/null | grep external | awk {'print $NF'}`
+if [[ -z ${STANDBY_SG} ]] ; then write_log "Could not determine standby service gateway, exiting"; exit 127 ; fi
+
+MASTER_SG=`$SSH $NETWORK.$SGW0 "$CLI 'show cluster master'" 2>/dev/null | grep external | awk {'print $NF'}`
+if [[ -z ${MASTER_SG} ]] ; then write_log "Could not determine master service gateway, exiting"; exit 127 ; fi
+# ------------------------------------------------------------------------------------------
+
 # Get Service gateway Nodes status 
-for node in $SGW ; do
-  SUBENTITY=`$SSH $NETWORK.$node 'hostname'`
+for node in $STANDBY_SG $MASTER_SG ; do
+  SUBENTITY=`$SSH $node 'hostname'`
   if [[ $? -eq '0' ]] 
   then 
   STATUS=0
-  $SSH $NETWORK.$node 'ps -ef' > $TMPFILE
+  $SSH $node 'ps -ef' > $TMPFILE
 
   # Check Oozie process
     if ! egrep -q "org.apache.catalina.startup.Bootstrap" $TMPFILE ; then let STATUS+=$CATALINA ; fi
   # Check Tibco process
-    $SSH $NETWORK.$node '/opt/tms/bin/cli -t "en" "show pm process tibco"' > $TMPFILE
+    $SSH $node '/opt/tms/bin/cli -t "en" "show pm process tibco"' > $TMPFILE
     if ! egrep -q "Current status:  running" $TMPFILE ; then let STATUS+=$TIBCO ; fi
 
   else 
   # Not reachable
   STATUS=1
-  SUBENTITY=`/bin/grep $NETWORK.$node /etc/hosts | awk '{print $2}'`
+  SUBENTITY=`/bin/grep $node /etc/hosts | awk '{print $2}'`
   fi
 
   # Write data
