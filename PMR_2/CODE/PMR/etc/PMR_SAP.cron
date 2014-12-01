@@ -1,5 +1,14 @@
 MAILTO=kiran.subash@guavus.com,supreet.singh@guavus.com
 
+# Run daily v2 KPIs - Missing DC bins and count, version/patch/FD limit.
+05 01 * * * 	root	/data/scripts/PMR/bin/dailyPMRv2.sh
+
+# Run hourly v2 KPIs - Collector Stats, FD Utils and DC Backlogs 
+55 * * * *       root    /data/scripts/PMR/bin/hourlyPMRv2.sh
+
+# Run 5 minute v2 KPIs - Systems performance and utilization, advanced CPU/memory, interface, uptime and various snmp stats.
+*/5 * * * * 	root	/data/scripts/PMR/bin/fiveMinutePMRv2.sh
+
 # Run the 15 minute job to get all node statuses in SAP
 */15 * * * *	root	/data/scripts/PMR/bin/SAPNodeStatus.sh
 
@@ -20,9 +29,6 @@ MAILTO=kiran.subash@guavus.com,supreet.singh@guavus.com
 
 # Run the 15 minute job to get Backlog, Disk Utilization & Arcsight in SAP
 */15 * * * *    root    /data/scripts/PMR/bin/BACKLOG_DISK_ARCSIGHTStats.sh
-
-# Run the daily job to get Missing Bins for all DC in SAP
-05 1 * * *      root    /data/scripts/PMR/bin/DC_BinsStats.sh
 
 # Capture SNMP alarms every day, once.
 59 23 * * *	root	/data/scripts/PMR/bin/snmp-alarm.sh

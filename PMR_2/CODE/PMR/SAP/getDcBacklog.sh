@@ -87,7 +87,7 @@ write_log "----- IPFIX Bin Lag"
 for dc in $cmdsDC; do
   for chassis in 1 2 3 4; do
     str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
-    if [[ $str ]]; then dcClli=`echo $dc | sed $str`; fi
+    if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
     # Skip if chassis does not exist.
     if [[ `$SSH $STANDBY "$HDFSCMD /data/$dc/$chassis 2>/dev/null"` ]]; then
       outFile="/tmp/binListForLag-ipfix-${chassis}-${dc}"
@@ -122,7 +122,7 @@ done
 for dc in $pnsaDC; do
   for chassis in 0; do
     str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
-    if [[ $str ]]; then dcClli=`echo $dc | sed $str`; fi
+    if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
       outFile="/tmp/binListForLag-ipfix-${chassis}-${dc}"
       for y in $Idays; do
       $SSH $STANDBY "$HDFSCMD /data/$dc/ipfix/${y}/*/*/_DONE 2>/dev/null" | awk '{print $NF}' >>$outFile
@@ -155,7 +155,7 @@ write_log "----- RADIUS Bin Lag"
 for dc in $cmdsDC; do
   for chassis in 1 2 3 4; do
     str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
-    if [[ $str ]]; then dcClli=`echo $dc | sed $str`; fi
+    if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
     # Skip if chassis does not exist.
     if [[ `$SSH $STANDBY "$HDFSCMD /data/$dc/$chassis 2>/dev/null"` ]]; then
       outFile="/tmp/binListForLag-pilot-${chassis}-${dc}"
@@ -190,7 +190,7 @@ done
 for dc in $pnsaDC; do
   for chassis in 0; do
     str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
-    if [[ $str ]]; then dcClli=`echo $dc | sed $str`; fi
+    if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
       outFile="/tmp/binListForLag-pilot-${chassis}-${dc}"
       for y in $Pdays; do
       $SSH $STANDBY "$HDFSCMD /data/$dc/pilotPacket/${y}/*/*/_DONE 2>/dev/null" | awk '{print $NF}' >>$outFile
@@ -224,7 +224,7 @@ write_log "----- SUBIB Bin Lag"
 for dc in $allDC; do
   for chassis in 0; do
     str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
-    if [[ $str ]]; then dcClli=`echo $dc | sed $str`; fi
+    if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
       outFile="/tmp/binListForLag-subib-${chassis}-${dc}"
       for y in $Sdays; do
       $SSH $STANDBY "$HDFSCMD /data/$dc/SubscriberIB/${y}/*/distcp_DONE 2>/dev/null" | awk '{print $NF}' >>$outFile
