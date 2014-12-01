@@ -63,7 +63,12 @@ for ADAPTOR in ${ADAPTORS_NN}; do
   done 2>/dev/null
 
   if [[ ! $stamp ]]; then
-    echo "$TIMESTAMP,$ENTITY/${hostn},,${ADAPTOR}_dropped_record_data_volume,0"
+    epo=`date -d "1 hour ago" +"%s"`; epo=`echo "$epo - \`echo \"$epo % 300\" | bc \`" | bc`
+    for i in `seq 0 300 3300`; do
+      stamp=`echo "$epo + $i" | bc`
+      stamp=`date -d \@${stamp} +%Y%m%d-%H%M`
+      echo "$stamp,$ENTITY/${hostn},,${ADAPTOR}_dropped_record_data_volume,0"
+    done
   fi
 
 # --------- Collector Stats Total Flow, hourly.
@@ -86,7 +91,12 @@ for ADAPTOR in ${ADAPTORS_NN}; do
   done
 
   if [[ ! $stamp ]]; then
-    echo "$TIMESTAMP,$ENTITY/${hostn},,${ADAPTOR}_record_data_volume,0"
+    epo=`date -d "1 hour ago" +"%s"`; epo=`echo "$epo - \`echo \"$epo % 300\" | bc \`" | bc`
+    for i in `seq 0 300 3300`; do
+      stamp=`echo "$epo + $i" | bc`
+      stamp=`date -d \@${stamp} +%Y%m%d-%H%M`
+      echo "$stamp,$ENTITY/${hostn},,${ADAPTOR}_record_data_volume,0"
+    done
   fi
 
 # ----------- Collector Stats Dropped Flow Percentage, hourly.
@@ -140,7 +150,12 @@ for ADAPTOR in ${ADAPTORS_SGW}; do
   done
 
   if [[ ! $stamp ]]; then
-    echo "$TIMESTAMP,$ENTITY/${hostn},,${ADAPTOR}_dropped_record_data_volume,0"
+    epo=`date -d "1 hour ago" +"%s"`; epo=`echo "$epo - \`echo \"$epo % 300\" | bc \`" | bc`
+    for i in `seq 0 300 3300`; do
+      stamp=`echo "$epo + $i" | bc`
+      stamp=`date -d \@${stamp} +%Y%m%d-%H%M`
+      echo "$stamp,$ENTITY/${hostn},,${ADAPTOR}_dropped_record_data_volume,0"
+    done
   fi
 
 # --------- Collector Stats Total Flow, hourly.
@@ -162,7 +177,12 @@ for ADAPTOR in ${ADAPTORS_SGW}; do
   done
 
   if [[ ! $stamp ]]; then
-    echo "$TIMESTAMP,$ENTITY/${hostn},,${ADAPTOR}_record_data_volume,0"
+    epo=`date -d "1 hour ago" +"%s"`; epo=`echo "$epo - \`echo \"$epo % 300\" | bc \`" | bc`
+    for i in `seq 0 300 3300`; do
+      stamp=`echo "$epo + $i" | bc`
+      stamp=`date -d \@${stamp} +%Y%m%d-%H%M`
+      echo "$stamp,$ENTITY/${hostn},,${ADAPTOR}_record_data_volume,0"
+    done
   fi
 
 # --------- Collector Stats Files Processed, hourly.
@@ -186,7 +206,12 @@ for ADAPTOR in ${ADAPTORS_SGW}; do
   done
 
   if [[ ! $stamp ]]; then
-    echo "$TIMESTAMP,$ENTITY/${hostn},,${ADAPTOR}_files_processed,0"
+    epo=`date -d "1 hour ago" +"%s"`; epo=`echo "$epo - \`echo \"$epo % 300\" | bc \`" | bc`
+    for i in `seq 0 300 3300`; do
+      stamp=`echo "$epo + $i" | bc`
+      stamp=`date -d \@${stamp} +%Y%m%d-%H%M`
+      echo "$stamp,$ENTITY/${hostn},,${ADAPTOR}_files_processed,0"
+    done
   fi
 
 # --------- Collector Stats Files Dropped, hourly.
@@ -211,7 +236,12 @@ for ADAPTOR in ${ADAPTORS_SGW}; do
   done
  
   if [[ ! $stamp ]]; then
-    echo "$TIMESTAMP,$ENTITY/${hostn},,${ADAPTOR}_files_dropped,0"
+    epo=`date -d "1 hour ago" +"%s"`; epo=`echo "$epo - \`echo \"$epo % 300\" | bc \`" | bc`
+    for i in `seq 0 300 3300`; do
+      stamp=`echo "$epo + $i" | bc`
+      stamp=`date -d \@${stamp} +%Y%m%d-%H%M`
+      echo "$stamp,$ENTITY/${hostn},,${ADAPTOR}_files_dropped,0"
+    done
   fi
 
 # --------- Collector Stats Files With Errors, hourly.
@@ -235,7 +265,12 @@ for ADAPTOR in ${ADAPTORS_SGW}; do
   done
 
   if [[ ! $stamp ]]; then
-    echo "$TIMESTAMP,$ENTITY/${hostn},,${ADAPTOR}_files_with_errors,0"
+    epo=`date -d "1 hour ago" +"%s"`; epo=`echo "$epo - \`echo \"$epo % 300\" | bc \`" | bc`
+    for i in `seq 0 300 3300`; do
+      stamp=`echo "$epo + $i" | bc`
+      stamp=`date -d \@${stamp} +%Y%m%d-%H%M`
+      echo "$stamp,$ENTITY/${hostn},,${ADAPTOR}_files_with_errors,0"
+   done
   fi
 
 done
