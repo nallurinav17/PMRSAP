@@ -46,7 +46,7 @@ for ADAPTOR in ${ADAPTORS_NN}; do
 
 # --------- Collector Stats Dropped Flow, hourly.
 
-  collectorStatsDroppedFlow='';collectorStatsDroppedFlow=`$SSH $NETWORK.$CNP0 "${CLI} 'collector stats instance-id 1 adaptor-stats $ADAPTOR dropped-flow interval-type 1-hour interval-count 24' 2>/dev/null | /bin/grep \"$H\" " | awk '{print $2" "$3" "$NF}'`
+  collectorStatsDroppedFlow='';collectorStatsDroppedFlow=`$SSH $NETWORK.$CNP0 "${CLI} 'collector stats instance-id 1 adaptor-stats $ADAPTOR dropped-flow interval-type 1-hour interval-count 24' 2>/dev/null | /bin/grep \"$H\" | head -1 " | awk '{print $2" "$3" "$NF}'`
   ds1='';ds1=`echo "$collectorStatsDroppedFlow" | awk '{print $1" "$2}'`
   if [[ $ds1 ]]; then
     stamp=`date -d "$ds1" "+%Y%m%d-%H%M"`
@@ -61,7 +61,7 @@ for ADAPTOR in ${ADAPTORS_NN}; do
 
 # --------- Collector Stats Total Flow, hourly.
 
-  collectorStatsTotalFlow='';collectorStatsTotalFlow=`$SSH $NETWORK.$CNP0 "${CLI} 'collector stats instance-id 1 adaptor-stats $ADAPTOR total-flow interval-type 1-hour interval-count 24' 2>/dev/null | /bin/grep \"$H\" " | awk '{print $2" "$3" "$NF}'`
+  collectorStatsTotalFlow='';collectorStatsTotalFlow=`$SSH $NETWORK.$CNP0 "${CLI} 'collector stats instance-id 1 adaptor-stats $ADAPTOR total-flow interval-type 1-hour interval-count 24' 2>/dev/null | /bin/grep \"$H\" | head -1 " | awk '{print $2" "$3" "$NF}'`
 
   ds2='';ds2=`echo "$collectorStatsTotalFlow" | awk '{print $1" "$2}'`
   if [[ $ds2 ]]; then
@@ -108,7 +108,7 @@ for ADAPTOR in ${ADAPTORS_SGW}; do
 
 # --------- Collector Stats Dropped Flow, hourly.
 
-  collectorStatsDroppedFlow='';collectorStatsDroppedFlow=`$SSH $NETWORK.$SGW0 "${CLI} 'collector stats instance-id 1 adaptor-stats $ADAPTOR dropped-flow interval-type 1-hour interval-count 24' 2>/dev/null | /bin/grep \"$H\" " | awk '{print $2" "$3" "$NF}'`
+  collectorStatsDroppedFlow='';collectorStatsDroppedFlow=`$SSH $NETWORK.$SGW0 "${CLI} 'collector stats instance-id 1 adaptor-stats $ADAPTOR dropped-flow interval-type 1-hour interval-count 24' 2>/dev/null | /bin/grep \"$H\" | head -1 " | awk '{print $2" "$3" "$NF}'`
   ds1='';ds1=`echo "$collectorStatsDroppedFlow" | awk '{print $1" "$2}'`
   if [[ $ds1 ]]; then
     stamp=`date -d "$ds1" "+%Y%m%d-%H%M"`
@@ -123,7 +123,7 @@ for ADAPTOR in ${ADAPTORS_SGW}; do
 
 # --------- Collector Stats Total Flow, hourly.
 
-  collectorStatsTotalFlow='';collectorStatsTotalFlow=`$SSH $NETWORK.$SGW0 "${CLI} 'collector stats instance-id 1 adaptor-stats $ADAPTOR total-flow interval-type 1-hour interval-count 24' 2>/dev/null | /bin/grep \"$H\" " | awk '{print $2" "$3" "$NF}'`
+  collectorStatsTotalFlow='';collectorStatsTotalFlow=`$SSH $NETWORK.$SGW0 "${CLI} 'collector stats instance-id 1 adaptor-stats $ADAPTOR total-flow interval-type 1-hour interval-count 24' 2>/dev/null | /bin/grep \"$H\" | head -1 " | awk '{print $2" "$3" "$NF}'`
 
   ds2='';ds2=`echo "$collectorStatsTotalFlow" | awk '{print $1" "$2}'`
   if [[ $ds2 ]]; then
@@ -138,7 +138,7 @@ for ADAPTOR in ${ADAPTORS_SGW}; do
 
 # --------- Collector Stats Files Processed, hourly.
 
-  collectorStatsTotalFlow='';collectorStatsTotalFlow=`$SSH $NETWORK.$SGW0 "${CLI} 'collector stats instance-id 1 adaptor-stats $ADAPTOR num-files-processed interval-type 1-hour interval-count 24' 2>/dev/null | /bin/grep \"$H\" " | awk '{print $2" "$3" "$NF}'`
+  collectorStatsTotalFlow='';collectorStatsTotalFlow=`$SSH $NETWORK.$SGW0 "${CLI} 'collector stats instance-id 1 adaptor-stats $ADAPTOR num-files-processed interval-type 1-hour interval-count 24' 2>/dev/null | /bin/grep \"$H\" | head -1 " | awk '{print $2" "$3" "$NF}'`
 
   ds2='';ds2=`echo "$collectorStatsTotalFlow" | awk '{print $1" "$2}'`
   if [[ $ds2 ]]; then
@@ -154,7 +154,7 @@ for ADAPTOR in ${ADAPTORS_SGW}; do
 
 # --------- Collector Stats Files Dropped, hourly.
 
-  collectorStatsTotalFlow='';collectorStatsTotalFlow=`$SSH $NETWORK.$SGW0 "${CLI} 'collector stats instance-id 1 adaptor-stats $ADAPTOR num-files-dropped interval-type 1-hour interval-count 24' 2>/dev/null | /bin/grep \"$H\" " | awk '{print $2" "$3" "$NF}'`
+  collectorStatsTotalFlow='';collectorStatsTotalFlow=`$SSH $NETWORK.$SGW0 "${CLI} 'collector stats instance-id 1 adaptor-stats $ADAPTOR num-files-dropped interval-type 1-hour interval-count 24' 2>/dev/null | /bin/grep \"$H\" | head -1 " | awk '{print $2" "$3" "$NF}'`
 
   ds2='';ds2=`echo "$collectorStatsTotalFlow" | awk '{print $1" "$2}'`
   if [[ $ds2 ]]; then
@@ -170,7 +170,7 @@ for ADAPTOR in ${ADAPTORS_SGW}; do
 
 # --------- Collector Stats Files With Errors, hourly.
 
-  collectorStatsTotalFlow='';collectorStatsTotalFlow=`$SSH $NETWORK.$SGW0 "${CLI} 'collector stats instance-id 1 adaptor-stats $ADAPTOR num-files-with-errors interval-type 1-hour interval-count 24' 2>/dev/null | /bin/grep \"$H\" " | awk '{print $2" "$3" "$NF}'`
+  collectorStatsTotalFlow='';collectorStatsTotalFlow=`$SSH $NETWORK.$SGW0 "${CLI} 'collector stats instance-id 1 adaptor-stats $ADAPTOR num-files-with-errors interval-type 1-hour interval-count 24' 2>/dev/null | /bin/grep \"$H\" | head -1 " | awk '{print $2" "$3" "$NF}'`
 
   ds2='';ds2=`echo "$collectorStatsTotalFlow" | awk '{print $1" "$2}'`
   if [[ $ds2 ]]; then

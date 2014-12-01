@@ -132,7 +132,7 @@ for node in $SGW ; do
   $SSH $NETWORK.$node 'ps -ef' > $TMPFILE
 
   # Check Oozie process
-    if ! egrep -q "org.apache.catalina.startup.Bootstrap" $TMPFILE ; then let STATUS+=$JOBTRACKER ; fi
+    if ! egrep -q "org.apache.catalina.startup.Bootstrap" $TMPFILE ; then let STATUS+=$CATALINA ; fi
   # Check Tibco process
     $SSH $NETWORK.$node '/opt/tms/bin/cli -t "en" "show pm process tibco"' > $TMPFILE
     if ! egrep -q "Current status:  running" $TMPFILE ; then let STATUS+=$TIBCO ; fi
@@ -188,7 +188,8 @@ for node in $CNP $UIP $CMP $SGW $CCP; do
   #-----
   val='';
   for value in `$SSH $NETWORK.$node "/bin/df -P | tail -n+3 | tr -s ' ' | sed 's/%//g'" | awk '{print $6";"$2*1024";"$5}'`; do
-     disk='';disk=`echo $value | awk -F ";" '{print $1}' | sed 's/\//_/g'`
+     #disk='';disk=`echo $value | awk -F ";" '{print $1}' | sed 's/\//_/g'`
+     disk='';disk=`echo $value | awk -F ";" '{print $1}'`
      valSize=`echo $value | awk -F ";" '{print $2}'`
      val=`echo $value | awk -F ";" '{print $3}'`
     if [[ $val && $disk && $valSize ]]; then
