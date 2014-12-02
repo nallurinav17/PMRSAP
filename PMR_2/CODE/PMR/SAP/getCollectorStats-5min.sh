@@ -313,8 +313,8 @@ for ID in `/opt/oozie/bin/oozie jobs -oozie http://${NETWORK}.${CNP0}:8080/oozie
        if [[ ! ${hostn} ]]; then hostn=`$SSH $node "hostname"`; fi
        if [[ ! ${hostn} ]]; then hostn="${node}"; fi
 
-       echo "$stamp,$ENTITY/$hostn,,Arcsight_resolved_msg_volume,$resolved"
-       echo "$stamp,$ENTITY/$hostn,,Arcsight_unresolved_msg_volume,$unresolved" 
+       echo "$stamp,$ENTITY/$hostn,,NS_MDN_lookup_resolved_msg_volume,$resolved"
+       echo "$stamp,$ENTITY/$hostn,,NS_MDN_lookup_unresolved_msg_volume,$unresolved" 
        flag='';break
     else
        write_log "------ Unable to locate job ID ${ID} at ${node}"
@@ -326,8 +326,8 @@ done 2>/dev/null
 
 if [[ $flag ]]; then
   write_log "------ Can not find successful iteration of ArcSight job in the last hour `date -d \"1 hour ago\" +\"%Y-%m-%d %H00\"`"
-  echo "$TIMESTAMP,$ENTITY/$hostn,,Arcsight_resolved_msg_volume,0"
-  echo "$TIMESTAMP,$ENTITY/$hostn,,Arcsight_unresolved_msg_volume,0"
+  echo "$TIMESTAMP,$ENTITY/$hostn,,NS_MDN_lookup_resolved_msg_volume,0"
+  echo "$TIMESTAMP,$ENTITY/$hostn,,NS_MDN_lookup_unresolved_msg_volume,0"
 fi
 
 write_log "Completed calculating ArcSight SNMP messages resolved or unresolved stats."

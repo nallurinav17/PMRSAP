@@ -59,9 +59,9 @@ for node in $CNP $UIP $CMP $SGW $CCP; do
   patches=''
   val=`$SSH $NETWORK.$node "/bin/cat /proc/sys/fs/file-max" 2>/dev/null`
   if [[ $val && $? -eq '0' ]]; then
-   echo "$TIMESTAMP,SAP/$hostn,,max_file_descriptors,$val"
+   echo "$TIMESTAMP,SAP/$hostn,,file_descriptors_max,$val"
   else
-   echo "$TIMESTAMP,SAP/$hostn,,max_file_descriptors,0"
+   echo "$TIMESTAMP,SAP/$hostn,,file_descriptors_max,0"
    write_log "----- Unable to calculate configured FD limit for node $hostn"
   fi
 

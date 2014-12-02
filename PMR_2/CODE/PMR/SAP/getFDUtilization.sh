@@ -37,24 +37,25 @@ for node in $CNP $UIP $CMP $SGW $CCP; do
 
   val='';
   patches=''
-  val=`$SSH $NETWORK.$node "/bin/cat /proc/sys/fs/file-nr 2>/dev/null"  2>/dev/null | awk '{print $1":"$2}' 2>/dev/null`
+  val=`$SSH $NETWORK.$node "/bin/cat /proc/sys/fs/file-nr 2>/dev/null"  2>/dev/null | awk '{print $1":"$2":"$3}' 2>/dev/null`
   
   if [[ $val && $? -eq '0' ]]; then
    usedAllocatedFD=`echo "$val" | awk -F ':' '{print $1}' 2>/dev/null`
    unUsedAllocatedFD=`echo "$val" | awk -F ':' '{print $2}' 2>/dev/null`
+   totalFDlimit=`echo "$val" | awk -F ':' '{print $3}' 2>/dev/null`
    if [[ $usedAllocatedFD && $unUsedAllocatedFD ]]; then
-     echo "$TIMESTAMP,SAP/$hostn,,used_allocated_file_descriptors,$usedAllocatedFD"
-     echo "$TIMESTAMP,SAP/$hostn,,unused_allocated_file_descriptors,$unUsedAllocatedFD"
-     fdUtilization='';fdUtilization=`echo "$usedAllocatedFD + $unUsedAllocatedFD" | bc 2>/dev/null`
+     echo "$TIMESTAMP,SAP/$hostn,,file_descriptors_used_allocated,$usedAllocatedFD"
+     echo "$TIMESTAMP,SAP/$hostn,,file_descriptors_unused_allocated,$unUsedAllocatedFD"
+     fdUtilization='';fdUtilization=`echo "scale=2; (($usedAllocatedFD + $unUsedAllocatedFD)/$totalFDlimit)*100" | bc 2>/dev/null`
      echo "$TIMESTAMP,SAP/$hostn,,file_descriptor_utilization,$fdUtilization"
    else
-     echo "$TIMESTAMP,SAP/$hostn,,used_allocated_file_descriptors,0"
-     echo "$TIMESTAMP,SAP/$hostn,,unused_allocated_file_descriptors,0"
+     echo "$TIMESTAMP,SAP/$hostn,,file_descriptors_used_allocated,0"
+     echo "$TIMESTAMP,SAP/$hostn,,file_descriptors_unused_allocated,0"
      echo "$TIMESTAMP,SAP/$hostn,,file_descriptor_utilization,0"
    fi
   else
-     echo "$TIMESTAMP,SAP/$hostn,,used_allocated_file_descriptors,0"
-     echo "$TIMESTAMP,SAP/$hostn,,unused_allocated_file_descriptors,0"
+     echo "$TIMESTAMP,SAP/$hostn,,file_descriptors_used_allocated,0"
+     echo "$TIMESTAMP,SAP/$hostn,,file_descriptors_maxunused_allocated,0"
      echo "$TIMESTAMP,SAP/$hostn,,file_descriptor_utilization,0"
   fi
    

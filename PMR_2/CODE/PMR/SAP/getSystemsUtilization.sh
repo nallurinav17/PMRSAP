@@ -22,6 +22,7 @@ write_log "Starting Poller for detailed CPU & Mem Utilization and Disk IO stats"
 
 # Poll ALL nodes in SAP for detailed CPU and Memory Stats
 # ---------------------
+
 for element in $CNP $CMP $UIP $CCP $SGW 
 do
 
@@ -96,6 +97,30 @@ do
   echo "$TIMESTAMP,SAP/$hostn,,hrSystemUptime,${value%??}"
   fi
 done
+
+# Compute CPU Util average.
+write_log "----- Calculate compute CPU average."
+count='0'; sum='0'
+for element in $CMP 
+do
+  hostn='';hostn=`/bin/grep -w "$NETWORK.${element}" /etc/hosts | awk '{print $2}' | sed 's/ //g'`
+  if [[ ! ${hostn} ]]; then hostn=`$SSH $NETWORK.${element} "hostname"`; fi
+  if [[ ! ${hostn} ]]; then hostn="$NETWORK.${element}"; fi
+
+  # Detailed CPU.
+  val1='';val1=`${SSH} ${NETWORK}.${element} "/usr/bin/iostat -c 2>/dev/null | egrep -A1 avg-cpu 2>/dev/null | tail -1 2>/dev/null" | awk '{print $6}' 2>/dev/null `
+
+  if [[ $val1 ]]; then
+  count=`echo "$count + 1" | bc`
+  sum=`echo "scale=2;($sum + $val1)" | bc`
+  else
+    write_log "----- Unable to calculate aggregated compute CPU for $hostn."
+  fi
+
+done
+
+avg=`echo "scale=2;($sum/$count)" | bc 2>/dev/null`
+echo "$TIMESTAMP,SAP,,Aggregated_compute_CPU_utilization,$avg"
 
 write_log "Completed Poller for detailed CPU & Mem Utilization and Disk IO stats"
 
