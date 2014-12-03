@@ -80,9 +80,9 @@ yMissedKpi=`date -d "2 days ago" +%Y%m%d`
 write_log "----- IPFIX Bins"
 maxBinsInDay='288'
 for dc in $cmdsDC; do
+  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+  if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
   for chassis in 1 2 3 4; do
-    str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
-    if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
     # Skip if chassis does not exist.
     if [[ `$SSH $STANDBY "$HDFSCMD /data/$dc/$chassis 2>/dev/null"` ]]; then
       outFile="/tmp/binList-ipfix-${chassis}-${dc}"
@@ -133,9 +133,9 @@ done
 
 maxBinsInDay='288'
 for dc in $pnsaDC; do
+  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+  if [[ $str ]]; then dcClli=`echo $dc | sed $str`;  else dcClli=$dc; fi
   for chassis in 0; do
-    str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
-    if [[ $str ]]; then dcClli=`echo $dc | sed $str`;  else dcClli=$dc; fi
     #Skip if chassis does not exist.	- skipped as it is PNSA/VISP
     #if [[ `$SSH $STANDBY "$HDFSCMD /data/$dc/$chassis 2>/dev/null"` ]]; then
       outFile="/tmp/binList-ipfix-${chassis}-${dc}"
@@ -188,9 +188,9 @@ write_log "----- RADIUS Bins"
 
 maxBinsInDay='288'
 for dc in $cmdsDC; do
+  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+  if [[ $str ]]; then dcClli=`echo $dc | sed $str`;  else dcClli=$dc; fi
   for chassis in 1 2 3 4; do
-    str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
-    if [[ $str ]]; then dcClli=`echo $dc | sed $str`;  else dcClli=$dc; fi
     # Skip if chassis does not exist.
     if [[ `$SSH $STANDBY "$HDFSCMD /data/$dc/$chassis 2>/dev/null"` ]]; then
       outFile="/tmp/binList-pilot-${chassis}-${dc}"
@@ -241,9 +241,9 @@ done
 
 maxBinsInDay='288'
 for dc in $pnsaDC; do
+  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+  if [[ $str ]]; then dcClli=`echo $dc | sed $str`;  else dcClli=$dc; fi
   for chassis in 0; do
-    str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
-    if [[ $str ]]; then dcClli=`echo $dc | sed $str`;  else dcClli=$dc; fi
     #Skip if chassis does not exist.	- skipped as it is PNSA/VISP
     #if [[ `$SSH $STANDBY "$HDFSCMD /data/$dc/$chassis 2>/dev/null"` ]]; then
       outFile="/tmp/binList-pilot-${chassis}-${dc}"
@@ -296,9 +296,9 @@ write_log "----- SUBIB Bins"
 
 maxBinsInDay='24'
 for dc in $allDC; do
+  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+  if [[ $str ]]; then dcClli=`echo $dc | sed $str`;  else dcClli=$dc; fi
   for chassis in 0; do
-    str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
-    if [[ $str ]]; then dcClli=`echo $dc | sed $str`;  else dcClli=$dc; fi
     #Skip if chassis does not exist.	- skipped as it is PNSA/VISP
     #if [[ `$SSH $STANDBY "$HDFSCMD /data/$dc/$chassis 2>/dev/null"` ]]; then
       outFile="/tmp/binList-subib-${chassis}-${dc}"

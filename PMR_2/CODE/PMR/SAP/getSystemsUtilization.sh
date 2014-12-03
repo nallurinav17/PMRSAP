@@ -112,6 +112,7 @@ do
 
   if [[ $val1 ]]; then
   count=`echo "$count + 1" | bc`
+  val1=`echo "scale=2;(100 - $val1)" | bc`
   sum=`echo "scale=2;($sum + $val1)" | bc`
   else
     write_log "----- Unable to calculate aggregated compute CPU for $hostn."
@@ -120,7 +121,8 @@ do
 done
 
 avg=`echo "scale=2;($sum/$count)" | bc 2>/dev/null`
-echo "$TIMESTAMP,SAP,,Aggregated_compute_CPU_utilization,$avg"
+printf "%s,SAP,,Aggregated_compute_CPU_utilization,%.2f\n" "$TIMESTAMP" "$avg"
+#echo"$TIMESTAMP,SAP,,Aggregated_compute_CPU_utilization,$avg"
 
 write_log "Completed Poller for detailed CPU & Mem Utilization and Disk IO stats"
 
