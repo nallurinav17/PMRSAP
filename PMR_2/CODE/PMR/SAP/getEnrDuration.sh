@@ -30,7 +30,7 @@ mydate=`date "+%Y-%m-%d" --date="1 days ago"`
 #GET OOZIE JOB LIST
 $SSH $NAMENODE "${OOZIECMD}" 2>/dev/null | sed -e 's/\s*SUCCEEDED/SUCCEEDED/g' -e 's/\s*KILLED/KILLED/g' -e 's/\s*RUNNING/RUNNING/g' > $TMPFILE.oozie
 
-if [[ -s $TMPFILE.oozie && $? -eq '0' ]] ; then 
+#if [[ -s $TMPFILE.oozie && $? -eq '0' ]] ; then 
 
      # get enrjobs
      cat ${TMPFILE}.oozie | awk -v d1="${mydate}" '{if (($5 ~d1) && ($2 ~ /MidmEnr_/)) print $2 "\t" $5 "\t" $6 "\t" $7 "\t" $8 "\t" $1}'|sed -e 's/RUNNING/\tRUNNING/g' -e 's/SUCCEEDED/\tSUCCEEDED/g' -e 's/KILLED/\tKILLED/g' -e 's/_/\t/g'|awk -F "\t" '{printf "%-17s %-8s %-9s %s %s %s %s %s\n", $2, $1, $3, $4, $5, $6, $7, $8}' |sort -k 7 >$TMPFILE.enrjobs
@@ -41,12 +41,12 @@ if [[ -s $TMPFILE.oozie && $? -eq '0' ]] ; then
      # get BDA data jobs # Replaced all occurences of underscore.
      cat ${TMPFILE}.oozie | awk -v d1="${mydate}" '{if (($5 ~d1) && ($2 ~ /MidmData_/) && ($2 !~ /CFI/)) print $2 "\t" $5 "\t" $6 "\t" $7 "\t" $8 "\t" $1}'| sed -e 's/RUNNING/\tRUNNING/g' -e 's/SUCCEEDED/\tSUCCEEDED/g' -e 's/KILLED/\tKILLED/g' -e 's/_/\t/g'| awk -F "\t" '{printf "%-17s %-8s %-9s %s %s %s %s %s\n", $2, $1, $3, $4, $5, $6, $7, $8}' |sort -k 7 >$TMPFILE.bda.datajobs
 
-fi
+#fi
 
 #
 # midmEnrDuration
 # 
-if [[ -s $TMPFILE.enrjobs ]]; then
+#if [[ -s $TMPFILE.enrjobs ]]; then
 subtot=0;
 for dc in ${midmDC}; do
   jobid=`grep $dc $TMPFILE.enrjobs | awk '{print $NF'}`
@@ -74,7 +74,7 @@ for dc in ${midmDC}; do
   echo "$TIMESTAMP,MIDM,$dcClli,MIDM_data_processing_DC_duration,$timestring" 
   rm -f ${TMPFILE}.endTime $TMPFILE.startTime
 done
-fi
+#fi
 
 #
 # midmEnrTotalDuration
