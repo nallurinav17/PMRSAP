@@ -37,7 +37,7 @@ write_log "  -- MIDM Aggregate"
 for dc in ${midmDC};
 do 
 str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
-if [[ $str ]]; then dcClli=`echo $dc | sed $str`; fi
+if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
 $SSH $STANDBY "$HDFSCMD  /data/output/$dc/Midm/$myyr/$mymo/$myda/GVS.MIDM_Aggregate* 2>/dev/null" | awk '{print $5$8}'| awk -v "t1=$TIMESTAMP" -v "dc=$dcClli" -F "/" 'BEGIN{sum1=0} {sum1+= $1} END{printf "%s,MIDM,%s,MIDM_aggregated_data_DC_volume,%s\n", t1, dc, sum1}';
 done 2>/dev/null | tee -a ${TMPFILE}.midmagg
 
@@ -52,7 +52,7 @@ write_log "  -- MIDM Enriched"
 for dc in ${midmDC};
 do
 str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
-if [[ $str ]]; then dcClli=`echo $dc | sed $str`; fi
+if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
 $SSH $STANDBY "$HDFSCMD  /data/output/$dc/Midm/$myyr/$mymo/$myda/GVS.MIDM_Enriched* 2>/dev/null" | awk '{print $5$8}'| awk -v "t1=$TIMESTAMP" -v "dc=$dcClli" -F "/" 'BEGIN{sum1=0} {sum1+= $1} END{printf "%s,MIDM,%s,MIDM_enriched_data_DC_volume,%s\n", t1, dc, sum1}';
 done 2>/dev/null | tee -a ${TMPFILE}.midmenr
 
@@ -77,7 +77,7 @@ write_log "  -- IPFIX Records"
 for dc in $cmdsDC
 do
 str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
-if [[ $str ]]; then dcClli=`echo $dc | sed $str`; fi
+if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
 $SSH $STANDBY "$HDFSCMD /data/$dc/{1,2,3,4}/ipfix/$myyr1/$mymo1/$myda1/*/*/*IPFIX*.? 2>/dev/null" | awk '{print $5$8}'| awk -v "dc=$dcClli" -F "/" '{if ($9>6) subtot1 += $1} END {printf "%s;%13d",dc, subtot1}';
 $SSH $STANDBY "$HDFSCMD /data/$dc/{1,2,3,4}/ipfix/$myyr2/$mymo2/$myda2/*/*/*IPFIX*.? 2>/dev/null"| awk '{print $5$8}'| awk -F "/" '{if ($9<7) subtot2 += $1} END {print ";"subtot2}';
 done  2>/dev/null | awk -v "time=$TIMESTAMP" -F ";" '{printf "%s,SAP,%s,SAP_IPFIX_DC_volume,%s\n", time, $1, ($2+$3)}' 
@@ -85,7 +85,7 @@ done  2>/dev/null | awk -v "time=$TIMESTAMP" -F ";" '{printf "%s,SAP,%s,SAP_IPFI
 for dc in $pnsaDC;
 do
 str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
-if [[ $str ]]; then dcClli=`echo $dc | sed $str`; fi
+if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
 $SSH $STANDBY "$HDFSCMD /data/$dc/ipfix/$myyr1/$mymo1/$myda1/*/*/*IPFIX*.? 2>/dev/null" | awk '{print $5$8}'| awk -v "dc=$dcClli" -F "/" '{if ($8>6) subtot1 += $1} END {printf "%s;%13d",dc, subtot1}';
 $SSH $STANDBY "$HDFSCMD /data/$dc/ipfix/$myyr2/$mymo2/$myda2/*/*/*IPFIX*.? 2>/dev/null" | awk '{print $5$8}'| awk -F "/" '{if ($8<7) subtot2 += $1} END {print ";"subtot2}';
 done 2> /dev/null | awk -v "time=$TIMESTAMP" -F ";" '{printf "%s,SAP,%s,SAP_IPFIX_DC_volume,%s\n", time, $1, ($2+$3)}'
@@ -96,7 +96,7 @@ write_log "  -- RADIUS Records"
 for dc in $cmdsDC;
 do
 str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
-if [[ $str ]]; then dcClli=`echo $dc | sed $str`; fi
+if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
 $SSH $STANDBY "$HDFSCMD /data/$dc/{1,2,3,4}/pilotPacket/$myyr1/$mymo1/$myda1/*/*/*RADIUS*0 2>/dev/null" | awk '{print $5$8}'| awk -v "dc=$dcClli" -F "/" '{if ($9>6) subtot1a += $1} END {printf "%s;%13d",dc, subtot1a}';
 $SSH $STANDBY "$HDFSCMD /data/$dc/{1,2,3,4}/pilotPacket/$myyr2/$mymo2/$myda2/*/*/*RADIUS*0 2>/dev/null" | awk '{print $5$8}'| awk -F "/" '{if ($9<7) subtot2a += $1} END {printf ";%13d;", subtot2a}';
 #----
@@ -111,7 +111,7 @@ done 2> /dev/null | awk -v "time=$TIMESTAMP" -F ";" '{printf "%s,SAP,%s,SAP_Pilo
 for dc in $pnsaDC;
 do
 str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
-if [[ $str ]]; then dcClli=`echo $dc | sed $str`; fi
+if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
 $SSH $STANDBY "$HDFSCMD  /data/$dc/pilotPacket/$myyr1/$mymo1/$myda1/*/*/*RADIUS*0 2>/dev/null" | awk '{print $5$8}'| awk -v "dc=$dcClli" -F "/" '{if ($8>6) subtot1 += $1} END {printf "%s;%13d",dc, subtot1}';
 $SSH $STANDBY "$HDFSCMD  /data/$dc/pilotPacket/$myyr2/$mymo2/$myda2/*/*/*RADIUS*0 2>/dev/null" | awk '{print $5$8}'| awk -F "/" '{if ($8<7) subtot2 += $1} END {print "; " subtot2}';
 done 2> /dev/null | awk -v "time=$TIMESTAMP" -F ";" '{printf "%s,SAP,%s,SAP_PilotPacket_DC_volume,%s\n", time, $1, ($2+$3)}' 
@@ -122,7 +122,7 @@ write_log "  -- SUBIB Records"
 for dc in $allDC;
 do
 str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
-if [[ $str ]]; then dcClli=`echo $dc | sed $str`; fi
+if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
 $SSH $STANDBY "$HDFSCMD /data/$dc/SubscriberIB/$myyr1/$mymo1/$myda1/*/X.MAPREDUCE.0.0 2>/dev/null" | awk '{print $5$8}'| awk -v "dc=$dcClli" -F "/" '{if ($8>6) subtot1 += $1} END {printf "%s;%13d",dc, subtot1}';
 $SSH $STANDBY "$HDFSCMD /data/$dc/SubscriberIB/$myyr2/$mymo2/$myda2/*/X.MAPREDUCE.0.0 2>/dev/null" | awk '{print $5$8}'| awk -F "/" '{if ($8<7) subtot2 += $1} END {print "; " subtot2}';
 done 2> /dev/null | awk -v "time=$TIMESTAMP" -F ";" '{printf "%s,SAP,%s,SAP_SubscriberIB_DC_volume,%s\n", time, $1,($2+$3)}' 

@@ -126,4 +126,13 @@ printf "%s,SAP,,Aggregated_compute_CPU_utilization,%.2f\n" "$TIMESTAMP" "$avg"
 
 write_log "Completed Poller for detailed CPU & Mem Utilization and Disk IO stats"
 
+# Calculate percentage map slots occupied.
+#write_log "Calculating compute cluster load."
+#ssh -q root@172.30.5.61 "/usr/bin/curl http://localhost:50030/jobtracker.jsp 2>/dev/null | grep -A1 'Occupied Map Slots'" 2>/dev/null >test
+#cat test | awk -F '<th>' '{print $10}' | awk -F '</th>' '{print $1}'
+#val=`cat test | awk -F '<td>' '{print $10}' | awk -F '</td>' '{print $1}' | grep ^[0-9]`; echo $val
+#cat test | awk -F '<th>' '{print $11}' | awk -F '</th>' '{print $1}'
+#cat test | awk -F '<td>' '{print $11}' | awk -F '</td>' '{print $1}' | grep ^[0-9]
+#write_log "Done calculating compute cluster load."
+
 exit 0

@@ -1,5 +1,5 @@
-# midmDC are regular names of DCs that are actually processing MIDM currently. Used in Enr/Data duration calculations and Enriched/Aggregated file size calculations.
-midmDC="Wilmington PlymouthMeeting AnnapolisJunction Chantilly Westside Guion Johnstown Bridgeville Lenexa SaintLouis Bloomington Omaha Copperfield BatonRouge Alpharetta Birmingham RedmondRidge Hillsboro WestJordan Aurora LasVegas Tempe Westborough Windsor Rochester EastSyracuse Branchburg Wall HickoryHills NewBerlin Lodge Westland Columbus Duff Euless Schertz Memphis Tulsa Charlotte Nashville PembrokePines Orlando Sunnyvale Rocklin Marina Azusa Ontario Vista";
+# midmDC are regular names of DCs that are actually processing MIDM currently. Used in MidmEnr/MidmData (BDA transfer) duration calculations and Enriched/Aggregated file size calculations.
+midmDC="Wilmington PlymouthMeeting Branchburg Wall Lenexa SaintLouis Bloomington Omaha Westborough Windsor AnnapolisJunction Chantilly Westside Guion Johnstown Bridgeville Copperfield BatonRouge Alpharetta Birmingham RedmondRidge Hillsboro WestJordan Aurora LasVegas Tempe Rochester EastSyracuse HickoryHills NewBerlin Lodge Westland Columbus Duff Euless Schertz Memphis Tulsa Charlotte Nashville PembrokePines Orlando Sunnyvale Rocklin Marina Azusa Ontario Vista";
 
 # dcCMDS is a list of CMDS DCs, used in IPFIX and PP volume calculation.
 cmdsDC="NWCSDEBG WMTPPAAA AnnapolisJunction Chantilly IPLUINXI Guion Johnstown Bridgeville Lenexa SaintLouis Bloomington Omaha Copperfield BatonRouge ALPRGAGQ Birmingham RDMEWA22 HLBOOR38 WJRDUT30 AURSCOTY NLVGNVOQ TEMQAZKW";
@@ -12,4 +12,7 @@ allDC="NWCSDEBG WMTPPAAA AnnapolisJunction Chantilly IPLUINXI Guion Johnstown Br
 
 # dcListCMDS is coded list with CLLI name and regular name. Not being used anywhere yet.
 dcListCMDS="NWCSDEBG:Wilmington WMTPPAAA:PlymouthMeeting AnnapolisJunction:AnnapolisJunction Chantilly:Chantilly IPLUINXI:Westside Guion:Guion Johnstown:Johnstown Bridgeville:Bridgeville Lenexa:Lenexa SaintLouis:SaintLouis Bloomington:Bloomington Omaha:Omaha Copperfield:Copperfield BatonRouge:BatonRouge  ALPRGAGQ:Alpharetta Birmingham:Birmingham RDMEWA22:RedmondRidge HLBOOR38:Hillsboro WJRDUT30:WestJordan AURSCOTY:Aurora NLVGNVOQ:LasVegas TEMQAZKW:Tempe";
+
+# midmCFIDC is regular DC names with which jobs are configured. Used to calculate data transfer duration for 10 CFI DCs
+midmCFIDC="Wilmington PlymouthMeeting Branchburg Wall Lenexa SaintLouis Bloomington Omaha Westborough Windsor"
 

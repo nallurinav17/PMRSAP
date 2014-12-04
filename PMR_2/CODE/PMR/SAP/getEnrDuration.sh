@@ -28,24 +28,37 @@ OOZIEADMI="/data/oozie-admi/"
 mydate=`date "+%Y-%m-%d" --date="1 days ago"`
 
 #GET OOZIE JOB LIST
-$SSH $NAMENODE "${OOZIECMD}" > $TMPFILE.oozie
-# get enrjobs
-cat ${TMPFILE}.oozie  |sed -e 's/Wall SUCCEEDED/\WallSUCCEEDED/g' | sed -e 's/Duff SUCCEEDED/\DuffSUCCEEDED/g' | awk -v d1="${mydate}" '{if (($5 ~d1) && ($2 ~ /MidmEnr|MidmData_/)) print $2 "\t" $5 "\t" $6 "\t" $7 "\t" $8 "\t" $1}'|sed -e 's/RUNNING/\tRUNNING/g' -e 's/SUCCEEDED/\tSUCCEEDED/g' -e 's/KILLED/\tKILLED/g' -e 's/_/\t/g'|awk -F "\t" '{printf "%-17s %-8s %-9s %s %s %s %s %s\n", $2, $1, $3, $4, $5, $6, $7, $8}' |sort -k 7 | grep Enr > $TMPFILE.enrjobs
-# get data jobs
-cat ${TMPFILE}.oozie  |sed -e 's/Wall SUCCEEDED/\WallSUCCEEDED/g' | sed -e 's/Duff SUCCEEDED/\DuffSUCCEEDED/g' | awk -v d1="${mydate}" '{if (($5 ~d1) && ($2 ~ /MidmEnr|MidmData_/)) print $2 "\t" $5 "\t" $6 "\t" $7 "\t" $8 "\t" $1}'|sed -e 's/RUNNING/\tRUNNING/g' -e 's/SUCCEEDED/\tSUCCEEDED/g' -e 's/KILLED/\tKILLED/g' -e 's/_/\t/g'|awk -F "\t" '{printf "%-17s %-8s %-9s %s %s %s %s %s\n", $2, $1, $3, $4, $5, $6, $7, $8}' |sort -k 7|grep Data > $TMPFILE.datajobs
+$SSH $NAMENODE "${OOZIECMD}" 2>/dev/null | sed -e 's/\s*SUCCEEDED/SUCCEEDED/g' -e 's/\s*KILLED/KILLED/g' -e 's/\s*RUNNING/RUNNING/g' > $TMPFILE.oozie
+
+if [[ -s $TMPFILE.oozie && $? -eq '0' ]] ; then 
+
+     # get enrjobs
+     cat ${TMPFILE}.oozie | awk -v d1="${mydate}" '{if (($5 ~d1) && ($2 ~ /MidmEnr_/)) print $2 "\t" $5 "\t" $6 "\t" $7 "\t" $8 "\t" $1}'|sed -e 's/RUNNING/\tRUNNING/g' -e 's/SUCCEEDED/\tSUCCEEDED/g' -e 's/KILLED/\tKILLED/g' -e 's/_/\t/g'|awk -F "\t" '{printf "%-17s %-8s %-9s %s %s %s %s %s\n", $2, $1, $3, $4, $5, $6, $7, $8}' |sort -k 7 >$TMPFILE.enrjobs
+
+     # get CFI data jobs # Replaced second occurence of underscore.
+     cat ${TMPFILE}.oozie | awk -v d1="${mydate}" '{if (($5 ~d1) && ($2 ~ /MidmData_CFI_/)) print $2 "\t" $5 "\t" $6 "\t" $7 "\t" $8 "\t" $1}'| sed -e 's/RUNNING/\tRUNNING/g' -e 's/SUCCEEDED/\tSUCCEEDED/g' -e 's/KILLED/\tKILLED/g' -e 's/_/\t/2'| awk -F "\t" '{printf "%-17s %-8s %-9s %s %s %s %s %s\n", $2, $1, $3, $4, $5, $6, $7, $8}' |sort -k 7 >$TMPFILE.cfi.datajobs
+
+     # get BDA data jobs # Replaced all occurences of underscore.
+     cat ${TMPFILE}.oozie | awk -v d1="${mydate}" '{if (($5 ~d1) && ($2 ~ /MidmData_/) && ($2 !~ /CFI/)) print $2 "\t" $5 "\t" $6 "\t" $7 "\t" $8 "\t" $1}'| sed -e 's/RUNNING/\tRUNNING/g' -e 's/SUCCEEDED/\tSUCCEEDED/g' -e 's/KILLED/\tKILLED/g' -e 's/_/\t/g'| awk -F "\t" '{printf "%-17s %-8s %-9s %s %s %s %s %s\n", $2, $1, $3, $4, $5, $6, $7, $8}' |sort -k 7 >$TMPFILE.bda.datajobs
+
+fi
 
 #
 # midmEnrDuration
 # 
+if [[ -s $TMPFILE.enrjobs ]]; then
 subtot=0;
 for dc in ${midmDC}; do
-  jobid=`grep $dc $TMPFILE.enrjobs | awk '{print $8'}`
+  jobid=`grep $dc $TMPFILE.enrjobs | awk '{print $NF'}`
+
+  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+  if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
  
   $SSH $NAMENODE "grep 'map 0% reduce 0%' $OOZIEADMI/$jobid/mapredAction--ssh/*stderr"  2>/dev/null | awk '{print $1" "$2}' | head -1 | sed 's/\//-/g' > $TMPFILE.startTime
   $SSH $NAMENODE "grep 'map 100%' $OOZIEADMI/$jobid/mapredAction--ssh/*stderr" 2>/dev/null | grep 'reduce 100%' | awk '{print $1" "$2}' | head -1 | sed 's/\//-/g' > ${TMPFILE}.endTime;
 
-  startTime=`cat $TMPFILE.startTime`;
-  endTime=`cat ${TMPFILE}.endTime`;
+  startTime=`cat $TMPFILE.startTime 2>/dev/null`;
+  endTime=`cat ${TMPFILE}.endTime 2>/dev/null`;
 
   if [[ -n $startTime && -n $endTime ]] ; then
     start=`date -d "$startTime" +%s`;
@@ -58,27 +71,32 @@ for dc in ${midmDC}; do
     timestring="000000"
   fi
 
-  echo "$TIMESTAMP, MIDM, $dc, MIDM_data_processing_DC_duration, $timestring" 
+  echo "$TIMESTAMP,MIDM,$dcClli,MIDM_data_processing_DC_duration,$timestring" 
   rm -f ${TMPFILE}.endTime $TMPFILE.startTime
 done
+fi
 
 #
 # midmEnrTotalDuration
 #
 ((sec=subtot%60, subtot/=60, min=subtot%60, hrs=subtot/60))
 tottimestring=$(printf "%02d%02d%02d" $hrs $min $sec)
-echo "$TIMESTAMP, MIDM, ALL_DC, MIDM_data_processing_total_duration, $tottimestring"
+echo "$TIMESTAMP,MIDM,ALL_DC,MIDM_data_processing_total_duration,$tottimestring"
 
 #
-# midmDataTransferDuration
+# midmDataTransferDuration  - CFI Data Transfers
 # 
 subtot=0;
-for dc in ${midmDC}; do
+for dc in ${midmCFIDC}; do
 
-  jobid=`grep $dc $TMPFILE.datajobs | awk '{print $8'}`
-  $SSH $NAMENODE "grep 'DataTransferActionTime Taken' $OOZIEADMI/$jobid/invokeDataTransferScripts--ssh/*0.stdout" 2>/dev/null | awk -F ":" '{print $7}' > ${TMPFILE}.dataTime
+  jobid=`grep $dc $TMPFILE.cfi.datajobs | awk '{print $8'}`
 
-  dataTime=`cat ${TMPFILE}.dataTime | awk -F "." '{print $1}'`;
+  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+  if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
+
+  $SSH $NAMENODE "grep 'DataTransferActionTime Taken' $OOZIEADMI/$jobid/invokeDataTransferScripts--ssh/*0.stdout" 2>/dev/null | awk '{print $NF}' > ${TMPFILE}.dataTime
+
+  dataTime=`cat ${TMPFILE}.dataTime 2>/dev/null | awk -F "." '{print $1}'`;
   if [[ -n $dataTime ]] ; then
     let "subtot += $dataTime";
     ((sec=dataTime%60, dataTime/=60, min=dataTime%60, hrs=dataTime/60))
@@ -87,32 +105,66 @@ for dc in ${midmDC}; do
     xfertimestring="000000"
   fi
 
-  echo "$TIMESTAMP, MIDM, $dc, MIDM_data_transfer_DC_duration, $xfertimestring"
+  echo "$TIMESTAMP,MIDM,$dcClli,MIDM_data_transfer_DC_duration,$xfertimestring"
   rm -f ${TMPFILE}.dataTime
 
 done
 
 #
-# midmTotalTransferDuration 
+# midmDataTotalTransferDuration - CFI Transfers. 
 #
 ((sec=subtot%60, subtot/=60, min=subtot%60, hrs=subtot/60))
 xfertottimestring=$(printf "%02d%02d%02d" $hrs $min $sec)
-echo "$TIMESTAMP, MIDM, ALL_DC, MIDM_data_transfer_total_duration, $xfertottimestring" 
+echo "$TIMESTAMP,MIDM,ALL_DC,MIDM_data_transfer_total_duration,$xfertottimestring" 
 
 #
-# midmTotalDuration
+# midmData BDA transfer duration.
+#
+subtot=0;
+for dc in ${midmDC}; do
+
+  jobid=`grep $dc $TMPFILE.bda.datajobs | awk '{print $8'}`
+
+  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+  if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
+
+  $SSH $NAMENODE "grep 'DataTransferActionTime Taken' $OOZIEADMI/$jobid/invokeDataTransferScripts--ssh/*0.stdout" 2>/dev/null | awk '{print $NF}' > ${TMPFILE}.dataTime
+
+  dataTime=`cat ${TMPFILE}.dataTime 2>/dev/null | awk -F "." '{print $1}'`;
+  if [[ -n $dataTime ]] ; then
+    let "subtot += $dataTime";
+    ((sec=dataTime%60, dataTime/=60, min=dataTime%60, hrs=dataTime/60))
+    xfertimestring=$(printf "%02d%02d%02d" $hrs $min $sec)
+  else
+    xfertimestring="000000"
+  fi
+
+  echo "$TIMESTAMP,MIDM/BDA/$dcClli,MIDM_data_transfer_DC_duration,$xfertimestring"
+  rm -f ${TMPFILE}.dataTime
+
+done
+
+#
+# midmDataTotalTransferDuration - BDA Transfers.
+#
+((sec=subtot%60, subtot/=60, min=subtot%60, hrs=subtot/60))
+xfertottimestring=$(printf "%02d%02d%02d" $hrs $min $sec)
+echo "$TIMESTAMP,MIDM/BDA/ALL_DC,MIDM_data_transfer_total_duration,$xfertottimestring"
+
+#
+# midmTotalDuration - Enr Start TO BDA End time.
 # 
 startjobid=`grep $MIDMSTARTDC $TMPFILE.enrjobs | awk '{print $NF'}`
-endjobid=`grep $MIDMENDDC $TMPFILE.datajobs | awk '{print $NF'}`
+endjobid=`grep $MIDMENDDC $TMPFILE.bda.datajobs | awk '{print $NF'}`
 
 if [[ -n $startjobid && -n $endjobid ]]; then
 
-  $SSH $NAMENODE "grep 'Setting output dir' $OOZIEADMI/$startjobid/mapredAction--ssh/*stderr" 2>/dev/null | awk '{print $1" "$2}' | cut -c 2-17 > ${TMPFILE}.midmtotalstartTime;
+  $SSH $NAMENODE "grep 'Setting output dir' $OOZIEADMI/$startjobid/mapredAction--ssh/*stderr" 2>/dev/null | awk '{print $1" "$2}' | sed 's/\//-/g' > ${TMPFILE}.midmtotalstartTime;
 
   $SSH $NAMENODE "tail -1 $OOZIEADMI/$endjobid/invokeDataTransferScripts--ssh/*stdout" 2>/dev/null | awk -F "[" '{print $3}' | cut -c 1-17  > ${TMPFILE}.midmtotalendTime;
 
-  startTime=`cat ${TMPFILE}.midmtotalstartTime`
-  endTime=`cat ${TMPFILE}.midmtotalendTime`
+  startTime=`cat ${TMPFILE}.midmtotalstartTime 2>/dev/null`
+  endTime=`cat ${TMPFILE}.midmtotalendTime 2>/dev/null`
 
   if [[ -n $startTime && -n $endTime ]] ; then
     start=`date -d "$startTime" +%s`;
@@ -127,8 +179,7 @@ else
   totalmidmtimestring="000000"
 fi
 
-echo "$TIMESTAMP, MIDM, ALL_DC, MIDM_total_duration, $totalmidmtimestring"
-
+echo "$TIMESTAMP,MIDM,ALL_DC,MIDM_total_duration,$totalmidmtimestring"
 
 # Clean up temporary files 
 rm -f $TMPFILE.*
