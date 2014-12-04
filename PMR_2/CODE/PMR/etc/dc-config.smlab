@@ -13,3 +13,6 @@ allDC="SANMATEO FSLAB"
 # dcListCMDS is coded list with CLLI name and regular name. Not being used anywhere yet.
 dcListCMDS="FSLAB:SanMateoCMDSLAB"
 
+# midmCFIDC is regular DC names with which jobs are configured. Used to calculate data transfer duration for 10 CFI DCs
+midmCFIDC="SANMATEO FSLAB"
+
