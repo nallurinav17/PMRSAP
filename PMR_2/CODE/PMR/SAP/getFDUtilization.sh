@@ -47,16 +47,20 @@ for node in $CNP $UIP $CMP $SGW $CCP; do
      echo "$TIMESTAMP,SAP/$hostn,,file_descriptors_used_allocated,$usedAllocatedFD"
      echo "$TIMESTAMP,SAP/$hostn,,file_descriptors_unused_allocated,$unUsedAllocatedFD"
      fdUtilization='';fdUtilization=`echo "scale=2; (($usedAllocatedFD + $unUsedAllocatedFD)/$totalFDlimit)*100" | bc 2>/dev/null`
+     fdUtilization_count='';fdUtilization_count=`echo "$usedAllocatedFD + $unUsedAllocatedFD" | bc 2>/dev/null`
      echo "$TIMESTAMP,SAP/$hostn,,file_descriptor_utilization,$fdUtilization"
+     echo "$TIMESTAMP,SAP/$hostn,,file_descriptor_utilization_count,$fdUtilization_count"
    else
      echo "$TIMESTAMP,SAP/$hostn,,file_descriptors_used_allocated,0"
      echo "$TIMESTAMP,SAP/$hostn,,file_descriptors_unused_allocated,0"
      echo "$TIMESTAMP,SAP/$hostn,,file_descriptor_utilization,0"
+     echo "$TIMESTAMP,SAP/$hostn,,file_descriptor_utilization_count,0"
    fi
   else
      echo "$TIMESTAMP,SAP/$hostn,,file_descriptors_used_allocated,0"
-     echo "$TIMESTAMP,SAP/$hostn,,file_descriptors_maxunused_allocated,0"
+     echo "$TIMESTAMP,SAP/$hostn,,file_descriptors_unused_allocated,0"
      echo "$TIMESTAMP,SAP/$hostn,,file_descriptor_utilization,0"
+     echo "$TIMESTAMP,SAP/$hostn,,file_descriptor_utilization_count,0"
   fi
    
 
