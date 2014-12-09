@@ -18,8 +18,8 @@ SSH='ssh -q -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -l root '
 #------------------------------------------------------------------------
 
 
-DEST="/data/mgmt/pmr/scripts/pm/SAP/PMR"
-FILE="pmr-nbi-code-v02.tgz"
+DEST="/data/mgmt/pmr/scripts/pm/SAP"
+FILE="sap-pmr-v02.tgz"
 SRC="/tmp"
 
 #  MGMT
@@ -34,19 +34,19 @@ $SSH ${prefix}${i} "/opt/tms/bin/cli -t 'en' 'conf t' 'pm process crond restart'
 done
 }
 
-function uninstallNbi {
-echo "---------------------------- Uninstalling PMR NBI code."
+function uninstallPMRv2 {
+echo "---------------------------- Uninstalling PMR v2 code."
 for i in $mgmt0
 do
 echo "Working on node: ${prefix}${i}"
 sleep 3
 $SSH ${prefix}${i} "mount -o remount,rw /"
-$SSH ${prefix}${i} "/bin/mv ${DEST}/etc/PMR_SAP.cron.b4nbi.bkp ${DEST}/etc/PMR_SAP.cron"
+$SSH ${prefix}${i} "if [[ -e ${DEST}/PMR/etc/PMR_SAP.cron.b4pmrv2.bkp ]]; then /bin/mv ${DEST}/PMR/etc/PMR_SAP.cron.b4pmrv2.bkp ${DEST}/PMR/etc/PMR_SAP.cron"
 done
 }
 
 function syncPMR {
-echo "---------------------------- Synchronize PMR NBI uninstall with repository."
+echo "---------------------------- Synchronize PMR v2 uninstall with repository."
 for i in $mgmt
 do
 echo "Working on node: ${prefix}${i}"
@@ -56,7 +56,7 @@ $SSH ${prefix}${i} "/data/scripts/PMR/bin/SyncPMRHosts.sh"
 done
 }
 
-uninstallNbi
+uninstallPMRv2
 syncPMR
 restartCron
 echo "---------------------------- Done!"
