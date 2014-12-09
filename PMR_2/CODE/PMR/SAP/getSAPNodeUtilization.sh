@@ -24,7 +24,7 @@ write_log "Starting Poller for CPU Mem Utilization"
 
 # Poll ALl nodes in SAP
 # ---------------------
-for element in $CNP $CMP $UIP $CCP $SGW 
+for element in $CNP $CMP $UIP $CCP $SGW $MGT
 do
 
   # Get MEM Utilization and interpolate for 5 minute

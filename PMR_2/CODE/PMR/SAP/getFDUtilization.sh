@@ -26,7 +26,7 @@ HDFSCMD="$HADOOP dfs -ls "
 
 # Software Version and patches.
 write_log "Starting FD Utilization Measurement."
-for node in $CNP $UIP $CMP $SGW $CCP; do
+for node in $CNP $UIP $CMP $SGW $CCP $MGT; do
   #-----
   hostn='';hostn=`/bin/grep -w "$NETWORK.$node" /etc/hosts | awk '{print $2}' | sed 's/ //g'`
   if [[ ! ${hostn} ]]; then hostn=`$SSH $NETWORK.$node "hostname"`; fi

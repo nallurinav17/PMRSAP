@@ -33,7 +33,7 @@ y=`date -d "1 day ago" +%Y/%m/%d`
 # IPFIX Bins
 write_log "----- IPFIX Records"
 for dc in $cmdsDC; do
-  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed 2>/dev/null`
   if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
   for chassis in 1 2 3 4; do
     # Skip if chassis does not exist.
@@ -52,7 +52,7 @@ for dc in $cmdsDC; do
 done  
 
 for dc in $pnsaDC; do
-  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed 2>/dev/null`
   if [[ $str ]]; then dcClli=`echo $dc | sed $str`;  else dcClli=$dc; fi
   for chassis in 0; do
     #Skip if chassis does not exist.	- skipped as it is PNSA/VISP
@@ -74,7 +74,7 @@ done
 write_log "----- Pilot Packet Records"
 
 for dc in $cmdsDC; do
-  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed 2>/dev/null`
   if [[ $str ]]; then dcClli=`echo $dc | sed $str`;  else dcClli=$dc; fi
   for chassis in 1 2 3 4; do
     # Skip if chassis does not exist.
@@ -93,7 +93,7 @@ for dc in $cmdsDC; do
 done
 
 for dc in $pnsaDC; do
-  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed 2>/dev/null`
   if [[ $str ]]; then dcClli=`echo $dc | sed $str`;  else dcClli=$dc; fi
   for chassis in 0; do
     #Skip if chassis does not exist.	- skipped as it is PNSA/VISP
@@ -116,7 +116,7 @@ done
 
 #maxBinsInDay='24'
 #for dc in $allDC; do
-#  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+#  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed 2>/dev/null`
 #  if [[ $str ]]; then dcClli=`echo $dc | sed $str`;  else dcClli=$dc; fi
 #  for chassis in 0; do
 #  done

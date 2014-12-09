@@ -26,7 +26,7 @@ HDFSCMD="$HADOOP dfs -ls "
 
 # Software Version and patches.
 write_log "Starting software patches, version collection, Configured FD Limit."
-for node in $CNP $UIP $CMP $SGW $CCP; do
+for node in $CNP $UIP $CMP $SGW $CCP $MGT; do
   #-----
   hostn='';hostn=`/bin/grep -w "$NETWORK.$node" /etc/hosts | awk '{print $2}' | sed 's/ //g'`
   if [[ ! ${hostn} ]]; then hostn=`$SSH $NETWORK.$node "hostname"`; fi
@@ -80,7 +80,7 @@ yMissedKpi=`date -d "2 days ago" +%Y%m%d`
 write_log "----- IPFIX Bins"
 maxBinsInDay='288'
 for dc in $cmdsDC; do
-  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed 2>/dev/null`
   if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
   for chassis in 1 2 3 4; do
     # Skip if chassis does not exist.
@@ -133,7 +133,7 @@ done
 
 maxBinsInDay='288'
 for dc in $pnsaDC; do
-  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed 2>/dev/null`
   if [[ $str ]]; then dcClli=`echo $dc | sed $str`;  else dcClli=$dc; fi
   for chassis in 0; do
     #Skip if chassis does not exist.	- skipped as it is PNSA/VISP
@@ -188,7 +188,7 @@ write_log "----- RADIUS Bins"
 
 maxBinsInDay='288'
 for dc in $cmdsDC; do
-  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed 2>/dev/null`
   if [[ $str ]]; then dcClli=`echo $dc | sed $str`;  else dcClli=$dc; fi
   for chassis in 1 2 3 4; do
     # Skip if chassis does not exist.
@@ -241,7 +241,7 @@ done
 
 maxBinsInDay='288'
 for dc in $pnsaDC; do
-  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed 2>/dev/null`
   if [[ $str ]]; then dcClli=`echo $dc | sed $str`;  else dcClli=$dc; fi
   for chassis in 0; do
     #Skip if chassis does not exist.	- skipped as it is PNSA/VISP
@@ -296,7 +296,7 @@ write_log "----- SUBIB Bins"
 
 maxBinsInDay='24'
 for dc in $allDC; do
-  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed 2>/dev/null`
   if [[ $str ]]; then dcClli=`echo $dc | sed $str`;  else dcClli=$dc; fi
   for chassis in 0; do
     #Skip if chassis does not exist.	- skipped as it is PNSA/VISP

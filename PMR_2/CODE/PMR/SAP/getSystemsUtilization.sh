@@ -23,7 +23,7 @@ write_log "Starting Poller for detailed CPU & Mem Utilization and Disk IO stats"
 # Poll ALL nodes in SAP for detailed CPU and Memory Stats
 # ---------------------
 
-for element in $CNP $CMP $UIP $CCP $SGW 
+for element in $CNP $CMP $UIP $CCP $SGW $MGT
 do
 
   hostn='';hostn=`/bin/grep -w "$NETWORK.${element}" /etc/hosts | awk '{print $2}' | sed 's/ //g'`

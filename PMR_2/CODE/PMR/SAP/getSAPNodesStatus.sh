@@ -132,23 +132,24 @@ if [[ -z ${MASTER_SG} ]] ; then write_log "Could not determine master service ga
 # ------------------------------------------------------------------------------------------
 
 # Get Service gateway Nodes status 
-for node in $STANDBY_SG $MASTER_SG ; do
-  SUBENTITY=`$SSH $node 'hostname'`
+for node in $SGW; do
+  SUBENTITY=`$SSH $NETWORK.$node 'hostname'`
   if [[ $? -eq '0' ]] 
   then 
   STATUS=0
-  $SSH $node 'ps -ef' > $TMPFILE
-
-  # Check Oozie process
+  if [[ "$NETWORK.$node" == "$MASTER_SG" ]]; then
+    $SSH $NETWORK.$node 'ps -ef' > $TMPFILE
+    # Check Oozie process
     if ! egrep -q "org.apache.catalina.startup.Bootstrap" $TMPFILE ; then let STATUS+=$CATALINA ; fi
+  fi
   # Check Tibco process
-    $SSH $node '/opt/tms/bin/cli -t "en" "show pm process tibco"' > $TMPFILE
+    $SSH $NETWORK.$node '/opt/tms/bin/cli -t "en" "show pm process tibco"' > $TMPFILE
     if ! egrep -q "Current status:  running" $TMPFILE ; then let STATUS+=$TIBCO ; fi
 
   else 
   # Not reachable
   STATUS=1
-  SUBENTITY=`/bin/grep $node /etc/hosts | awk '{print $2}'`
+  SUBENTITY=`/bin/grep $NETWORK.$node /etc/hosts | awk '{print $2}'`
   fi
 
   # Write data
@@ -169,12 +170,18 @@ done
 
 # Get Insta status from MASTER CCP
 # Get cc command result 
-$SSH $NETWORK.$CCP0 '/usr/local/Calpont/bin/calpontConsole getsysteminfo' > $TMPFILE
+#$SSH $NETWORK.$CCP0 '/usr/local/Calpont/bin/calpontConsole getsysteminfo' > $TMPFILE
 INSTASTATUS=0
-
 # Check status of both nodes
-  if ! egrep -q "Module pm1    ACTIVE" $TMPFILE ; then let INSTASTATUS+=1 ; fi
-  if ! egrep -q "Module pm2    ACTIVE" $TMPFILE ; then let INSTASTATUS+=1 ; fi
+#  if ! egrep -q "Module pm1    ACTIVE" $TMPFILE ; then let INSTASTATUS+=1 ; fi
+#  if ! egrep -q "Module pm2    ACTIVE" $TMPFILE ; then let INSTASTATUS+=1 ; fi
+for module in `$SSH $NETWORK.$CCP0 '/usr/local/Calpont/bin/calpontConsole getsysteminfo' 2>/dev/null | grep ^Module 2>/dev/null | awk '{print $2";"$3}'`; do
+mod=`echo $module | awk -F ';' '{print $1}'`;
+status=`echo $module | awk -F ';' '{print $2}'`;
+if [[ ! "$status" == "ACTIVE" ]]; then
+ let INSTASTATUS+=1 
+fi
+done
 
 # write data
   printf "%s,%s,%s,Insta_status,%s\n" "$TIMESTAMP" "$ENTITY" "$SUBENTITY" "$INSTASTATUS" 
@@ -188,7 +195,7 @@ write_log "Starting SAP Nodes disk stats"
 # Get Disk Stats - SAP PMR V2
 #-----
 # Disk Monitoring
-for node in $CNP $UIP $CMP $SGW $CCP; do
+for node in $CNP $UIP $CMP $SGW $CCP $MGT; do
   #-----
   hostn='';hostn=`/bin/grep -w "$NETWORK.$node" /etc/hosts | awk '{print $2}' | sed 's/ //g'`
   if [[ ! ${hostn} ]]; then hostn=`$SSH $NETWORK.$node "hostname"`; fi

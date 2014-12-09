@@ -27,9 +27,6 @@ MAILTO=kiran.subash@guavus.com,supreet.singh@guavus.com
 # Clean up older than 5 days files
 55 23 * * * 	root	/data/scripts/PMR/bin/Cleanup.sh
 
-# Run the 15 minute job to get Backlog, Disk Utilization & Arcsight in SAP
-*/15 * * * *    root    /data/scripts/PMR/bin/BACKLOG_DISK_ARCSIGHTStats.sh
-
 # Capture SNMP alarms every day, once.
 59 23 * * *	root	/data/scripts/PMR/bin/snmp-alarm.sh
 

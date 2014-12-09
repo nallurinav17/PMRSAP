@@ -51,7 +51,7 @@ subtot=0;
 for dc in ${midmDC}; do
   jobid=`grep $dc $TMPFILE.enrjobs | awk '{print $NF'}`
 
-  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed 2>/dev/null`
   if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
  
   $SSH $NAMENODE "grep 'map 0% reduce 0%' $OOZIEADMI/$jobid/mapredAction--ssh/*stderr"  2>/dev/null | awk '{print $1" "$2}' | head -1 | sed 's/\//-/g' > $TMPFILE.startTime
@@ -91,7 +91,7 @@ for dc in ${midmCFIDC}; do
 
   jobid=`grep $dc $TMPFILE.cfi.datajobs | awk '{print $8'}`
 
-  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed 2>/dev/null`
   if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
 
   $SSH $NAMENODE "grep 'DataTransferActionTime Taken' $OOZIEADMI/$jobid/invokeDataTransferScripts--ssh/*0.stdout" 2>/dev/null | awk '{print $NF}' > ${TMPFILE}.dataTime
@@ -125,7 +125,7 @@ for dc in ${midmDC}; do
 
   jobid=`grep $dc $TMPFILE.bda.datajobs | awk '{print $8'}`
 
-  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed`
+  str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed 2>/dev/null`
   if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
 
   $SSH $NAMENODE "grep 'DataTransferActionTime Taken' $OOZIEADMI/$jobid/invokeDataTransferScripts--ssh/*0.stdout" 2>/dev/null | awk '{print $NF}' > ${TMPFILE}.dataTime
