@@ -1,0 +1,29 @@
+NETWORK="10.136.239"
+
+# Collectors
+CNP='165 166'
+
+# Computes
+CMP='167 168 169 39'
+
+# CCP
+CCP='27 28'
+
+# SVGW
+SGW='162 163'
+
+# UI
+UIP='31 32'
+
+# MGT
+MGT='33 34'
+
+# VIPs
+CNP0=36
+CCP0=35
+SGW0=164
+UIP0=37
+MGT0=38
+
+MIDMSTARTDC="Memphis"
+MIDMENDDC="Bridgeville"

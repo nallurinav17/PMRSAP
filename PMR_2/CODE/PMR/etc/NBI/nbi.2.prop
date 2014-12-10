@@ -1,0 +1,37 @@
+# nbiName (MUST)
+nbiName='vzw2'
+
+# nbiSwitch (MUST)
+nbiSwitch='off'
+
+# nbiHostname (OPTIONAL)
+nbiHostname='visp-dc-2'
+
+# IP Address (MUST)
+nbiIpAddr='10.10.21.67'
+
+# User (MUST)
+nbiUser='root'
+
+# Password (Default:KeysBased/PasswordLess)
+nbiPassword='Gu@vu$!!'
+
+# DestPath (Default:/tmp/nbi)
+nbiDestPath='/tmp'
+
+# Sync Days (Default:2)
+nbiSyncDays='3'
+
+# DC Include Comma Separated  List (OPTIONAL But higher in precedence than 'ExcludeDc') - Defaults to include all.
+nbiIncludeDc=''
+
+# DC Exclude Comma Separated List (OPTIONAL But lower in precedence than 'IncludeDc') - Defaults to exclude none.
+nbiExcludeDc=''
+
+# DC TYPE Include Comma Separated List - VISP/PNSA/CMDS/SAP (OPTIONAL But higher in precedence than 'ExcludeType') - Defaults to include all.
+nbiIncludeType=''
+
+# DC TYPE Exclude Comma Separated List - VISP/PNSA/CMDS/SAP (OPTIONAL But lower in precedence than 'IncludeType') - Defaults to exclude none.
+nbiExcludeType=''
+
+

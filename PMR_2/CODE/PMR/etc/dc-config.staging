@@ -1,0 +1,18 @@
+# midmDC are DC's that are actually processing MIDM currently
+midmDC="Memphis Tulsa Johnstown Bridgeville"
+
+# dcCMDS is a list of CMDS DCs
+cmdsDC="Johnstown Bridgeville"
+
+#dcPNSA is list of PNSA DCs
+pnsaDC="Memphis Tulsa"
+
+# all DC is dcCMDS plus dcPNSA
+allDC="Memphis Tulsa Johnstown Bridgeville"
+
+# dcListCMDS is coded list with CLLI name and regular name. Not being used anywhere yet.
+dcListCMDS=""
+
+# midmCFIDC is regular DC names with which jobs are configured. Used to calculate data transfer duration for 10 CFI DCs
+midmCFIDC="Memphis Tulsa Johnstown Bridgeville"
+
