@@ -12,7 +12,7 @@ function getHosts()
 }
 # Get Hosts
 getHosts
-SSH='ssh -q -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -l root ';
+SSH='ssh -q -o StrictHostKeyChecking=no -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -l root ';
 ##########################################################################
 
 function saveconfig {
@@ -22,7 +22,7 @@ for i in $cnp $mgmt
 do
 	echo "Backing up configuration at ${prefix}${i}"
     	$SSH ${prefix}${i} "mount -o remount,rw /"
-	$SSH ${prefix}${i} "/opt/tms/bin/cli -t 'en' 'conf t' 'configuration delete pre-pmrv2-config' 'wr mem'" > /dev/null
+	$SSH ${prefix}${i} "/opt/tms/bin/cli -t 'en' 'conf t' 'configuration delete pre-pmrv2-config' 'wr mem'" 2>/dev/null
   	$SSH ${prefix}${i} "/opt/tms/bin/cli -t 'en' 'conf t' 'configuration write to pre-pmrv2-config no-switch' 'wr mem'"
 done
 

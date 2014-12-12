@@ -13,7 +13,7 @@ function getHosts()
 # Get Hosts
 getHosts
 
-SSH='ssh -q -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -l root ';
+SSH='ssh -q -o StrictHostKeyChecking=no -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -l root ';
 clear
 echo "------- CHECKING BUILD VERSION -----------"
 #for i in $cnp $cmp $ccp $sgp $uip
@@ -54,14 +54,15 @@ read -p "Continue (y): "
 clear
 
 echo "------- CHECKING DRBD STATE ---------"
+echo "Namenodes"
 for i in $cnp ; do
   $SSH ${prefix}${i} "drbd-overview"
 done
-echo ""
-for i in $sgp ; do
+echo "Service Gateways"
+for i in $sgp1 ; do
   $SSH ${prefix}${i} "drbd-overview"
 done
-echo ""
+echo "UI Nodes"
 for i in $uip ; do
   $SSH ${prefix}${i} "drbd-overview"
 done

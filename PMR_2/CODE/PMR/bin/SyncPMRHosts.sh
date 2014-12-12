@@ -8,11 +8,15 @@ cd /data/scripts/PMR
 #if /sbin/ifconfig -a | grep -q ${PMRMASTER} ; then REMOTEHOST=${PMRHOST2}; else REMOTEHOST=${PMRHOST1} ; fi
 
 write_log "Syncing scripts from SAN repository through ${PMRHOST1}"
-write_log "`$RSYNC -v $RSYNCOPT root@${PMRHOST1}:${SAPREPO}/* $BASEPATH/ | tail -2  | tr '\n' ' ' `"
-if [[ $? -eq 0 ]] ; then write_log "Sync Complete!" ; else write_log "Sync Failed, Retrying..." ; 
-  write_log "Syncing scripts from SAN repository through ${PMRHOST2}"
-  write_log "`$RSYNC -v $RSYNCOPT root@${PMRHOST2}:${SAPREPO}/* $BASEPATH/ | tail -2  | tr '\n' ' ' `"
-  if [[ $? -eq 0 ]] ; then write_log "Sync Complete!" ; else write_log "Sync Failed, Exit!" ; fi
+val=`$RSYNC -v $RSYNCOPT root@${PMRHOST1}:${SAPREPO}/* $BASEPATH/ 2>&1 tr '\n' ' '`; 
+if [[ $? -ne '0' ]]; then
+   write_log "$val"; write_log "Sync Failed, Retrying..."
+   write_log "Syncing scripts from SAN repository through ${PMRHOST2}"
+   val='';val=`$RSYNC -v $RSYNCOPT root@${PMRHOST2}:${SAPREPO}/* $BASEPATH/ 2>&1 | tr '\n' ' '`
+  if [[ $? -eq 0 ]] ; then write_log "$val"; write_log "Sync Complete!" ; else write_log "$val"; write_log "Sync Failed, Exit!" ; fi
+else
+write_log "$val"
+write_log "Sync Complete!"
 fi
 
 exit 0

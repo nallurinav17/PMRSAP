@@ -12,7 +12,7 @@ function getHosts()
 }
 # Get Hosts
 getHosts
-SSH='ssh -q -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -l root ';
+SSH='ssh -q -o StrictHostKeyChecking=no -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -l root ';
 ##########################################################################
 clear
 
