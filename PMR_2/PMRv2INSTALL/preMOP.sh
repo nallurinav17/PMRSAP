@@ -75,8 +75,8 @@ clear
 echo "----- VERIFY TOMCAT PIDs -----"
 for i in $uip ; do
   echo "Working on Node : ${prefix}${i}"
-  #echo "HSQLDB PID : `$SSH ${prefix}${i} 'ps -ef | grep hsqldb | grep -v grep' | awk '{ print $2 }'`"
-  echo "TOMCAT PID : `$SSH ${prefix}${i} 'ps -ef | grep tomcat | grep -v grep' | awk '{ print $2 }'`"
+  echo "QE PID : `$SSH ${prefix}${i} 'ps -ef | grep qecache | grep -v grep' | awk '{ print $2 }'`"
+  echo "RGE PID : `$SSH ${prefix}${i} 'ps -ef | grep rge | grep -v grep' | awk '{ print $2 }'`"
   echo ""
 done
 read -p "Continue (y): "
