@@ -40,7 +40,6 @@ LOGF="${TLOGS}/zabbix_trap.log"
 INIF="/platform_latest/gms/monitoring/conf/snmptt.ini"
 
 function identifyCustomSnmpttIniEntry {
-
 if [[ -f /etc/snmp/snmptt.ini ]]; then 
   /bin/grep "customsnmptt.conf" ${INIF}
    if [[ $? -ne '0' ]]; then
@@ -57,8 +56,21 @@ if [[ -f /etc/snmp/snmptt.ini ]]; then
 	fi
    fi
 fi
+}
 
-
+function identifySnmpTrapdHandlerEntry {
+if [[ -s /platform_latest/gms/monitoring/conf/snmptrapd.conf ]]; then
+  /bin/grep "traphandle default snmptt" ${TRAPDF}
+   if [[ $? -ne '0' ]]; then
+        /usr/bin/perl -pi -e 's/^\s*traphandle default.*$/traphandle default snmptt/g' ${TRAPDF}
+        sleep 1
+        /bin/grep "traphandle default snmptt" ${TRAPDF}
+        if [[ $? -eq '0' ]]; then write_log "Successfully restored traphandler in ${TRAPDF}"
+        else
+                write_log "Unable to restore traphandler in ${TRAPDF}"
+        fi
+   fi
+fi
 }
 
 function identifySelf {
@@ -120,6 +132,8 @@ identifySelf
 rotate
 
 identifyCustomSnmpttIniEntry
+
+identifySnmpTrapdHandlerEntry
 
 ATT='0'
 while [[ $FLAGTD -eq '1' ]]; do

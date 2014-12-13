@@ -37,8 +37,15 @@ echo "---------------------------- Restarting cron service."
 for i in $mgmt
 do
 echo "Working on node: ${prefix}${i}"
-sleep 3
 $SSH ${prefix}${i} "mount -o remount,rw /"
+sleep 3
+# Restart trapd processes. Since monitorTrapd.sh has to update the "/platform_latest/gms/monitoring/conf/snmptrapd.conf" and restart the service.
+SNMPTD_PID=''; SNMPTD_PID=`$SSH ${prefix}${i} "ps -ef | grep -v grep | egrep 'snmptrapd|snmptt' 2>/dev/null" 2>/dev/null | awk '{print $2}'`;
+sleep 1
+if [[ $SNMPTD_PID ]]; then
+  $SSH ${prefix}${i} "/bin/kill -9 $SNMPTD_PID 2>/dev/null" 2>/dev/null
+  sleep 2
+fi
 /usr/bin/scp -q ../restart.cli root@${prefix}${i}:/tmp
 $SSH ${prefix}${i} "/opt/tms/bin/cli -x -h /tmp/restart.cli"
 done
