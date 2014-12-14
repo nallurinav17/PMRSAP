@@ -5,11 +5,9 @@ source ${BASEPATH}/etc/PMRConfig.cfg
 
 if [[ $# -eq 0 ]] ; then TYPE='05m' ; else TYPE=$1; fi
 
-CURR=`date +%s`
-
 # Round off to next 5 minute
+CURR=`date +%s`
 ROUNDOFF=$(echo "(${CURR}-(${CURR}%300))+300" | bc)
-
 myY=`date -d @${ROUNDOFF} +%Y`
 myM=`date -d @${ROUNDOFF} +%m`
 myD=`date -d @${ROUNDOFF} +%d`
