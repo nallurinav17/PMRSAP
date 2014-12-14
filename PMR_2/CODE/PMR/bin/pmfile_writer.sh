@@ -3,11 +3,21 @@
 BASEPATH="/data/scripts/PMR"
 source ${BASEPATH}/etc/PMRConfig.cfg
 
+FILEStamp=''
 if [[ $# -eq 0 ]] ; then TYPE='05m' ; else TYPE=$1; fi
+# Introduced the FileStamp variable (round off to upper value by $2 minutes) to put the KPI collected at every 5 minute into a single file name forming at upper $2 minutes from current time.
+if [[ $2 ]] ; then FILEStamp=$2; else FILEStamp='5'; fi
 
-# Round off to next 5 minute
+# Calculate the file Stamp.
+
+if [[ ${FILEStamp} ]]; then
+ FILEStamp=`echo "$FILEStamp * 60" | bc`
+fi
+
+# Round off to next 5/$2 minute
 CURR=`date +%s`
-ROUNDOFF=$(echo "(${CURR}-(${CURR}%300))+300" | bc)
+ROUNDOFF=$(echo "(${CURR}-(${CURR}%${FILEStamp}))+${FILEStamp}" | bc)
+#ROUNDOFF=$(echo "(${CURR}-(${CURR}%300))+300" | bc)
 myY=`date -d @${ROUNDOFF} +%Y`
 myM=`date -d @${ROUNDOFF} +%m`
 myD=`date -d @${ROUNDOFF} +%d`

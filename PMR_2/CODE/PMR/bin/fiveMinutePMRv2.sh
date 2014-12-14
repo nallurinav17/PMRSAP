@@ -11,7 +11,7 @@ if [[ `am_i_master` -ne 0 ]] ; then exit 0; fi
 # Call SAP PMR v2 hourly KPI Scripts and send to pmfile writer
 
 # Running every 5 minutes, calculating 5 minute system stats.
-/data/scripts/PMR/SAP/getSystemsUtilization.sh | /data/scripts/PMR/bin/pmfile_writer.sh 05m
+/data/scripts/PMR/SAP/getSystemsUtilization.sh | /data/scripts/PMR/bin/pmfile_writer.sh 05m 60
 
 
 exit 0
