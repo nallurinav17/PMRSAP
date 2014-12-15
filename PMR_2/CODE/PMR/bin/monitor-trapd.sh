@@ -38,6 +38,7 @@ FLAGTT='1'
 FLAGS=''
 LOGF="${TLOGS}/zabbix_trap.log"
 INIF="/platform_latest/gms/monitoring/conf/snmptt.ini"
+TRAPDF="/platform_latest/gms/monitoring/conf/snmptrapd.conf"
 
 function identifyCustomSnmpttIniEntry {
 if [[ -f /etc/snmp/snmptt.ini ]]; then 
@@ -66,6 +67,10 @@ if [[ -s /platform_latest/gms/monitoring/conf/snmptrapd.conf ]]; then
         sleep 1
         /bin/grep "traphandle default snmptt" ${TRAPDF}
         if [[ $? -eq '0' ]]; then write_log "Successfully restored traphandler in ${TRAPDF}"
+	   SNMPTD_PID=''; SNMPTD_PID=`ps -ef | grep -v grep | egrep 'snmptrapd|snmptt' 2>/dev/null | awk '{print $2}' 2>/dev/null`;
+           if [[ $SNMPTD_PID ]]; then	
+  	        /bin/kill -9 ${SNMPTD_PID} 2>/dev/null
+	   fi
         else
                 write_log "Unable to restore traphandler in ${TRAPDF}"
         fi

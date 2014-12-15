@@ -1,0 +1,131 @@
+GNS-MOB-SOL-MIB DEFINITIONS ::= BEGIN
+
+--  (C) Copyright 2002-2010 Guavus Network Systems, Inc.  
+--  All rights reserved.
+
+IMPORTS
+    OBJECT-TYPE, MODULE-IDENTITY, NOTIFICATION-TYPE, enterprises, 
+        Unsigned32, Counter64
+        FROM SNMPv2-SMI
+    IpAddress
+        FROM RFC1155-SMI
+    gnsProducts, notificationPrefix
+        FROM GNS-MIB;
+
+gnsMobility MODULE-IDENTITY
+    LAST-UPDATED        "201306181000Z"
+    ORGANIZATION        "Guavus Network Systems Pvt. Ltd."
+    CONTACT-INFO
+            "   Manpreet Gambhir
+                manpreet.gambhir@guavus.com"
+    DESCRIPTION 
+            "Guavus Mobility Solution MIB"
+    REVISION      "201306181000Z"
+    DESCRIPTION 
+            "Initial version for Mobility Solution MIB"
+
+    ::= { gnsProducts 2 }
+
+gnsMobilityVariables OBJECT IDENTIFIER
+    ::= { gnsMobility 1 }
+
+gnsMobilityNotifications OBJECT IDENTIFIER
+    ::= { gnsMobility 2 }
+
+gnsMobilityApps OBJECT IDENTIFIER
+    ::= { gnsMobility 3 }
+
+--
+-- APPS
+--
+
+gnsMobilityAppsMIDM OBJECT IDENTIFIER
+    ::= { gnsMobilityApps 3 }
+
+
+--
+-- APPS VARIABLES
+--
+
+gnsMobilityAppsMIDMVariables OBJECT IDENTIFIER
+    ::= { gnsMobilityAppsMIDM 1 }
+
+smsDetails OBJECT IDENTIFIER
+    ::= { gnsMobilityAppsMIDMVariables 1 }
+
+smsInvalidRecords OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Number Of Invalid Records Of SMS"
+    ::= { smsDetails 1 }
+
+mmsDetails OBJECT IDENTIFIER
+    ::= { gnsMobilityAppsMIDMVariables 2 }
+
+mmsInvalidRecords OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Number Of Invalid Records Of MMS"
+    ::= { mmsDetails 1 }
+    
+dataTransferErrorVarBinds OBJECT IDENTIFIER
+    ::= { gnsMobilityAppsMIDMVariables 3 }
+
+errorType OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Error Type"
+    ::= { dataTransferErrorVarBinds 1 }
+
+errorCode OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Error Code"
+    ::= { dataTransferErrorVarBinds 2 }
+    
+dataTransferDetail OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "DC Transfer Detail"
+    ::= { dataTransferErrorVarBinds 3 }
+
+
+--
+-- APPS NOTIFICATIONS
+--
+
+gnsMobilityAppsMIDMNotifications OBJECT IDENTIFIER
+    ::= { gnsMobilityAppsMIDM 2 }
+
+raiseDataTransferError NOTIFICATION-TYPE
+	OBJECTS {errorType, errorCode, systemHostname, currentTimestamp, trapCounter, sysLocation, customInfo}
+	STATUS current
+	DESCRIPTION
+			"Raise Data Transfer Error"
+	::= { gnsMobilityAppsMIDMNotifications 1 }
+	
+clearDataTransferError NOTIFICATION-TYPE
+	OBJECTS {errorType, systemHostname, currentTimestamp, trapCounter, sysLocation, customInfo}
+	STATUS current
+	DESCRIPTION
+			"Clear Data Transfer Error"
+	::= { gnsMobilityAppsMIDMNotifications 2 }
+
+raiseDataTransferEvent NOTIFICATION-TYPE
+        OBJECTS {errorType, errorCode, dataTransferDetail, systemHostname, currentTimestamp, trapCounter, sysLocation, customInfo}
+        STATUS current
+        DESCRIPTION
+                        "Raise Data Transfer Event"
+        ::= { gnsMobilityAppsMIDMNotifications 3 }
+
+END

@@ -1121,3 +1121,213 @@ getRecordsCount.sh
 20141202-2300,SAP/SMDCCLLI/0,,SAP_PilotPacket_DC_record_volume,0
 [admin@smlabgvsgp1 SAP]#
 
+[admin@smlabgvsgp2 SMLAB]# ./install.sh
+---------------------------- Creating PMR Install Architecture.
+Working on node: 172.30.5.57
+Working on node: 172.30.5.58
+---------------------------- Installing PMR v2 code to repository.
+Working on node: 172.30.5.63
+PMR/
+PMR/bin/
+PMR/etc/
+PMR/Readme
+PMR/SAP/
+PMR/SAP/getCollectorStats-5min.sh
+PMR/SAP/getDcBacklog.sh
+PMR/SAP/getDCBinStats.sh
+PMR/SAP/getEnrDuration.sh
+PMR/SAP/getFDUtilization.sh
+PMR/SAP/getRecordsCount.sh
+PMR/SAP/getSAPNodesStatus.sh
+PMR/SAP/getSAPNodeUtilization.sh
+PMR/SAP/getSystemsUtilization.sh
+PMR/SAP/getVolumeStats.sh
+PMR/SAP/snmp-parser.pl
+PMR/etc/customsnmptt.conf
+PMR/etc/dc-config.cfg
+PMR/etc/dc-config.prod
+PMR/etc/dc-config.smlab
+PMR/etc/dc-config.staging
+PMR/etc/nameCLLI.sed
+PMR/etc/NBI/
+PMR/etc/oidMaps.csv
+PMR/etc/PMR_SAP.cron
+PMR/etc/PMRConfig.cfg
+PMR/etc/PMRConfig.prod
+PMR/etc/PMRConfig.smlab
+PMR/etc/PMRConfig.staging
+PMR/etc/SAPConfig.cfg
+PMR/etc/SAPConfig.prod
+PMR/etc/SAPConfig.smlab
+PMR/etc/SAPConfig.staging
+PMR/etc/NBI/nbi.1.prop
+PMR/etc/NBI/nbi.2.prop
+PMR/etc/NBI/nbi.3.prop
+PMR/bin/alarmfile_writer.sh
+PMR/bin/Cleanup.sh
+PMR/bin/dailyPMRv2.sh
+PMR/bin/fiveMinutePMRv2.sh
+PMR/bin/hourlyPMRv2.sh
+PMR/bin/manual-nbiPmDataTx.sh
+PMR/bin/monitor-trapd.sh
+PMR/bin/nbiPmDataTx.sh
+PMR/bin/pmfile_writer.sh
+PMR/bin/SAPMIDMStats.sh
+PMR/bin/SAPNodeStatus.sh
+PMR/bin/SAPNodeUtilization.sh
+PMR/bin/SAPVolumeStats.sh
+PMR/bin/snmp-alarm.sh
+PMR/bin/sshpass
+PMR/bin/SyncPMRHosts-internally.sh
+PMR/bin/SyncPMRHosts.sh
+---------------------------- Installing PMR v2 code to management nodes.
+Working on node: 172.30.5.57
+PMR/
+PMR/bin/
+PMR/etc/
+PMR/Readme
+PMR/SAP/
+PMR/SAP/getCollectorStats-5min.sh
+PMR/SAP/getDcBacklog.sh
+PMR/SAP/getDCBinStats.sh
+PMR/SAP/getEnrDuration.sh
+PMR/SAP/getFDUtilization.sh
+PMR/SAP/getRecordsCount.sh
+PMR/SAP/getSAPNodesStatus.sh
+PMR/SAP/getSAPNodeUtilization.sh
+PMR/SAP/getSystemsUtilization.sh
+PMR/SAP/getVolumeStats.sh
+PMR/SAP/snmp-parser.pl
+PMR/etc/customsnmptt.conf
+PMR/etc/dc-config.cfg
+PMR/etc/dc-config.prod
+PMR/etc/dc-config.smlab
+PMR/etc/dc-config.staging
+PMR/etc/nameCLLI.sed
+PMR/etc/NBI/
+PMR/etc/oidMaps.csv
+PMR/etc/PMR_SAP.cron
+PMR/etc/PMRConfig.cfg
+PMR/etc/PMRConfig.prod
+PMR/etc/PMRConfig.smlab
+PMR/etc/PMRConfig.staging
+PMR/etc/SAPConfig.cfg
+PMR/etc/SAPConfig.prod
+PMR/etc/SAPConfig.smlab
+PMR/etc/SAPConfig.staging
+PMR/etc/NBI/nbi.1.prop
+PMR/etc/NBI/nbi.2.prop
+PMR/etc/NBI/nbi.3.prop
+PMR/bin/alarmfile_writer.sh
+PMR/bin/Cleanup.sh
+PMR/bin/dailyPMRv2.sh
+PMR/bin/fiveMinutePMRv2.sh
+PMR/bin/hourlyPMRv2.sh
+PMR/bin/manual-nbiPmDataTx.sh
+PMR/bin/monitor-trapd.sh
+PMR/bin/nbiPmDataTx.sh
+PMR/bin/pmfile_writer.sh
+PMR/bin/SAPMIDMStats.sh
+PMR/bin/SAPNodeStatus.sh
+PMR/bin/SAPNodeUtilization.sh
+PMR/bin/SAPVolumeStats.sh
+PMR/bin/snmp-alarm.sh
+PMR/bin/sshpass
+PMR/bin/SyncPMRHosts-internally.sh
+PMR/bin/SyncPMRHosts.sh
+Working on node: 172.30.5.58
+PMR/
+PMR/bin/
+PMR/etc/
+PMR/Readme
+PMR/SAP/
+PMR/SAP/getCollectorStats-5min.sh
+PMR/SAP/getDcBacklog.sh
+PMR/SAP/getDCBinStats.sh
+PMR/SAP/getEnrDuration.sh
+PMR/SAP/getFDUtilization.sh
+PMR/SAP/getRecordsCount.sh
+PMR/SAP/getSAPNodesStatus.sh
+PMR/SAP/getSAPNodeUtilization.sh
+PMR/SAP/getSystemsUtilization.sh
+PMR/SAP/getVolumeStats.sh
+PMR/SAP/snmp-parser.pl
+PMR/etc/customsnmptt.conf
+PMR/etc/dc-config.cfg
+PMR/etc/dc-config.prod
+PMR/etc/dc-config.smlab
+PMR/etc/dc-config.staging
+PMR/etc/nameCLLI.sed
+PMR/etc/NBI/
+PMR/etc/oidMaps.csv
+PMR/etc/PMR_SAP.cron
+PMR/etc/PMRConfig.cfg
+PMR/etc/PMRConfig.prod
+PMR/etc/PMRConfig.smlab
+PMR/etc/PMRConfig.staging
+PMR/etc/SAPConfig.cfg
+PMR/etc/SAPConfig.prod
+PMR/etc/SAPConfig.smlab
+PMR/etc/SAPConfig.staging
+PMR/etc/NBI/nbi.1.prop
+PMR/etc/NBI/nbi.2.prop
+PMR/etc/NBI/nbi.3.prop
+PMR/bin/alarmfile_writer.sh
+PMR/bin/Cleanup.sh
+PMR/bin/dailyPMRv2.sh
+PMR/bin/fiveMinutePMRv2.sh
+PMR/bin/hourlyPMRv2.sh
+PMR/bin/manual-nbiPmDataTx.sh
+PMR/bin/monitor-trapd.sh
+PMR/bin/nbiPmDataTx.sh
+PMR/bin/pmfile_writer.sh
+PMR/bin/SAPMIDMStats.sh
+PMR/bin/SAPNodeStatus.sh
+PMR/bin/SAPNodeUtilization.sh
+PMR/bin/SAPVolumeStats.sh
+PMR/bin/snmp-alarm.sh
+PMR/bin/sshpass
+PMR/bin/SyncPMRHosts-internally.sh
+PMR/bin/SyncPMRHosts.sh
+---------------------------- Update install type.
+Working on node: 172.30.5.63
+---------------------------- Performing SMLAB specific operations.
+Working on node: 172.30.5.57
+---------------------------- Performing SMLAB specific operations.
+Working on node: 172.30.5.58
+---------------------------- Performing SMLAB specific operations.
+---------------------------- Synchronize PMR install with repository.
+Working on node: 172.30.5.57
+Working on node: 172.30.5.58
+---------------------------- Refresh schedules.
+Working on node: 172.30.5.57
+Working on node: 172.30.5.58
+---------------------------- Restarting cron service.
+Working on node: 172.30.5.57
+smlabgvsgp1 [smlabgvsgp: standby] >    en
+smlabgvsgp1 [smlabgvsgp: standby] #    conf t
+smlabgvsgp1 [smlabgvsgp: standby] (config) #
+smlabgvsgp1 [smlabgvsgp: standby] (config) #    logging file pmr path /var/log/PMRLogger.log
+smlabgvsgp1 [smlabgvsgp: standby] (config) #    logging file pmr rotation criteria size 1024
+smlabgvsgp1 [smlabgvsgp: standby] (config) #    logging file snmptrapd path /var/log/snmptrapd.log
+smlabgvsgp1 [smlabgvsgp: standby] (config) #    logging file snmptrapd rotation criteria frequency daily
+smlabgvsgp1 [smlabgvsgp: standby] (config) #    pm process crond restart
+smlabgvsgp1 [smlabgvsgp: standby] (config) #    write memory
+smlabgvsgp1 [smlabgvsgp: standby] (config) #
+smlabgvsgp1 [smlabgvsgp: standby] (config) #
+Working on node: 172.30.5.58
+smlabgvsgp2 [smlabgvsgp: master] >    en
+smlabgvsgp2 [smlabgvsgp: master] #    conf t
+smlabgvsgp2 [smlabgvsgp: master] (config) #
+smlabgvsgp2 [smlabgvsgp: master] (config) #    logging file pmr path /var/log/PMRLogger.log
+smlabgvsgp2 [smlabgvsgp: master] (config) #    logging file pmr rotation criteria size 1024
+smlabgvsgp2 [smlabgvsgp: master] (config) #    logging file snmptrapd path /var/log/snmptrapd.log
+smlabgvsgp2 [smlabgvsgp: master] (config) #    logging file snmptrapd rotation criteria frequency daily
+smlabgvsgp2 [smlabgvsgp: master] (config) #    pm process crond restart
+smlabgvsgp2 [smlabgvsgp: master] (config) #    write memory
+smlabgvsgp2 [smlabgvsgp: master] (config) #
+smlabgvsgp2 [smlabgvsgp: master] (config) #
+---------------------------- Done!
+[admin@smlabgvsgp2 SMLAB]#
+
+

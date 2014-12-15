@@ -1,0 +1,2301 @@
+GNS-MIB DEFINITIONS ::= BEGIN
+
+--  (C) Copyright 2002-2010 Guavus Network Systems, Inc.  
+--  All rights reserved.
+
+IMPORTS
+    OBJECT-TYPE, MODULE-IDENTITY, NOTIFICATION-TYPE, enterprises, 
+        Unsigned32, Counter64
+        FROM SNMPv2-SMI
+    IpAddress
+        FROM RFC1155-SMI
+    TruthValue
+        FROM SNMPv2-TC
+    systemHostname, currentTimestamp, trapCounter, sysLocation, customInfo
+        FROM TMS-MIB;
+
+gns MODULE-IDENTITY
+    LAST-UPDATED        "201307121800Z"
+    ORGANIZATION        "Guavus Network Systems Pvt. Ltd."
+    CONTACT-INFO
+            "   Pradeep Roy
+                pradeep.roy@guavus.com"
+    DESCRIPTION 
+            "Guavus vendor MIB"
+    REVISION      "201307121800Z"
+    DESCRIPTION 
+            "Added Object Type for lowThresholdInputDataRaise and lowThresholdInputDataClear"
+
+    ::= { enterprises 37140 }
+
+variables OBJECT IDENTIFIER
+    ::= { gns 1 }
+
+gnsProducts OBJECT IDENTIFIER
+    ::= { gns 2 }
+
+notifications OBJECT IDENTIFIER
+    ::= { gns 3 }
+
+--
+-- VARIABLES
+--
+
+netReflex OBJECT IDENTIFIER
+    ::= { variables 2 }
+
+applTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF ApplEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "List of appliances managed by the CMC"
+    ::= { netReflex 1 }
+
+applEntry OBJECT-TYPE
+    SYNTAX      ApplEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Entry for one managed appliance"
+    INDEX   { applIndex }
+    ::= { applTable 1 }
+
+ApplEntry ::=
+    SEQUENCE {
+        applIndex             Unsigned32,
+        applName              OCTET STRING,
+        applConnected         TruthValue,
+        applOK                TruthValue
+    }
+
+applIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Synthetic numeric unique ID of appliance"
+    ::= { applEntry 1 }
+
+applName OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Textual ID/name of appliance"
+    ::= { applEntry 2 }
+
+--
+-- 3 and 4 were applConnected and applOK when they were Unsigned32
+-- (0=false, 1=true).  They were retired when the new TruthValue versions
+-- of each were introduced on 5 and 6.
+--
+
+applConnected OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Is CMC connected to this appliance (1=yes, 2=no)"
+    ::= { applEntry 5 }
+
+applOK OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Did this appliance pass its most recent status check 
+            (1=yes, 2=no)"
+    ::= { applEntry 6 }
+
+instaAdaptorDown OBJECT IDENTIFIER
+    ::= { netReflex 4 }
+
+instaAdaptorType OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Insta adaptor type"
+    ::= { instaAdaptorDown 1 }
+
+noCollectorData OBJECT IDENTIFIER
+    ::= { netReflex 2 }
+
+hdfsNamenode OBJECT IDENTIFIER
+    ::= { netReflex 3 }
+
+drbdPrimary OBJECT IDENTIFIER
+    ::= { netReflex 5 }
+
+dataTransfer OBJECT IDENTIFIER
+    ::= { netReflex 6 }
+
+receiveData OBJECT IDENTIFIER
+    ::= { netReflex 7 }
+
+processedData OBJECT IDENTIFIER
+    ::= { netReflex 8 }
+
+transferData OBJECT IDENTIFIER
+    ::= { netReflex 9 }
+
+stats OBJECT IDENTIFIER
+    ::= { netReflex 10 }
+
+inputData OBJECT IDENTIFIER
+    ::= { netReflex 11 }
+
+failure OBJECT IDENTIFIER
+    ::= { netReflex 12 }
+
+record OBJECT IDENTIFIER
+    ::= { netReflex 13 }
+
+cilrecordstats OBJECT IDENTIFIER
+    ::= { netReflex 14 }
+
+dataIncomplete OBJECT IDENTIFIER
+    ::= { netReflex 15 }
+
+lowThresholdinputData OBJECT IDENTIFIER
+    ::= { netReflex 16 }
+
+gmountd OBJECT IDENTIFIER
+    ::= { netReflex 17 }
+
+inputFileData OBJECT IDENTIFIER
+    ::= { netReflex 18 }
+
+instaBackupStatus OBJECT IDENTIFIER
+    ::= { netReflex 19 }
+
+instaBackupReason OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Insta backup reason"
+    ::= { instaBackupStatus 1 }
+
+instaAdaptorUp OBJECT IDENTIFIER
+    ::= { netReflex 20 }
+
+fileSystems OBJECT IDENTIFIER
+    ::= { netReflex 21 }
+
+clusterInfo OBJECT IDENTIFIER
+    ::= { netReflex 22 }
+
+gms OBJECT IDENTIFIER
+    ::= { netReflex 23 }
+
+rubix OBJECT IDENTIFIER
+    ::= { netReflex 24 }
+ 
+drbd OBJECT IDENTIFIER
+    ::= { netReflex 25 }
+
+instaBackupStatusClear OBJECT IDENTIFIER
+    ::= { netReflex 26 }
+
+hdfs OBJECT IDENTIFIER
+    ::= { netReflex 27 }
+
+nodeMgmtIp OBJECT-TYPE
+    SYNTAX      IpAddress 
+    MAX-ACCESS  read-only 
+    STATUS      current
+    DESCRIPTION
+            "Management Ip of the node"
+    ::= { gms 1 }
+
+reconfigFailedReason OBJECT-TYPE
+    SYNTAX      OCTET STRING 
+    MAX-ACCESS  read-only 
+    STATUS      current
+    DESCRIPTION
+            "Reconfiguration failed reason"
+    ::= { gms 2 }
+
+lunTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF LunEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "List of filesystems on SAN"
+    ::= { fileSystems 1 }
+
+lunEntry OBJECT-TYPE
+    SYNTAX      LunEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Entry for one SAN filesystem"
+    INDEX   { lunIndex }
+    ::= { lunTable 1 }
+
+LunEntry ::=
+    SEQUENCE {
+        lunIndex             Unsigned32,
+        lunName              OCTET STRING,
+        lunStatus            OCTET STRING
+    }
+
+lunIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Synthetic numeric unique ID of filesystem"
+    ::= { lunEntry 1 }
+
+lunName OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Unique name of filesystem"
+    ::= { lunEntry 2 }
+
+lunStatus OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Current state of filesystem"
+    ::= { lunEntry 4 }
+
+instaAdaptorUpType OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Insta adaptor up reason"
+    ::= { instaAdaptorUp 1 }
+
+clusterTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF ClusterEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Table having clusterd entries"
+    ::= { clusterInfo 1 }
+
+clusterEntry OBJECT-TYPE
+    SYNTAX      ClusterEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A record in clusterd table"
+    INDEX   { clusterIndex }
+    ::= { clusterTable 1 }
+
+ClusterEntry ::=
+    SEQUENCE {
+        clusterIndex             Unsigned32,
+        iD              	INTEGER,
+        hostId         		OCTET STRING,
+        clusterHostName         OCTET STRING,
+	primaryAddress		IpAddress,
+	clusterAddress		IpAddress
+    }
+
+clusterIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Index representing row in clusterd table"
+    ::= { clusterEntry 1 }
+
+iD OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Unique index of a node in a cluster"
+    ::= { clusterEntry 2 }
+
+hostId OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "hostId of cluster node"
+    ::= { clusterEntry 3 }
+
+clusterHostName OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "hostname of clusterd node"
+    ::= { clusterEntry 4 }
+
+primaryAddress OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Ip address of eth0 interface"
+    ::= { clusterEntry 5 }
+
+clusterAddress OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Ip address of cluster interface configured"
+    ::= { clusterEntry 6 }
+
+numOfNodes OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Number of nodes currently in the cluster"
+    ::= { clusterInfo 2 }
+
+clusterID OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Cluster Id as configured"
+    ::= { clusterInfo 3 }
+
+clusterName OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Configured name of the cluster"
+    ::= { clusterInfo 4 }
+
+expectedNoOfNodes OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Number of expected nodes configured on the cluster"
+    ::= { clusterInfo 5 }
+
+collectorStats OBJECT IDENTIFIER
+    ::= { stats 1 }
+
+collectorStats5MinTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF CollectorStats5MinEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "List of 5 min stats of adaptors managed by collector"
+    ::= { collectorStats 1 }
+
+collectorStats1HourTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF CollectorStats1HourEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "List of 1 hour stats of adaptors managed by collector"
+    ::= { collectorStats 2 }
+
+collectorStats1DayTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF CollectorStats1DayEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "List of 1 day stats of adaptors managed by collector"
+    ::= { collectorStats 3 }
+
+collectorStatsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF CollectorStatsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "List of stats from start for adaptors managed by collector"
+    ::= { collectorStats 4 }
+
+collectorStatsEntry OBJECT-TYPE
+    SYNTAX      CollectorStatsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Entry for one stats from start of collector"
+    INDEX   { collectorStatsAdaptorName,collectorStatsInstanceId }
+    ::= { collectorStatsTable 1 }
+
+CollectorStatsEntry ::=
+    SEQUENCE {
+        collectorStatsAdaptorName           OCTET STRING,
+        collectorStatsInstanceId            Unsigned32,
+        collectorStatsAvgFlowPerMin         OCTET STRING,
+        collectorStatsTotalFlow             OCTET STRING,
+        collectorStatsDroppedFlow           OCTET STRING,
+        collectorStatsProratedFlow          OCTET STRING,
+        collectorStatsMaxFlowPerSec         OCTET STRING
+    }
+
+collectorStatsAdaptorName OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (0..256))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Name of the adaptor"
+    ::= { collectorStatsEntry 1 }
+
+collectorStatsInstanceId OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Instance ID of the collector. This is the instance id of the 
+            collector for which stats is needed"
+    ::= { collectorStatsEntry 2 }
+
+collectorStatsAvgFlowPerMin OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Average value of the flows per minute for the adaptor from
+             the time when collector was started"
+    ::= { collectorStatsEntry 3 }
+
+collectorStatsTotalFlow OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Total number of flows for the adaptor from the time
+             when collector was started"
+    ::= { collectorStatsEntry 4 }
+
+collectorStatsDroppedFlow OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Total number of dropped flows for the adaptor from the time
+             when collector was started"
+    ::= { collectorStatsEntry 5 }
+
+collectorStatsProratedFlow OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Total number of prorated flows for the adaptor from the time
+             when collector was started"
+    ::= { collectorStatsEntry 6 }
+
+collectorStatsMaxFlowPerSec OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Max number of flows per second for the adaptor from the time
+             when collector was started"
+    ::= { collectorStatsEntry 7 }
+
+collectorStats5MinEntry OBJECT-TYPE
+    SYNTAX      CollectorStats5MinEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Entry for one 5min stats"
+    INDEX   { collector5MinStatsAdaptorName,collector5MinStatsInstanceId }
+    ::= { collectorStats5MinTable 1 }
+
+CollectorStats5MinEntry ::=
+    SEQUENCE {
+        collector5MinStatsAdaptorName           OCTET STRING,
+        collector5MinStatsInstanceId            Unsigned32,
+        collector5MinStatsAvgFlowPerMin         OCTET STRING,
+        collector5MinStatsTotalFlow             OCTET STRING,
+        collector5MinStatsDroppedFlow           OCTET STRING,
+        collector5MinStatsProratedFlow          OCTET STRING,
+        collector5MinStatsMaxFlowPerSec         OCTET STRING,
+        collector5MinStatsNumFilesProcessed     OCTET STRING,
+        collector5MinStatsNumFilesDropped       OCTET STRING,
+        collector5MinStatsNumFilesWithErrors    OCTET STRING,
+        collector5MinStatsIntervalTime          OCTET STRING
+    }
+
+collector5MinStatsAdaptorName OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (0..256))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Name of the adaptor"
+    ::= { collectorStats5MinEntry 1 }
+
+collector5MinStatsInstanceId OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Instance ID of the stat. The value of this variable can be from
+            1-12, where 1 indicates last 5-min interval, 2 means last to last 
+            5-min interval and so on"
+    ::= { collectorStats5MinEntry 2 }
+
+collector5MinStatsAvgFlowPerMin OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Average value of the flows per minute for the adaptor in a
+             5 minute interval"
+    ::= { collectorStats5MinEntry 3 }
+
+collector5MinStatsTotalFlow OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Total number of flows for the adaptor in a 5 minute interval"
+    ::= { collectorStats5MinEntry 4 }
+
+collector5MinStatsDroppedFlow OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Total number of dropped flows for the adaptor in a 5 minute
+             interval"
+    ::= { collectorStats5MinEntry 5 }
+
+collector5MinStatsProratedFlow OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Total number of prorated flows for the adaptor in a 5 minute
+             interval"
+    ::= { collectorStats5MinEntry 6 }
+
+collector5MinStatsMaxFlowPerSec OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Max number of flows per second for the adaptor in a 5 minute
+             interval"
+    ::= { collectorStats5MinEntry 7 }
+
+collector5MinStatsNumFilesProcessed OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Number of files processed by the adaptor in a 5 minute
+             interval"
+    ::= { collectorStats5MinEntry 8 }
+
+collector5MinStatsNumFilesDropped OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Number of files dropped by the adaptor in a 5 minute
+             interval"
+    ::= { collectorStats5MinEntry 9 }
+
+collector5MinStatsNumFilesWithErrors OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Number of files with errors for the adaptor in a 5 minute
+             interval"
+    ::= { collectorStats5MinEntry 10 }
+
+collector5MinStatsIntervalTime OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Date and time when the stat was taken"
+    ::= { collectorStats5MinEntry 11 }
+
+collectorStats1HourEntry OBJECT-TYPE
+    SYNTAX      CollectorStats1HourEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Entry for one hour stats"
+    INDEX   { collector1HourStatsAdaptorName,collector1HourStatsInstanceId }
+    ::= { collectorStats1HourTable 1 }
+
+CollectorStats1HourEntry ::=
+    SEQUENCE {
+        collector1HourStatsAdaptorName           OCTET STRING,
+        collector1HourStatsInstanceId            Unsigned32,
+        collector1HourStatsAvgFlowPerMin         OCTET STRING,
+        collector1HourStatsTotalFlow             OCTET STRING,
+        collector1HourStatsDroppedFlow           OCTET STRING,
+        collector1HourStatsProratedFlow          OCTET STRING,
+        collector1HourStatsMaxFlowPerSec         OCTET STRING,
+        collector1HourStatsNumFilesProcessed     OCTET STRING,
+        collector1HourStatsNumFilesDropped       OCTET STRING,
+        collector1HourStatsNumFilesWithErrors    OCTET STRING,
+        collector1HourStatsIntervalTime          OCTET STRING
+    }
+
+collector1HourStatsAdaptorName OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (0..256))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Name of the adaptor"
+    ::= { collectorStats1HourEntry 1 }
+
+collector1HourStatsInstanceId OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Instance ID of the stat.The value of this variable can be from 
+            1-24, where 1 indicates last 1-hour interval, 2 means last to last
+            1-hour interval and so on"
+    ::= { collectorStats1HourEntry 2 }
+
+collector1HourStatsAvgFlowPerMin OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Average value of the flows per minute for the adaptor in a 1 hour
+             interval"
+    ::= { collectorStats1HourEntry 3 }
+
+collector1HourStatsTotalFlow OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Total number of flows for the adaptor in a 1 hour interval"
+    ::= { collectorStats1HourEntry 4 }
+
+collector1HourStatsDroppedFlow OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Total number of dropped flows for the adaptor in a 1 hour
+             interval"
+    ::= { collectorStats1HourEntry 5 }
+
+collector1HourStatsProratedFlow OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Total number of prorated flows for the adaptor in a 1 hour
+             interval"
+    ::= { collectorStats1HourEntry 6 }
+
+collector1HourStatsMaxFlowPerSec OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Max number of flows per second for the adaptor in a 1 hour
+             interval"
+    ::= { collectorStats1HourEntry 7 }
+
+collector1HourStatsNumFilesProcessed OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Number of files processed by the adaptor in a 1 hour
+             interval"
+    ::= { collectorStats1HourEntry 8 }
+
+collector1HourStatsNumFilesDropped OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Number of files dropped by the adaptor in a 1 hour
+             interval"
+    ::= { collectorStats1HourEntry 9 }
+
+collector1HourStatsNumFilesWithErrors OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Number of files with errors for the adaptor in a 1 hour
+             interval"
+    ::= { collectorStats1HourEntry 10 }
+
+collector1HourStatsIntervalTime OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Date and time when the stat was taken"
+    ::= { collectorStats1HourEntry 11 }
+
+collectorStats1DayEntry OBJECT-TYPE
+    SYNTAX      CollectorStats1DayEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Entry for one day stats"
+    INDEX   { collector1DayStatsAdaptorName,collector1DayStatsInstanceId }
+    ::= { collectorStats1DayTable 1 }
+
+CollectorStats1DayEntry ::=
+    SEQUENCE {
+        collector1DayStatsAdaptorName           OCTET STRING,
+        collector1DayStatsInstanceId            Unsigned32,
+        collector1DayStatsAvgFlowPerMin         OCTET STRING,
+        collector1DayStatsTotalFlow             OCTET STRING,
+        collector1DayStatsDroppedFlow           OCTET STRING,
+        collector1DayStatsProratedFlow          OCTET STRING,
+        collector1DayStatsMaxFlowPerSec         OCTET STRING,
+        collector1DayStatsNumFilesProcessed     OCTET STRING,
+        collector1DayStatsNumFilesDropped       OCTET STRING,
+        collector1DayStatsNumFilesWithErrors    OCTET STRING,
+        collector1DayStatsIntervalTime          OCTET STRING
+    }
+
+collector1DayStatsAdaptorName OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (0..256))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Name of the adaptor"
+    ::= { collectorStats1DayEntry 1 }
+
+collector1DayStatsInstanceId OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Instance ID of the stat.The value of this variable can be from 
+            1-7, where 1 indicates last 1-day interval, 2 means last to last
+            1-day interval and so on"
+    ::= { collectorStats1DayEntry 2 }
+
+collector1DayStatsAvgFlowPerMin OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Average value of the flows per minute for the adaptor in a 1 day
+             interval"
+    ::= { collectorStats1DayEntry 3 }
+
+collector1DayStatsTotalFlow OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Total number of flows for the adaptor in a 1 day interval"
+    ::= { collectorStats1DayEntry 4 }
+
+collector1DayStatsDroppedFlow OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Total number of dropped flows for the adaptor in a 1 day 
+             interval"
+    ::= { collectorStats1DayEntry 5 }
+
+collector1DayStatsProratedFlow OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Total number of prorated flows for the adaptor in a 1 day 
+             interval"
+    ::= { collectorStats1DayEntry 6 }
+
+collector1DayStatsMaxFlowPerSec OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Max number of flows per second in the adaptor in a 1 day 
+             interval"
+    ::= { collectorStats1DayEntry 7 }
+
+collector1DayStatsNumFilesProcessed OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Number of files processed by the adaptor in a 1 day 
+             interval"
+    ::= { collectorStats1DayEntry 8 }
+
+collector1DayStatsNumFilesDropped OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Number of files dropped by the adaptor in a 1 day 
+             interval"
+    ::= { collectorStats1DayEntry 9 }
+
+collector1DayStatsNumFilesWithErrors OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Number of files with errors for the adaptor in a 1 day 
+             interval"
+    ::= { collectorStats1DayEntry 10 }
+
+collector1DayStatsIntervalTime OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Date and time when the stat was taken"
+    ::= { collectorStats1DayEntry 11 }
+
+adaptorType OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Collector adaptor type"
+    ::= { noCollectorData 1 }
+
+lastTime OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Time data was last received by the collector"
+    ::= { noCollectorData 2 }
+
+inputIfName OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Interface name for receiving data by collector's input interface"
+    ::= { noCollectorData 3 }
+
+filename OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "namestring of file received on collector's input interface"
+    ::= { noCollectorData 4 }
+
+seqNumStart OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The start of the sequence numbers in flows or input files
+             expected at collector's input(socket or file) interface. It effectively
+             indicates the starting of the chunk of flows or files
+             received/not-received by collector"
+    ::= { noCollectorData 5 }
+
+seqNumEnd OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The end of the sequence numbers in flows or input files 
+             expected at collector's input(socket or file) interface. It effectively 
+             indicates the end of the chunk of flows or files received/not-received by 
+             collector"
+    ::= { noCollectorData 6 }
+
+hostAddress OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Host address of hdfs namenode"
+    ::= { hdfsNamenode 1 }
+
+portAddress OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "port address of hdfs namenode"
+    ::= { hdfsNamenode 2 }
+
+status OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "status of hdfs namenode
+            (1=Up, 2=Down)"
+    ::= { hdfsNamenode 3 }
+
+drbdHost OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Host address of drbd node"
+    ::= { drbdPrimary 1 }
+
+tProtocol OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Transfer protocol"
+    ::= { dataTransfer 1 }
+
+tHost OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Destination address for the Data Transfer"
+    ::= { dataTransfer 2 }
+
+receiveDataSource OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Source address of the data"
+    ::= { receiveData 1 }
+
+receiveDataType OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Data type being received"
+    ::= { receiveData 2 }
+
+validRecordsOIMCCIL OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Number of valid records (MDNs) in the OIMC CIL"
+    ::= { cilrecordstats 1 }
+
+invalidRecordsOIMCCIL OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Number of invalid records (MDNs) in the OIMC CIL"
+    ::= { cilrecordstats 2 }
+
+validRecordsNOOACIL OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Number of valid records (MDNs) in the NOOA CIL"
+    ::= { cilrecordstats 3 }
+
+invalidRecordsNOOACIL OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Number of invalid records (MDNs) in the NOOA CIL"
+    ::= { cilrecordstats 4 }
+
+droppedMIDMRecordsCount OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Number of MIDM records dropped due to MDN not present in both OIMC and NOOA CILs"
+    ::= { cilrecordstats 5 }
+
+processedDataType OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Type of Data being processed"
+    ::= { processedData 1 }
+
+lastDataProcessingTime OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Time of last data processed"
+    ::= { processedData 2 }
+
+transferDataType OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Type of Data being transferred"
+    ::= { transferData 1 }
+
+lastDataTransferTime OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Time of last transfer"
+    ::= { transferData 2 }
+
+taskName OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Name of the failed task"
+    ::= { inputData 1 }
+
+inputDataType OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Input Data Type missing that led to task failure"
+    ::= { inputData 2 }
+
+inputFileName OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "CIL Input File Name"
+    ::= { inputFileData 1 }
+
+inputFileState OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "CIL Input File State"
+    ::= { inputFileData 2 } 
+
+cause OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Cause of a failure event"
+    ::= { failure 1 }
+
+recordType OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Type of the record"
+    ::= { record 1 }
+
+downloader OBJECT IDENTIFIER
+    ::= { variables 3 }
+
+hostName OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Host Name "
+    ::= { downloader 1 }
+
+remoteLoc OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Remote Location "
+    ::= { downloader 2 }
+
+logType OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Type of log "
+    ::= { downloader 3 }
+
+dcName OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Name of the Distribution Center for which data is incomplete"
+    ::= { dataIncomplete 1 }
+
+dataType OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Input Data Type missing for the DC"
+    ::= { dataIncomplete 2 }
+
+dcNamelowThreshold OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Name of the Distribution Center for which data is below threshold"
+    ::= { lowThresholdinputData 1 }
+
+
+dataTypelowThreshold OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Input Data Type of low threshold for the DC"
+    ::= { lowThresholdinputData 2 }
+
+
+dcDataFileSize OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "File Size of the Data for the Distribution Center"
+    ::= { lowThresholdinputData 3 }
+
+uuid OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Universally Unique Identifier (UUID) of the Filesystem"
+    ::= { gmountd 1 }
+
+mountPoint OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Directory where the Filesystem is mounted."
+    ::= { gmountd 2 }
+
+drbdDownCause OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Cause of drbd failure."
+    ::= { drbd 1 }
+
+downDatanodesIp OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "List of Ips of the datanodes which are down."
+    ::= { hdfs 1 }
+
+--
+-- PRODUCTS
+--
+
+--
+-- NOTIFICATIONS
+--
+
+notificationPrefix OBJECT IDENTIFIER
+    ::= { notifications 0 }
+
+noDataTrap NOTIFICATION-TYPE
+    OBJECTS {adaptorType, lastTime}
+    STATUS  current
+    DESCRIPTION
+            "When data is not received by collector for configured period of
+time"
+    ::= { notificationPrefix 17 }
+
+noDataTrapExt NOTIFICATION-TYPE
+    OBJECTS {adaptorType, lastTime, systemHostname, currentTimestamp,
+    trapCounter, sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "When data is not received by collector for configured period of
+time"
+    ::= { notificationPrefix 1017 }
+
+hdfsNamenodeStatusTrap NOTIFICATION-TYPE
+    OBJECTS {hostAddress,portAddress,status}
+    STATUS  current
+    DESCRIPTION
+            "HDFS Namenode status is changed"
+    ::= { notificationPrefix 18 }
+
+hdfsNamenodeStatusTrapExt NOTIFICATION-TYPE
+    OBJECTS {hostAddress,portAddress,status, systemHostname,
+    currentTimestamp, trapCounter, sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "HDFS Namenode status is changed"
+    ::= { notificationPrefix 1018 }
+
+dataResumeTrap NOTIFICATION-TYPE
+    OBJECTS {adaptorType}
+    STATUS  current
+    DESCRIPTION
+            "Data receiving is resumed"
+    ::= { notificationPrefix 19 }
+
+dataResumeTrapExt NOTIFICATION-TYPE
+    OBJECTS {adaptorType, systemHostname, currentTimestamp, trapCounter,
+    sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "Data receiving is resumed"
+    ::= { notificationPrefix 1019 }
+
+instaAdaptorDownTrap NOTIFICATION-TYPE
+    OBJECTS { instaAdaptorType }
+    STATUS  current
+    DESCRIPTION
+            "When one of the adaptors of insta is down"
+    ::= { notificationPrefix 20 }
+
+instaAdaptorDownTrapExt NOTIFICATION-TYPE
+    OBJECTS { instaAdaptorType, systemHostname, currentTimestamp, trapCounter,
+    sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "When one of the adaptors of insta is down"
+    ::= { notificationPrefix 1020 }
+
+drbdSetPrimaryTrap NOTIFICATION-TYPE
+    OBJECTS {drbdHost}
+    STATUS  current
+    DESCRIPTION
+            "Drbd primary is not coming up because of multiple primaries"
+    ::= { notificationPrefix 21 }
+
+drbdSetPrimaryTrapExt NOTIFICATION-TYPE
+    OBJECTS {drbdHost, systemHostname, currentTimestamp, trapCounter,
+    sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "Drbd primary is not coming up because of multiple primaries"
+    ::= { notificationPrefix 1021 }
+
+droppedFlowThresCrossedTrap NOTIFICATION-TYPE
+    OBJECTS {adaptorType}
+    STATUS  current
+    DESCRIPTION
+            "Collector is dropping too many packets"
+    ::= { notificationPrefix 22 }
+
+droppedFlowThresCrossedTrapExt NOTIFICATION-TYPE
+    OBJECTS {adaptorType, systemHostname, currentTimestamp, trapCounter,
+    sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "Collector is dropping too many packets"
+    ::= { notificationPrefix 1022 }
+
+droppedFlowAlarmCleared NOTIFICATION-TYPE
+    OBJECTS {adaptorType}
+    STATUS  current
+    DESCRIPTION
+            "Collector is not dropping too many packets"
+    ::= { notificationPrefix 23 }
+
+droppedFlowAlarmClearedExt NOTIFICATION-TYPE
+    OBJECTS {adaptorType, systemHostname, currentTimestamp, trapCounter,
+    sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "Collector is not dropping too many packets"
+    ::= { notificationPrefix 1023 }
+
+dataTransferFailure NOTIFICATION-TYPE
+   OBJECTS {tProtocol,tHost}
+   STATUS  current
+   DESCRIPTION
+           "Unable to transfer data to a remote system using the specific protocol"
+   ::= { notificationPrefix 24 }
+
+dataTransferFailureExt NOTIFICATION-TYPE
+   OBJECTS {tProtocol,tHost, systemHostname, currentTimestamp, trapCounter,
+   sysLocation, customInfo}
+   STATUS  current
+   DESCRIPTION
+           "Unable to transfer data to a remote system using the specific protocol"
+   ::= { notificationPrefix 1024 }
+
+dataTransferSuccess NOTIFICATION-TYPE
+   OBJECTS {tProtocol,tHost}
+   STATUS  current
+   DESCRIPTION
+           "Successful transfer following a failure instance."
+   ::= { notificationPrefix 25 }
+
+dataTransferSuccessExt NOTIFICATION-TYPE
+   OBJECTS {tProtocol,tHost, systemHostname, currentTimestamp, trapCounter,
+   sysLocation, customInfo}
+   STATUS  current
+   DESCRIPTION
+           "Successful transfer following a failure instance."
+   ::= { notificationPrefix 1025 }
+
+receiveFailure NOTIFICATION-TYPE
+   OBJECTS {receiveDataSource,receiveDataType}
+   STATUS  current
+   DESCRIPTION
+           "Data receive failed"
+   ::= { notificationPrefix 26 }
+
+receiveFailureExt NOTIFICATION-TYPE
+   OBJECTS {receiveDataSource,receiveDataType, systemHostname,
+   currentTimestamp, trapCounter, sysLocation, customInfo}
+   STATUS  current
+   DESCRIPTION
+           "Data receive failed"
+   ::= { notificationPrefix 1026 }
+    
+receiveSuccess NOTIFICATION-TYPE
+   OBJECTS {receiveDataSource,receiveDataType}
+   STATUS  current
+   DESCRIPTION
+           "Data receive succeeded following a failure instance"
+   ::= { notificationPrefix 27 }
+
+receiveSuccessExt NOTIFICATION-TYPE
+   OBJECTS {receiveDataSource,receiveDataType, systemHostname,
+   currentTimestamp, trapCounter, sysLocation, customInfo}
+   STATUS  current
+   DESCRIPTION
+           "Data receive succeeded following a failure instance"
+   ::= { notificationPrefix 1027 }
+
+dataProcessTimeExceeded NOTIFICATION-TYPE
+   OBJECTS {processedDataType,lastDataProcessingTime} 
+    STATUS  current
+    DESCRIPTION
+            "Data processing not completed within specified time"
+    ::= { notificationPrefix 28 }
+
+dataProcessTimeExceededExt NOTIFICATION-TYPE
+   OBJECTS {processedDataType,lastDataProcessingTime, systemHostname,
+   currentTimestamp, trapCounter, sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "Data processing not completed within specified time"
+    ::= { notificationPrefix 1028 }
+
+dataProcessTimeOk NOTIFICATION-TYPE
+   OBJECTS {processedDataType,lastDataProcessingTime} 
+    STATUS  current
+    DESCRIPTION
+            "Data processing completed within specified time"
+    ::= { notificationPrefix 29 }
+
+dataProcessTimeOkExt NOTIFICATION-TYPE
+   OBJECTS {processedDataType,lastDataProcessingTime, systemHostname,
+   currentTimestamp, trapCounter, sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "Data processing completed within specified time"
+    ::= { notificationPrefix 1029 }
+
+dataTransferTimeExceeded NOTIFICATION-TYPE
+   OBJECTS {transferDataType,lastDataTransferTime} 
+    STATUS  current
+    DESCRIPTION 
+            "Processed data transfer not completed within specified time"
+    ::= { notificationPrefix 30 }
+    
+dataTransferTimeExceededExt NOTIFICATION-TYPE
+   OBJECTS {transferDataType,lastDataTransferTime, systemHostname,
+   currentTimestamp, trapCounter, sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "Processed data transfer not completed within specified time"
+    ::= { notificationPrefix 1030 }
+
+dataTransferTimeOk NOTIFICATION-TYPE
+   OBJECTS {transferDataType,lastDataTransferTime} 
+    STATUS  current
+    DESCRIPTION
+            "Processed data transfer completed within specified time"
+    ::= { notificationPrefix 31 }
+
+dataTransferTimeOkExt NOTIFICATION-TYPE
+   OBJECTS {transferDataType,lastDataTransferTime, systemHostname,
+   currentTimestamp, trapCounter, sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "Processed data transfer completed within specified time"
+    ::= { notificationPrefix 1031 }
+
+peakFlowThresCrossedTrap NOTIFICATION-TYPE
+    OBJECTS {adaptorType}
+    STATUS  current
+    DESCRIPTION
+            "Collector is crossing peak flow rate threshold"
+    ::= { notificationPrefix 32 }
+
+peakFlowThresCrossedTrapExt NOTIFICATION-TYPE
+    OBJECTS {adaptorType, systemHostname, currentTimestamp, trapCounter,
+    sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "Collector is crossing peak flow rate threshold"
+    ::= { notificationPrefix 1032 }
+
+peakFlowAlarmCleared NOTIFICATION-TYPE
+    OBJECTS {adaptorType}
+    STATUS  current
+    DESCRIPTION
+            "Collector is not crossing peak flow rate threshold"
+    ::= { notificationPrefix 33 }
+
+peakFlowAlarmClearedExt NOTIFICATION-TYPE
+    OBJECTS {adaptorType, systemHostname, currentTimestamp, trapCounter,
+    sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "Collector is not crossing peak flow rate threshold"
+    ::= { notificationPrefix 1033 }
+
+inputDataMissingTaskFailed NOTIFICATION-TYPE
+    OBJECTS {taskName,inputDataType}
+    STATUS  current
+    DESCRIPTION
+            "Task Failed due to lack of Input Data"
+    ::= { notificationPrefix 34 }
+
+inputDataMissingTaskFailedExt NOTIFICATION-TYPE
+    OBJECTS {taskName,inputDataType, systemHostname, currentTimestamp,
+    trapCounter, sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "Task Failed due to lack of Input Data"
+    ::= { notificationPrefix 1034 }
+
+inputDataMissingTaskOk NOTIFICATION-TYPE
+    OBJECTS {taskName,inputDataType}
+    STATUS  current
+    DESCRIPTION
+            "Task Success after input data task failure"
+    ::= { notificationPrefix 35 }
+
+inputDataMissingTaskOkExt NOTIFICATION-TYPE
+    OBJECTS {taskName,inputDataType, systemHostname, currentTimestamp,
+    trapCounter, sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "Task Success after input data task failure"
+    ::= { notificationPrefix 1035 }
+
+lsFailoverSftp NOTIFICATION-TYPE
+    OBJECTS { hostName,remoteLoc }
+    STATUS  current
+    DESCRIPTION
+            "Error in executing ls command over sftp"
+    ::= { notificationPrefix 36 }
+
+lsFailoverSftpExt NOTIFICATION-TYPE
+    OBJECTS { hostName,remoteLoc, systemHostname, currentTimestamp,
+    trapCounter, sysLocation, customInfo }
+    STATUS  current
+    DESCRIPTION
+            "Error in executing ls command over sftp"
+    ::= { notificationPrefix 1036 }
+
+downloadFail NOTIFICATION-TYPE
+    OBJECTS { remoteLoc }
+    STATUS  current
+    DESCRIPTION
+            "Error in downloading file"
+    ::= { notificationPrefix 37 }
+
+downloadFailExt NOTIFICATION-TYPE
+    OBJECTS { remoteLoc, systemHostname, currentTimestamp, trapCounter,
+    sysLocation, customInfo }
+    STATUS  current
+    DESCRIPTION
+            "Error in downloading file"
+    ::= { notificationPrefix 1037 }
+
+slowDownload NOTIFICATION-TYPE
+    OBJECTS { logType }
+    STATUS  current
+    DESCRIPTION
+            "Download is slow"
+    ::= { notificationPrefix 38 }
+
+slowDownloadExt NOTIFICATION-TYPE
+    OBJECTS { logType, systemHostname, currentTimestamp, trapCounter,
+    sysLocation, customInfo }
+    STATUS  current
+    DESCRIPTION
+            "Download is slow"
+    ::= { notificationPrefix 1038 }
+
+invalidAtomFeed NOTIFICATION-TYPE
+    OBJECTS { remoteLoc }
+    STATUS  current
+    DESCRIPTION
+            "Invalid Atom Feed"
+    ::= { notificationPrefix 39 }
+
+invalidAtomFeedExt NOTIFICATION-TYPE
+    OBJECTS { remoteLoc, systemHostname, currentTimestamp, trapCounter,
+    sysLocation, customInfo }
+    STATUS  current
+    DESCRIPTION
+            "Invalid Atom Feed"
+    ::= { notificationPrefix 1039 }
+
+hdfsClusterDown NOTIFICATION-TYPE
+    OBJECTS { hostName }
+    STATUS  current
+    DESCRIPTION
+            "HDFS cluster is down"
+    ::= { notificationPrefix 40 }
+
+hdfsClusterDownExt NOTIFICATION-TYPE
+    OBJECTS { hostName, systemHostname, currentTimestamp, trapCounter,
+    sysLocation, customInfo }
+    STATUS  current
+    DESCRIPTION
+            "HDFS cluster is down"
+    ::= { notificationPrefix 1040 }
+
+noInputIfDataReceivedTrap NOTIFICATION-TYPE
+    OBJECTS {adaptorType,inputIfName,lastTime}
+    STATUS  current
+    DESCRIPTION
+            "When data is not received by collector's input interface for
+configured period of time"
+    ::= { notificationPrefix 41 }
+
+noInputIfDataReceivedTrapExt NOTIFICATION-TYPE
+    OBJECTS {adaptorType,inputIfName,lastTime, systemHostname,
+    currentTimestamp, trapCounter, sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "When data is not received by collector's input interface for
+configured period of time"
+    ::= { notificationPrefix 1041 }
+
+inputIfDataResumeTrap NOTIFICATION-TYPE
+    OBJECTS {adaptorType,inputIfName}
+    STATUS  current
+    DESCRIPTION
+            "Data receiving by collector's input interface is now resumed"
+    ::= { notificationPrefix 42 }
+
+inputIfDataResumeTrapExt NOTIFICATION-TYPE
+    OBJECTS {adaptorType,inputIfName, systemHostname, currentTimestamp,
+    trapCounter, sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "Data receiving by collector's input interface is now resumed"
+    ::= { notificationPrefix 1042 }
+
+inputDataNotUsableTaskFailed NOTIFICATION-TYPE
+    OBJECTS {inputDataType,cause}
+    STATUS  current
+    DESCRIPTION
+            "Task Failed due to invalid Input Data"
+    ::= { notificationPrefix 43 }
+
+inputDataNotUsableTaskFailedExt NOTIFICATION-TYPE
+    OBJECTS {inputDataType,cause, systemHostname, currentTimestamp,
+    trapCounter, sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "Task Failed due to invalid Input Data"
+    ::= { notificationPrefix 1043 }
+
+inputDataNotUsableTaskOk NOTIFICATION-TYPE
+    OBJECTS {inputDataType,cause}
+    STATUS  current
+    DESCRIPTION
+            "Task Success after input data invalid task failure"
+    ::= { notificationPrefix 44 }
+
+inputDataNotUsableTaskOkExt NOTIFICATION-TYPE
+    OBJECTS {inputDataType,cause,systemHostname, currentTimestamp,trapCounter, sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "Task Success after input data invalid task failure"
+    ::= { notificationPrefix 1044 }
+
+receiveDataValidationFail NOTIFICATION-TYPE
+   OBJECTS {inputDataType,cause}
+   STATUS  current
+   DESCRIPTION
+           "Received data from remote machine is invalid"
+   ::= { notificationPrefix 45 }
+
+receiveDataValidationFailExt NOTIFICATION-TYPE
+   OBJECTS {inputDataType,cause, systemHostname, currentTimestamp,
+   trapCounter, sysLocation, customInfo}
+   STATUS  current
+   DESCRIPTION
+           "Received data from remote machine is invalid"
+   ::= { notificationPrefix 1045 }
+
+receiveDataValidationSuccess NOTIFICATION-TYPE
+   OBJECTS {inputDataType,cause}
+   STATUS  current
+   DESCRIPTION
+           "Received data from remote machine is valid following an invalid data instance"
+   ::= { notificationPrefix 46 }
+
+receiveDataValidationSuccessExt NOTIFICATION-TYPE
+   OBJECTS {inputDataType,cause, systemHostname, currentTimestamp,
+   trapCounter, sysLocation, customInfo}
+   STATUS  current
+   DESCRIPTION
+           "Received data from remote machine is valid following an invalid data instance"
+   ::= { notificationPrefix 1046 }
+
+dataTransferStall NOTIFICATION-TYPE
+   OBJECTS {tProtocol,tHost}
+   STATUS  current
+   DESCRIPTION
+           "Data transfer stalled"
+   ::= { notificationPrefix 47 }
+
+dataTransferStallExt NOTIFICATION-TYPE
+   OBJECTS {tProtocol,tHost, systemHostname, currentTimestamp, trapCounter,
+   sysLocation, customInfo}
+   STATUS  current
+   DESCRIPTION
+           "Data transfer stalled"
+   ::= { notificationPrefix 1047 }
+
+dataTransferResume NOTIFICATION-TYPE
+   OBJECTS {tProtocol,tHost}
+   STATUS  current
+   DESCRIPTION
+           "Successful transfer following a stalled instance."
+   ::= { notificationPrefix 48 }
+
+dataTransferResumeExt NOTIFICATION-TYPE
+   OBJECTS {tProtocol,tHost, systemHostname, currentTimestamp, trapCounter,
+   sysLocation, customInfo}
+   STATUS  current
+   DESCRIPTION
+           "Successful transfer following a stalled instance."
+   ::= { notificationPrefix 1048 }
+
+invalidRecordThresTrap NOTIFICATION-TYPE
+   OBJECTS {recordType}
+   STATUS  current
+   DESCRIPTION
+           "Invalid record threshold has been reached"
+   ::= { notificationPrefix 49 }
+
+invalidRecordThresTrapExt NOTIFICATION-TYPE
+   OBJECTS {recordType, systemHostname, currentTimestamp, trapCounter,
+   sysLocation, customInfo}
+   STATUS  current
+   DESCRIPTION
+           "Invalid record threshold has been reached"
+   ::= { notificationPrefix 1049 }
+
+invalidRecordThresCleared NOTIFICATION-TYPE
+   OBJECTS {recordType}
+   STATUS  current
+   DESCRIPTION
+           "Number of invalid records has come back below the threshold value"
+   ::= { notificationPrefix 50 }
+
+invalidRecordThresClearedExt NOTIFICATION-TYPE
+   OBJECTS {recordType, systemHostname, currentTimestamp, trapCounter,
+   sysLocation, customInfo}
+   STATUS  current
+   DESCRIPTION
+           "Number of invalid records has come back below the threshold value"
+   ::= { notificationPrefix 1050 }
+
+inputDataIncomplete NOTIFICATION-TYPE
+   OBJECTS {dcName,dataType}
+   STATUS  current
+   DESCRIPTION
+           "Incomplete Data"
+   ::= { notificationPrefix 51 }
+    
+inputDataIncompleteExt NOTIFICATION-TYPE
+   OBJECTS {dcName,dataType, systemHostname, currentTimestamp, trapCounter,
+   sysLocation, customInfo}
+   STATUS  current
+   DESCRIPTION
+           "Incomplete Data"
+   ::= { notificationPrefix 1051 }
+
+inputDataAvailable NOTIFICATION-TYPE
+   OBJECTS {dcName,dataType}
+   STATUS  current
+   DESCRIPTION
+           "Complete Data"
+   ::= { notificationPrefix 52 }
+
+inputDataAvailableExt NOTIFICATION-TYPE
+   OBJECTS {dcName,dataType, systemHostname, currentTimestamp, trapCounter,
+   sysLocation, customInfo}
+   STATUS  current
+   DESCRIPTION
+           "Complete Data"
+   ::= { notificationPrefix 1052 }
+
+lowThresholdInputDataRaise NOTIFICATION-TYPE
+   OBJECTS {dcNamelowThreshold,dataTypelowThreshold,dcDataFileSize}
+   STATUS  current
+   DESCRIPTION
+           "Data receive is below the low threshold for DC"
+   ::= { notificationPrefix 53 }
+
+lowThresholdInputDataRaiseExt NOTIFICATION-TYPE
+   OBJECTS {dcNamelowThreshold,dataTypelowThreshold,dcDataFileSize,
+   systemHostname, currentTimestamp, trapCounter, sysLocation, customInfo}
+   STATUS  current
+   DESCRIPTION
+           "Data receive is below the low threshold for DC"
+   ::= { notificationPrefix 1053 }
+
+lowThresholdInputDataClear NOTIFICATION-TYPE
+   OBJECTS {dcNamelowThreshold,dataTypelowThreshold,dcDataFileSize}
+   STATUS  current
+   DESCRIPTION
+           "Data receive is above the low threshold for DC"
+   ::= { notificationPrefix 54 }
+
+lowThresholdInputDataClearExt NOTIFICATION-TYPE
+   OBJECTS {dcNamelowThreshold,dataTypelowThreshold,dcDataFileSize,
+   systemHostname, currentTimestamp, trapCounter, sysLocation, customInfo}
+   STATUS  current
+   DESCRIPTION
+           "Data receive is above the low threshold for DC"
+   ::= { notificationPrefix 1054 }
+
+fsNotMountedErrorTrap NOTIFICATION-TYPE
+    OBJECTS {uuid,mountPoint}
+    STATUS  current
+    DESCRIPTION
+            "Mounting filesystem on specified mount-point failed"
+    ::= { notificationPrefix 55 }
+
+fsNotMountedErrorTrapExt NOTIFICATION-TYPE
+    OBJECTS {uuid,mountPoint, systemHostname, currentTimestamp, trapCounter,
+    sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "Mounting filesystem on specified mount-point failed"
+    ::= { notificationPrefix 1055 }
+
+fsNotMountedClearTrap NOTIFICATION-TYPE
+    OBJECTS {uuid,mountPoint}
+    STATUS  current
+    DESCRIPTION
+            "Mounting filesystem on specified mount-point now successfull"
+    ::= { notificationPrefix 56 }
+
+fsNotMountedClearTrapExt NOTIFICATION-TYPE
+    OBJECTS {uuid,mountPoint, systemHostname, currentTimestamp, trapCounter,
+    sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "Mounting filesystem on specified mount-point now successfull"
+    ::= { notificationPrefix 1056 }
+
+fsReadOnlyMountedErrorTrap NOTIFICATION-TYPE
+    OBJECTS {uuid,mountPoint}
+    STATUS  current
+    DESCRIPTION
+            "Mount point is Read-Only"
+    ::= { notificationPrefix 57 }
+
+fsReadOnlyMountedErrorTrapExt NOTIFICATION-TYPE
+    OBJECTS {uuid,mountPoint, systemHostname, currentTimestamp, trapCounter,
+    sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "Mount point is Read-Only"
+    ::= { notificationPrefix 1057 }
+
+fsReadOnlyMountedClearTrap NOTIFICATION-TYPE
+    OBJECTS {uuid,mountPoint}
+    STATUS  current
+    DESCRIPTION
+            "Mount point Read-Only Trap cleared"
+    ::= { notificationPrefix 58 }
+
+fsReadOnlyMountedClearTrapExt NOTIFICATION-TYPE
+    OBJECTS {uuid,mountPoint, systemHostname, currentTimestamp, trapCounter,
+    sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "Mount point Read-Only Trap cleared"
+    ::= { notificationPrefix 1058 }
+
+clUnexpectedJoin NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "A node has unexpectedly joined the cluster"
+    ::= { notificationPrefix 59 }
+
+clUnexpectedJoinExt NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "A node has unexpectedly joined the cluster"
+    ::= { notificationPrefix 1059 }
+
+clUnexpectedLeave NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "A node has unexpectedly left the cluster"
+    ::= { notificationPrefix 60 }
+
+clUnexpectedLeaveExt NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "A node has unexpectedly left the cluster"
+    ::= { notificationPrefix 1060 }
+
+clJoin NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "A node has joined the cluster."
+    ::= { notificationPrefix 61 }
+
+clJoinExt NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "A node has joined the cluster."
+    ::= { notificationPrefix 1061 }
+
+clLeave NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "A node has left the cluster."
+    ::= { notificationPrefix 62 }
+
+clLeaveExt NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "A node has left the cluster."
+    ::= { notificationPrefix 1062 }
+
+clMaster NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "Node has changed role to cluster master."
+    ::= { notificationPrefix 63 }
+
+clMasterExt NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "Node has changed role to cluster master."
+    ::= { notificationPrefix 1063 }
+
+clNonMaster NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "Node has changed role. Node is not cluster master."
+    ::= { notificationPrefix 64 }
+
+clNonMasterExt NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "Node has changed role. Node is not cluster master."
+    ::= { notificationPrefix 1064 }
+
+usingEmptyIBTrap NOTIFICATION-TYPE
+    OBJECTS {inputDataType,cause}
+    STATUS  current
+    DESCRIPTION
+            "Using Empty IB trap raised"
+    ::= { notificationPrefix 101 }
+
+usingEmptyIBTrapExt NOTIFICATION-TYPE
+    OBJECTS {inputDataType,cause, systemHostname, currentTimestamp,
+    trapCounter, sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "Using Empty IB trap raised"
+    ::= { notificationPrefix 1101 }
+
+validIBAvailableTrap NOTIFICATION-TYPE
+    OBJECTS {inputDataType}
+    STATUS  current
+    DESCRIPTION
+            "Clear the trap as Valid IB is available"
+    ::= { notificationPrefix 102 }
+
+validIBAvailableTrapExt NOTIFICATION-TYPE
+    OBJECTS {inputDataType, systemHostname, currentTimestamp, trapCounter,
+    sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "Clear the trap as Valid IB is available"
+    ::= { notificationPrefix 1102 }
+
+inputFileReceivedAlarm NOTIFICATION-TYPE
+    OBJECTS {inputDataType,inputFileName,inputFileState}
+    STATUS  current
+    DESCRIPTION
+            "Inclusion List File Received Alarm"
+    ::= { notificationPrefix 103 }
+
+inputFileReceivedAlarmExt NOTIFICATION-TYPE
+    OBJECTS {inputDataType,inputFileName,inputFileState, systemHostname,
+    currentTimestamp, trapCounter, sysLocation, customInfo}
+    STATUS  current
+    DESCRIPTION
+            "Inclusion List File Received Alarm"
+    ::= { notificationPrefix 1103 }
+
+ntpSyncLoss NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "NTP Sync Loss"
+    ::= { notificationPrefix 77 }
+
+ntpSyncLossExt NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "NTP Sync Loss"
+    ::= { notificationPrefix 1077 }
+
+ntpSyncLossClear NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "NTP Sync Loss Clear"
+    ::= { notificationPrefix 78 }
+
+ntpSyncLossClearExt NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "NTP Sync Loss Clear"
+    ::= { notificationPrefix 1078 }
+
+instaBackupStatusTrap NOTIFICATION-TYPE
+    OBJECTS { instaBackupReason }
+    STATUS  current
+    DESCRIPTION
+            "Indicates the dbroot backup failed"
+    ::= { notificationPrefix 67 }
+
+instaBackupStatusTrapExt NOTIFICATION-TYPE
+    OBJECTS { instaBackupReason, systemHostname, currentTimestamp, trapCounter, sysLocation, customInfo }
+    STATUS  current
+    DESCRIPTION
+            "Indicates the dbroot backup failed"
+    ::= { notificationPrefix 1067 }
+
+instaAdaptorUpTrap NOTIFICATION-TYPE
+    OBJECTS { instaAdaptorUpType }
+    STATUS  current
+    DESCRIPTION
+            "When one of the adaptors of insta is up"
+    ::= { notificationPrefix 68 }
+
+instaAdaptorUpTrapExt NOTIFICATION-TYPE
+    OBJECTS { instaAdaptorUpType, systemHostname, currentTimestamp, trapCounter, sysLocation, customInfo }
+    STATUS  current
+    DESCRIPTION
+            "When one of the adaptors of insta is up"
+    ::= { notificationPrefix 1068 }
+
+lunPathsDown NOTIFICATION-TYPE
+    OBJECTS { lunName }
+    STATUS  current
+    DESCRIPTION
+            "Connectivity to a SAN based filesystem is down"
+    ::= { notificationPrefix 69 }
+
+lunPathsDownExt NOTIFICATION-TYPE
+    OBJECTS { lunName, systemHostname, currentTimestamp, trapCounter, sysLocation, customInfo }
+    STATUS  current
+    DESCRIPTION
+            "Connectivity to a SAN based filesystem is down"
+    ::= { notificationPrefix 1069 }
+
+lunPathsOK NOTIFICATION-TYPE
+    OBJECTS { lunName }
+    STATUS  current
+    DESCRIPTION
+            "Connectivity to a SAN based filesystem is up"
+    ::= { notificationPrefix 70 }
+
+lunPathsOKExt NOTIFICATION-TYPE
+    OBJECTS { lunName, systemHostname, currentTimestamp, trapCounter, sysLocation, customInfo }
+    STATUS  current
+    DESCRIPTION
+            "Connectivity to a SAN based filesystem is up"
+    ::= { notificationPrefix 1070 }
+
+inputFileUnzipError NOTIFICATION-TYPE
+    OBJECTS { adaptorType, filename }
+    STATUS  current
+    DESCRIPTION
+            "Error occured while decompressing the compressed input file
+            received by collector"
+    ::= { notificationPrefix 71 }
+
+inputFileUnzipErrorExt NOTIFICATION-TYPE
+    OBJECTS { adaptorType, filename, systemHostname, currentTimestamp, trapCounter, sysLocation, customInfo }
+    STATUS  current
+    DESCRIPTION
+            "Error occured while decompressing the compressed input file
+            received by collector"
+    ::= { notificationPrefix 1071 }
+
+inputFileUnzipErrorClear NOTIFICATION-TYPE
+    OBJECTS { adaptorType, filename }
+    STATUS  current
+    DESCRIPTION
+            "Clear of earlier sent trap for decompressing of input filename.
+             This is sent on successful unzipping of some next input file"
+    ::= { notificationPrefix 72 }
+
+inputFileUnzipErrorClearExt NOTIFICATION-TYPE
+    OBJECTS { adaptorType, filename, systemHostname, currentTimestamp, trapCounter, sysLocation, customInfo }
+    STATUS  current
+    DESCRIPTION
+            "Clear of earlier sent trap for decompressing of input filename.
+             This is sent on successful unzipping of some next input file"
+    ::= { notificationPrefix 1072 }
+
+inputSequenceNumMissed NOTIFICATION-TYPE
+    OBJECTS { adaptorType, seqNumStart, seqNumEnd }
+    STATUS  current
+    DESCRIPTION
+            "Trap raised on missing one or chunk of missed flows or input
+             files received by collector. Start and End of sequence numbers
+             may refer to the chunk of flows or input files missed"
+    ::= { notificationPrefix 73 }
+
+inputSequenceNumMissedExt NOTIFICATION-TYPE
+    OBJECTS { adaptorType, seqNumStart, seqNumEnd, systemHostname, currentTimestamp, trapCounter, sysLocation, customInfo }
+    STATUS  current
+    DESCRIPTION
+            "Trap raised on missing one or chunk of missed flows or input
+             files received by collector. Start and End of sequence numbers
+             may refer to the chunk of flows or input files missed"
+    ::= { notificationPrefix 1073 }
+
+inputSequenceNumMissedClear NOTIFICATION-TYPE
+    OBJECTS { adaptorType, seqNumStart, seqNumEnd }
+    STATUS  current
+    DESCRIPTION
+            "Clear of earlier trap sent on missing some sequence numbers of
+             flows or input files. Start and End of sequence numbers may refer
+             to monitored sequence numbers after which clear trap is raised"
+    ::= { notificationPrefix 74 }
+
+inputSequenceNumMissedClearExt NOTIFICATION-TYPE
+    OBJECTS { adaptorType, seqNumStart, seqNumEnd, systemHostname, currentTimestamp, trapCounter, sysLocation, customInfo }
+    STATUS  current
+    DESCRIPTION
+            "Clear of earlier trap sent on missing some sequence numbers of
+             flows or input files. Start and End of sequence numbers may refer
+             to monitored sequence numbers after which clear trap is raised"
+    ::= { notificationPrefix 1074 }
+
+inputFileRecordCountMismatch NOTIFICATION-TYPE
+    OBJECTS { adaptorType, filename }
+    STATUS  current
+    DESCRIPTION
+            "Records read from input file do not match with the record count
+            specified in input filename"
+    ::= { notificationPrefix 75 }
+
+inputFileRecordCountMismatchExt NOTIFICATION-TYPE
+    OBJECTS { adaptorType, filename, systemHostname, currentTimestamp, trapCounter, sysLocation, customInfo }
+    STATUS  current
+    DESCRIPTION
+            "Records read from input file do not match with the record count
+            specified in input filename"
+    ::= { notificationPrefix 1075 }
+
+inputFileRecordCountMismatchClear NOTIFICATION-TYPE
+    OBJECTS { adaptorType, filename }
+    STATUS  current
+    DESCRIPTION
+            "Clearing the record count mismatch trap sent earlier. This trap
+             is sent on successful matching of the records read and records
+             specified in filename of some next input file"
+    ::= { notificationPrefix 76 }
+
+inputFileRecordCountMismatchClearExt NOTIFICATION-TYPE
+    OBJECTS { adaptorType, filename, systemHostname, currentTimestamp, trapCounter, sysLocation, customInfo }
+    STATUS  current
+    DESCRIPTION
+            "Clearing the record count mismatch trap sent earlier. This trap
+             is sent on successful matching of the records read and records
+             specified in filename of some next input file"
+    ::= { notificationPrefix 1076 }
+
+gmsReconfigFailed NOTIFICATION-TYPE
+    OBJECTS { nodeMgmtIp,reconfigFailedReason }
+    STATUS  current
+    DESCRIPTION
+            "Reconfiguration of node failed through GMS"
+    ::= { notificationPrefix 79 }
+
+gmsReconfigFailedExt NOTIFICATION-TYPE
+    OBJECTS { nodeMgmtIp,reconfigFailedReason, systemHostname, currentTimestamp, trapCounter, sysLocation, customInfo }
+    STATUS  current
+    DESCRIPTION
+            "Reconfiguration of node failed through GMS"
+    ::= { notificationPrefix 1079 }
+
+gmsReconfigOk NOTIFICATION-TYPE
+    OBJECTS { nodeMgmtIp }
+    STATUS  current
+    DESCRIPTION
+            "Reconfiguration of node was successful through GMS"
+    ::= { notificationPrefix 80 }
+
+gmsReconfigOkExt NOTIFICATION-TYPE
+    OBJECTS { nodeMgmtIp, systemHostname, currentTimestamp, trapCounter, sysLocation, customInfo }
+    STATUS  current
+    DESCRIPTION
+            "Reconfiguration of node was successful through GMS"
+    ::= { notificationPrefix 1080 }
+
+adaptiveEvictionStarted NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "Adaptive Eviction has been triggered in rubix"
+    ::= { notificationPrefix 81 }
+
+adaptiveEvictionStartedExt NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "Adaptive Eviction has been triggered in rubix"
+    ::= { notificationPrefix 1081 }
+
+adaptiveEvictionOk NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "Adaptive eviction has been finished in rubix"
+    ::= { notificationPrefix 82 }
+
+adaptiveEvictionOkExt NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "Adaptive eviction has been finished in rubix"
+    ::= { notificationPrefix 1082 }
+
+drbdStatusDown NOTIFICATION-TYPE
+    OBJECTS { drbdDownCause }
+    STATUS  current
+    DESCRIPTION
+            "DRBD failed to come up on the node"
+    ::= { notificationPrefix 83 }
+
+drbdStatusDownExt NOTIFICATION-TYPE
+    OBJECTS { drbdDownCause, systemHostname, currentTimestamp, trapCounter, sysLocation, customInfo }
+    STATUS  current
+    DESCRIPTION
+            "DRBD failed to come up on the node"
+    ::= { notificationPrefix 1083 }
+
+drbdStatusUp NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "DRBD successfully came up on the node"
+    ::= { notificationPrefix 84 }
+
+drbdStatusUpExt NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "DRBD successfully came up on the node"
+    ::= { notificationPrefix 1084 }
+
+instaBackupStatusClearTrap NOTIFICATION-TYPE
+    OBJECTS { instaBackupReason }
+    STATUS  current
+    DESCRIPTION
+            "Indicates the dbroot backup was successful"
+    ::= { notificationPrefix 85 }
+
+instaBackupStatusClearTrapExt NOTIFICATION-TYPE
+    OBJECTS { instaBackupReason, systemHostname, currentTimestamp, trapCounter, sysLocation, customInfo }
+    STATUS  current
+    DESCRIPTION
+            "Indicates the dbroot backup was successful"
+    ::= { notificationPrefix 1085 }
+
+postgresqlStartupFail NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "PostgreSQL startup has failed."
+    ::= { notificationPrefix 1086 }
+
+postgresqlStartupOK NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "PostgreSQL startup has succeeded after initial failure."
+    ::= { notificationPrefix 1087 }
+
+postgresqlStreamingReplicationFail NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "PostgreSQL streaming replication has failed."
+    ::= { notificationPrefix 1088 }
+
+postgresqlStreamingReplicationOK NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "PostgreSQL streaming replication has succeeded."
+    ::= { notificationPrefix 1089 }
+
+postgresqlBasebackupFail NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "PostgreSQL basebackup has failed."
+    ::= { notificationPrefix 1090 }
+
+postgresqlBasebackupOK NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "PostgreSQL basebackup has succeeded."
+    ::= { notificationPrefix 1091 }
+
+HDFSDatanodesDown NOTIFICATION-TYPE
+    OBJECTS { downDatanodesIp }
+    STATUS  current
+    DESCRIPTION
+            "HDFS some datanodes are down."
+    ::= { notificationPrefix 1101 }
+
+HDFSDatanodesUp NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "HDFS all datanodes are up."
+    ::= { notificationPrefix 1102 }
+
+HDFSInvalidblocksError NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "HDFS missing, corrupted or under-replicated blocks are present."
+    ::= { notificationPrefix 1103 }
+
+HDFSInvalidblocksClear NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+            "Hadoop no missing, corrupted or under-replicated blocks are
+            present."
+    ::= { notificationPrefix 1104 }
+
+END
