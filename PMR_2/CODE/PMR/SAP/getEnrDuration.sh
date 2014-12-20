@@ -24,7 +24,7 @@ write_log "Starting Enrduration check"
 NAMENODE="$NETWORK.$CNP0"
 OOZIECMD="/opt/oozie/bin/oozie jobs -oozie http://localhost:8080/oozie -jobtype wf -len 30000"
 HDFSCMD="$HADOOP dfs -ls "
-OOZIEADMI="/data/oozie-admi/"
+OOZIEADMI="/data/oozie-admi"
 mydate=`date "+%Y-%m-%d" --date="1 days ago"`
 
 #GET OOZIE JOB LIST
@@ -49,7 +49,7 @@ $SSH $NAMENODE "${OOZIECMD}" 2>/dev/null | sed -e 's/\s*SUCCEEDED/SUCCEEDED/g' -
 #if [[ -s $TMPFILE.enrjobs ]]; then
 subtot=0;
 for dc in ${midmDC}; do
-  jobid=`grep $dc $TMPFILE.enrjobs | awk '{print $NF'}`
+  jobid=`grep $dc $TMPFILE.enrjobs | tail -1 | awk '{print $NF'}`
 
   str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed 2>/dev/null`
   if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
@@ -89,7 +89,7 @@ echo "$TIMESTAMP,MIDM,ALL_DC,MIDM_data_processing_total_duration,$tottimestring"
 subtot=0;
 for dc in ${midmCFIDC}; do
 
-  jobid=`grep $dc $TMPFILE.cfi.datajobs | awk '{print $8'}`
+  jobid=`grep $dc $TMPFILE.cfi.datajobs | tail -1 | awk '{print $8'}`
 
   str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed 2>/dev/null`
   if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
@@ -123,7 +123,7 @@ echo "$TIMESTAMP,MIDM,ALL_DC,MIDM_data_transfer_total_duration,$xfertottimestrin
 subtot=0;
 for dc in ${midmDC}; do
 
-  jobid=`grep $dc $TMPFILE.bda.datajobs | awk '{print $8'}`
+  jobid=`grep $dc $TMPFILE.bda.datajobs | tail -1 | awk '{print $8'}`
 
   str='';str=`/bin/grep $dc ${BASEPATH}/etc/nameCLLI.sed 2>/dev/null`
   if [[ $str ]]; then dcClli=`echo $dc | sed $str`; else dcClli=$dc; fi
@@ -154,8 +154,8 @@ echo "$TIMESTAMP,MIDM/BDA/ALL_DC,MIDM_data_transfer_total_duration,$xfertottimes
 #
 # midmTotalDuration - Enr Start TO BDA End time.
 # 
-startjobid=`grep $MIDMSTARTDC $TMPFILE.enrjobs | awk '{print $NF'}`
-endjobid=`grep $MIDMENDDC $TMPFILE.bda.datajobs | awk '{print $NF'}`
+startjobid=`grep $MIDMSTARTDC $TMPFILE.enrjobs | tail -1 | awk '{print $NF'}`
+endjobid=`grep $MIDMENDDC $TMPFILE.bda.datajobs | tail -1 | awk '{print $NF'}`
 
 if [[ -n $startjobid && -n $endjobid ]]; then
 

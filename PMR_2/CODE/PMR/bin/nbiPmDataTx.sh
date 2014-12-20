@@ -43,7 +43,8 @@ fi
 }
 
 function raiseTrap {
-  /usr/bin/snmptrap -v 2c -c public ${PMRMASTER} "" .1.3.6.1.4.1.37140.3.0.24 .1.3.6.1.4.1.37140.1.2.6.1 string 'PM' .1.3.6.1.4.1.37140.1.2.6.2 string "$1" .1.3.6.1.4.1.37140.1.2.6.3 string "`date`"
+  #/usr/bin/snmptrap -v 2c -c public ${PMRMASTER} "" .1.3.6.1.4.1.37140.3.0.24 .1.3.6.1.4.1.37140.1.2.6.1 string 'PM' .1.3.6.1.4.1.37140.1.2.6.2 string "$1" .1.3.6.1.4.1.37140.1.2.6.3 string "`date`"
+  /usr/bin/snmptrap -v 2c -c 2Y2LHTZP31 ${PMRMASTER} "" .1.3.6.1.4.1.37140.3.0.24 .1.3.6.1.4.1.37140.1.2.6.1 string 'PM' .1.3.6.1.4.1.37140.1.2.6.2 string "$1" .1.3.6.1.4.1.37140.1.2.6.3 string "`date`"
 }
 
 function calibrateDays {

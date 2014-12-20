@@ -159,7 +159,19 @@ sleep 3
         ${SSH} ${prefix}${i} "cd ${INSTALL_LOC}/PMR/etc/ ; /bin/ln -s SAPConfig.${post} ./SAPConfig.cfg"
         ${SSH} ${prefix}${i} "cd ${INSTALL_LOC}/PMR/etc/ ; /bin/ln -s dc-config.${post} ./dc-config.cfg"
 done
+}
 
+# ADD MIBS
+function transferMibs {
+echo "---------------------------- Transfering MIB files."
+for i in $mgmt
+do
+   echo "Working on node: ${prefix}${i}"
+   $SSH ${prefix}${i} "mount -o remount,rw /"
+   sleep 3
+   /usr/bin/scp -q ../MIBS/* root@${prefix}${i}:/usr/share/snmp/mibs/
+   /usr/bin/scp -q ../MIBS/* root@${prefix}${i}:/usr/share/mibs/ietf/
+done
 }
 
 clear
@@ -168,6 +180,7 @@ createPaths
 installPMRv2
 modifyLinks
 syncPMR
+transferMibs
 restartCron
 echo "---------------------------- Done!"
 
