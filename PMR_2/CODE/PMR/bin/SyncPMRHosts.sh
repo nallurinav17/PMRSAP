@@ -8,7 +8,7 @@ cd /data/scripts/PMR
 #if /sbin/ifconfig -a | grep -q ${PMRMASTER} ; then REMOTEHOST=${PMRHOST2}; else REMOTEHOST=${PMRHOST1} ; fi
 
 write_log "Syncing scripts from SAN repository through ${PMRHOST1}"
-val=`$RSYNC -v $RSYNCOPT root@${PMRHOST1}:${SAPREPO}/* $BASEPATH/ 2>&1 tr '\n' ' '`; 
+val=`$RSYNC -v $RSYNCOPT root@${PMRHOST1}:${SAPREPO}/* $BASEPATH/ 2>&1 | tr '\n' ' '`; 
 if [[ $? -ne '0' ]]; then
    write_log "$val"; write_log "Sync Failed, Retrying..."
    write_log "Syncing scripts from SAN repository through ${PMRHOST2}"
