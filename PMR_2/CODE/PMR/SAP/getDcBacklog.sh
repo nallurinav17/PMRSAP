@@ -21,7 +21,7 @@ ENTITY='SAP'
 
 write_log "Starting DC Backlog Identifier."
 
-STANDBY=`$SSH $NETWORK.$CNP0 "$CLI 'show cluster standby'" | grep external | awk {'print $NF'}`
+STANDBY=`$SSH $NETWORK.$CNP0 "$CLI 'show cluster standby'" | grep internal | awk '{print $4}' | sed 's/,//g'`
 if [[ -z ${STANDBY} ]] ; then write_log "Could not determine standby namenode, exiting"; exit 127 ; fi
 
 HDFSCMD="$HADOOP dfs -ls "

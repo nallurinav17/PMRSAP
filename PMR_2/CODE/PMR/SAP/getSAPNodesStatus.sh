@@ -124,10 +124,10 @@ done
 
 
 # ------------------------------------------------------------------------------------------
-STANDBY_SG=`$SSH $NETWORK.$SGW0 "$CLI 'show cluster standby'" 2>/dev/null | grep external | awk {'print $NF'}`
+STANDBY_SG=`$SSH $NETWORK.$SGW0 "$CLI 'show cluster standby'" 2>/dev/null | grep internal | awk '{print $4}' | sed 's/,//g'`
 if [[ -z ${STANDBY_SG} ]] ; then write_log "Could not determine standby service gateway, exiting"; exit 127 ; fi
 
-MASTER_SG=`$SSH $NETWORK.$SGW0 "$CLI 'show cluster master'" 2>/dev/null | grep external | awk {'print $NF'}`
+MASTER_SG=`$SSH $NETWORK.$SGW0 "$CLI 'show cluster master'" 2>/dev/null | grep internal | awk '{print $4}' | sed 's/,//g'`
 if [[ -z ${MASTER_SG} ]] ; then write_log "Could not determine master service gateway, exiting"; exit 127 ; fi
 # ------------------------------------------------------------------------------------------
 

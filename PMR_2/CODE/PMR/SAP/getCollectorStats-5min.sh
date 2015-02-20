@@ -24,10 +24,10 @@ ENTITY='SAP'
 
 write_log "Starting Collector Stats Collection."
 
-STANDBY=`$SSH $NETWORK.$CNP0 "$CLI 'show cluster standby'" 2>/dev/null | grep external | awk {'print $NF'}`
+STANDBY=`$SSH $NETWORK.$CNP0 "$CLI 'show cluster standby'" 2>/dev/null | grep internal | awk '{print $4}' | sed 's/,//g'`
 if [[ -z ${STANDBY} ]] ; then write_log "Could not determine standby namenode, exiting"; exit 127 ; fi
 
-MASTER=`$SSH $NETWORK.$CNP0 "$CLI 'show cluster master'" 2>/dev/null | grep external | awk {'print $NF'}`
+MASTER=`$SSH $NETWORK.$CNP0 "$CLI 'show cluster master'" 2>/dev/null | grep internal | awk '{print $4}' | sed 's/,//g'`
 if [[ -z ${MASTER} ]] ; then write_log "Could not determine master namenode, exiting"; exit 127 ; fi
 
 hostn='';hostn=`/bin/grep -w "$MASTER" /etc/hosts | awk '{print $2}' | sed 's/ //g'`
@@ -116,10 +116,10 @@ done
 
 # Second collector - SGW adaptor stats.
 # ------------------------------------------------------------------------------------------
-STANDBY_SG=`$SSH $NETWORK.$SGW0 "$CLI 'show cluster standby'" 2>/dev/null | grep external | awk {'print $NF'}`
+STANDBY_SG=`$SSH $NETWORK.$SGW0 "$CLI 'show cluster standby'" 2>/dev/null | grep internal | awk '{print $4}' | sed 's/,//g'`
 if [[ -z ${STANDBY_SG} ]] ; then write_log "Could not determine standby service gateway, exiting"; exit 127 ; fi
 
-MASTER_SG=`$SSH $NETWORK.$SGW0 "$CLI 'show cluster master'" 2>/dev/null | grep external | awk {'print $NF'}`
+MASTER_SG=`$SSH $NETWORK.$SGW0 "$CLI 'show cluster master'" 2>/dev/null | grep internal | awk '{print $4}' | sed 's/,//g'`
 if [[ -z ${MASTER_SG} ]] ; then write_log "Could not determine master service gateway, exiting"; exit 127 ; fi
 
 hostn='';hostn=`/bin/grep -w "${MASTER_SG}" /etc/hosts | awk '{print $2}' | sed 's/ //g'`

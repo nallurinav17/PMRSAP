@@ -1,0 +1,19 @@
+
+
+   en
+   conf t
+   cluster expected-nodes 2
+   cluster id smlab-sgp
+   cluster interface eth0
+   cluster master address vip 172.30.5.63 /16
+   cluster master interface eth0
+   cluster name smlabgvsgp
+   ip filter chain INPUT rule append tail target ACCEPT dup-delete source-addr 172.30.5.53 /32 dest-port 5353 protocol udp
+   ip filter chain INPUT rule append tail target ACCEPT dup-delete source-addr 172.30.5.54 /32 dest-port 5353 protocol udp
+   ip filter chain INPUT rule append tail target DROP dup-delete dest-port 5353 protocol udp
+
+
+   no cluster enable
+
+   write memory
+

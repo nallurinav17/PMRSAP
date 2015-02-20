@@ -2,10 +2,10 @@
 midmDC="Wilmington PlymouthMeeting Branchburg Wall Lenexa SaintLouis Bloomington Omaha Westborough Windsor AnnapolisJunction Chantilly Westside Guion Johnstown Bridgeville Copperfield BatonRouge Alpharetta Birmingham RedmondRidge Hillsboro WestJordan Aurora LasVegas Tempe Rochester EastSyracuse HickoryHills NewBerlin Lodge Westland Columbus Duff Euless Schertz Memphis Tulsa Charlotte Nashville PembrokePines Orlando Sunnyvale Rocklin Azusa Vista";
 
 # dcCMDS is a list of CMDS DCs, used in IPFIX and PP volume calculation.
-cmdsDC="AnnapolisJunction Chantilly Johnstown Bridgeville ALPRGAGQ Birmingham RDMEWA22 HLBOOR38";
+cmdsDC="";
 
 # dcPNSA is list of PNSA DCs, used in IPFIX and PP volume calculation.
-pnsaDC="NWCSDEBG WMTPPAAA IPLUINXI Guion Lenexa SaintLouis Bloomington Omaha Copperfield BatonRouge WJRDUT30 AURSCOTY NLVGNVOQ TEMQAZKW Westborough Windsor Rochester EastSyracuse Branchburg Wall HickoryHills NewBerlin Lodge Westland Columbus Duff Euless Schertz Memphis Tulsa Charlotte Nashville PembrokePines Orlando Sunnyvale Rocklin Azusa Vista";
+pnsaDC="NWCSDEBG WMTPPAAA IPLUINXI Guion Lenexa SaintLouis Bloomington Omaha Copperfield BatonRouge WJRDUT30 AURSCOTY NLVGNVOQ TEMQAZKW Westborough Windsor Rochester EastSyracuse Branchburg Wall HickoryHills NewBerlin Lodge Westland Columbus Duff Euless Schertz Memphis Tulsa Charlotte Nashville PembrokePines Orlando Sunnyvale Rocklin Azusa Vista AnnapolisJunction Chantilly Johnstown Bridgeville ALPRGAGQ Birmingham RDMEWA22 HLBOOR38";
 
 # all DC is dcCMDS plus dcPNSA, used in SubscriberIB volume calculation.
 allDC="NWCSDEBG WMTPPAAA AnnapolisJunction Chantilly IPLUINXI Guion Johnstown Bridgeville Lenexa SaintLouis Bloomington Omaha Copperfield BatonRouge ALPRGAGQ Birmingham RDMEWA22 HLBOOR38 WJRDUT30 AURSCOTY NLVGNVOQ TEMQAZKW Westborough Windsor Rochester EastSyracuse Branchburg Wall HickoryHills NewBerlin Lodge Westland Columbus Duff Euless Schertz Memphis Tulsa Charlotte Nashville PembrokePines Orlando Sunnyvale Rocklin Azusa Vista";

@@ -1,0 +1,13 @@
+
+   en
+   conf t
+
+   logging file pmr path /var/log/PMRLogger.log
+   logging file pmr rotation criteria size 1024
+   logging file snmptrapd path /var/log/snmptrapd.log
+   logging file snmptrapd rotation criteria frequency daily
+   pm process crond restart
+   cluster enable
+   write memory
+
+

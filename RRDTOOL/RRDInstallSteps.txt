@@ -1,0 +1,87 @@
+Hi Bruno,
+
+I have completed the html table generation of the PM Traffic Report. Please find the html attached (PMR_Report_20140417.html)
+
+1]  records/sec is currently blank and I need clarification for this. (as reported in my previous mail)
+2] Processing Time will have proper values/Format once we have the actual data trickling in.
+3] Table creation is triggered from cron:
+# Run the script to generate the HTML Table report on a daily basis using RRD
+15 10 * * *      root    /data/scripts/PMR/PMR_RRD/bin/tableCreate.sh 2>&1 > /tmp/tableCreate.log
+
+4] Sample date Result path:
+/data/mgmt/pmr/reports/SAP/2014/04/PMR_Report_20140417.html
+
+5] Also attaching the source PMR_RRD.tar.gz. This will be version 1.0.
+
+
+I will be on vacation from 18 to 29 Apr. Will respond to mail from 29Apr.
+
+
+Thanks,
+Anil
+
+
+---------------------
+
+
+
+
+
+
+Hi Supreet,
+
+Please find attached scripts  for report automation.
+
+Install Steps on Master (SAP).
+
+1] install rrdtool and htmldoc (also install fonts )
+
+2] cp PMR_RRD.tar.gz /tmp/ on Master
+
+3] tar -zxvhf PMR_RRD.tar.gz
+
+4] mkdir -p /data/scripts/PMR/PMR_RRD
+
+5] cp -r /tmp/PMR_RRD/* /data/scripts/PMR/PMR_RRD/
+
+6] Create RRD schema for the first time
+./bin/createSchema.sh 
+Do you really want to create RRD schema (Y/N)? This will overwrite previous RRD files. 
+
+<Type Y> to proceed
+
+7] Add cron bin/PMR_RRD.cron
+
+8] Ensure the configs are pointed to correct .prod or .smlab file. 
+
+
+
+The configs need minimal change:
+etc/PMRrrdConfig.prod:
+
+PMRHOST1, PMRHOST2 , PMRMASTER
+
+
+Info:
+
+- Runs on SAP master (check in place)
+
+- Cron:
+
+# Run the script to populate RRD files with current SAP PM metrics data
+10 9 * * *      root    /data/scripts/PMR/PMR_RRD/bin/rrdUpdate.sh 2>&1 > /tmp/rrdUpdate.log
+
+# Run the script to generate png images of counters with site pairs from RRD
+30 9 * * *      root    /data/scripts/PMR/PMR_RRD/bin/graphCreate.sh 2>&1 > /tmp/graphCreate.log
+
+# Run the script to generate the PDF report on a daily basis from the png graphs 
+00 10 * * *      root    /data/scripts/PMR/PMR_RRD/bin/htmldocCreate.sh 2>&1 > /tmp/htmldocCreate.log
+
+
+- Result PDF path is configured as: PDFRESULTPATH="/data/mgmt/pmr/reports/SAP"
+
+
+Please checkin to git and let me know if you have any questions.
+
+Thanks,
+Anil

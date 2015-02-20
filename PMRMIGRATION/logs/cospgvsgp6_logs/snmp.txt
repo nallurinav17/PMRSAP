@@ -1,0 +1,4 @@
+admin     2258  1989  0  2014 ?        00:35:40 /opt/tms/bin/snmpd -f -Ls7 -c /etc/snmpd.conf
+admin    19632     1  0  2014 ?        00:00:00 /usr/sbin/snmptrapd -On -Cc /platform_latest/gms/monitoring/conf/snmptrapd.conf -Lf /var/log/snmptrapd.log -m ALL
+admin    19687     1  0  2014 ?        00:00:36 /usr/bin/perl /usr/sbin/snmptt --daemon
+zabbix   19688 19687  0  2014 ?        00:02:05 /usr/bin/perl /usr/sbin/snmptt --daemon

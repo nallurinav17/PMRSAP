@@ -1,0 +1,5 @@
+total 0
+lrwxrwxrwx 1 admin  538 13 Jul 17  2013 vpart_sync -> ../vpart_sync
+lrwxrwxrwx 1 admin  538 24 Jul 17  2013 sysstat -> /etc/cron_conf.d/sysstat
+lrwxrwxrwx 1 admin  538 12 Jul 17  2013 logrotate -> ../logrotate
+lrwxrwxrwx 1 admin root 34 Mar 10  2014 PMR_SAP.cron -> /data/scripts/PMR/etc/PMR_SAP.cron

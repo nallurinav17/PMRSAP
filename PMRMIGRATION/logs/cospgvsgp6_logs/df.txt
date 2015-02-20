@@ -1,0 +1,14 @@
+Filesystem            Size  Used Avail Use% Mounted on
+rootfs                4.0G  2.4G  1.4G  64% /
+/dev/root             4.0G  2.4G  1.4G  64% /
+devtmpfs               48G  312K   48G   1% /dev
+/dev/sda2             130M   20M  103M  17% /boot
+/dev/sda1             130M  4.3M  119M   4% /bootmgr
+/dev/sda8             190M   19M  162M  11% /config
+/dev/sda10             20G  3.9G   15G  21% /var
+/dev/sda11            498G  437M  472G   1% /data
+tmpfs                  48G     0   48G   0% /dev/shm
+/dev/zram0            9.9G  151M  9.2G   2% /guavus/insta
+tmpfs                  64M     0   64M   0% /vtmp
+/dev/mapper/mpathap1 1008G  200M  957G   1% /data/gms
+/dev/mapper/mpathbp1  7.9T  1.4G  7.5T   1% /data/mgmt/pmr

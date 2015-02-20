@@ -2,10 +2,10 @@
 midmDC="Memphis Tulsa Johnstown Bridgeville"
 
 # dcCMDS is a list of CMDS DCs
-cmdsDC="Johnstown Bridgeville"
+cmdsDC=""
 
 #dcPNSA is list of PNSA DCs
-pnsaDC="Memphis Tulsa"
+pnsaDC="Memphis Tulsa Johnstown Bridgeville"
 
 # all DC is dcCMDS plus dcPNSA
 allDC="Memphis Tulsa Johnstown Bridgeville"

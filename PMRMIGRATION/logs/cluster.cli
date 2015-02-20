@@ -1,0 +1,15 @@
+
+   en
+   conf t
+
+# Cluster   
+   cluster interface amnb
+   cluster master interface amnb
+   cluster master address vip 10.136.239.161 /24
+   cluster id colsp-mnp
+   cluster name cospgvmnp
+   cluster expected-nodes 2
+   no cluster enable
+   write memory
+
+
