@@ -1,1 +1,0 @@
-../validatePmrMount.sh

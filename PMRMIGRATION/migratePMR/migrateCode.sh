@@ -40,7 +40,7 @@ function migrateCode {
 for i in $newmgmt; do
   echo -n "---------------------------- Transferring code to ${prefix}${i} : "
   $SSH ${prefix}${i} "mount -o remount,rw /"
-  $SSH ${prefix}${i} "/bin/mkdir -p ${DEST}"
+  $SSH ${prefix}${i} "/bin/mkdir -p ${DEST} 2>/dev/null"
   sleep 1
   val=`/usr/bin/rsync -v -azr ${INSTALL_LOC}/* root@${prefix}${i}:${DEST}/ 2>&1 | tr '\n' ' '`
   if [[ $? -eq '0' ]]; then
@@ -56,10 +56,9 @@ done
 
 # ADD MIBS
 function transferMibs {
-echo "---------------------------- Transfering MIB files."
 for i in $newmgmt
 do
-   echo "Working on node: ${prefix}${i}"
+   echo "---------------------------- Transferring MIB files to : ${prefix}${i}"
    $SSH ${prefix}${i} "mount -o remount,rw /"
    sleep 3
    /usr/bin/scp -q ../CLI/MIBS/* root@${prefix}${i}:/usr/share/snmp/mibs/

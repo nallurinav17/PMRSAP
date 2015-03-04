@@ -103,34 +103,50 @@ $SSH ${prefix}${i} "mount -o remount,rw /"
 sleep 3
 count=1
   for IP in $newmgmt; do
-   ${SSH} ${prefix}${i} "/usr/bin/perl -pi -e s/^PMRHOST${count}=.*/PMRHOST${count}=\'${prefix}${IP}\'/g ${DEST}/etc/PMRConfig.${post}"
+   #${SSH} ${prefix}${i} "/usr/bin/perl -pi -e s/^PMRHOST${count}=.*/PMRHOST${count}=\'${prefix}${IP}\'/g ${DEST}/etc/PMRConfig.${post}"
    ${SSH} ${prefix}${i} "/usr/bin/perl -pi -e s/^PMRHOST${count}=.*/PMRHOST${count}=\'${prefix}${IP}\'/g ${INSTALL_LOC}/etc/PMRConfig.${post}"
    sleep 1
    count=`echo "$count + 1" | bc`
   done
 done
+
+for i in $mgmt0
+do
+echo "---------------------------- Updating PMR configurations with new repository via : ${prefix}${i}"
+$SSH ${prefix}${i} "mount -o remount,rw /"
+sleep 3
+count=1
+  for IP in $newmgmt; do
+   ${SSH} ${prefix}${i} "/usr/bin/perl -pi -e s/^PMRHOST${count}=.*/PMRHOST${count}=\'${prefix}${IP}\'/g ${DEST}/etc/PMRConfig.${post}"
+   #${SSH} ${prefix}${i} "/usr/bin/perl -pi -e s/^PMRHOST${count}=.*/PMRHOST${count}=\'${prefix}${IP}\'/g ${INSTALL_LOC}/etc/PMRConfig.${post}"
+   sleep 1
+   count=`echo "$count + 1" | bc`
+  done
+done
+
+
+
 }
 
 function syncPmr {
-echo "---------------------------- Synchronize PMR install with repository."
 for i in $newmgmt
 do
-echo "Working on node : ${prefix}${i}"
-sleep 3
+echo "---------------------------- Synchronize PMR install with repository at new mgmt node : ${prefix}${i}"
 $SSH ${prefix}${i} "mount -o remount,rw /"
+sleep 3
 $SSH ${prefix}${i} "/data/scripts/PMR/bin/SyncPMRHosts.sh"
 done
 }
 
 clear
 SETUP=`/bin/pwd | awk -F '/' '{print $NF}'`
-generateKeysCli
+#generateKeysCli
 editPmrConfigs
-migrateCli
-disableCluster
-enableCluster
-echo "Sleeping for 5 seconds to get cluster enabled successfully!"
-sleep 5
+#migrateCli
+#disableCluster
+#enableCluster
+#echo "Sleeping for 5 seconds to get cluster enabled successfully!"
+#sleep 5
 syncPmr
 echo "---------------------------- Done!"
 

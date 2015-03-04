@@ -20,7 +20,7 @@ SSH='ssh -q -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -l root '
 
 # install PMRv2 into repository.
 function verifyPmrMount {
-for i in $mgmt $newmgmt
+for i in $newmgmt
 do
 echo -n "---------------------------- Verifying PMR mount point on : ${prefix}${i} : "
 $SSH ${prefix}${i} "mount -o remount,rw /"
@@ -29,7 +29,8 @@ val=`$SSH ${prefix}${i} "mount | grep pmr 2>/dev/null"`
 if [[ $? -eq '0' ]]; then
 echo "Mounted : $val"
 else 
-echo "Not mounted : Error!"
+role=''; role=`$SSH ${prefix}${i} "/opt/tms/bin/cli -t 'en' 'conf t' 'show cluster global brief'" | grep "${prefix}${i}" | awk '{print $2}'`
+echo "Not mounted : Node role : $role"
 fi
 done
 }

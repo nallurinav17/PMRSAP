@@ -31,7 +31,7 @@ do
 echo "Working on node: ${prefix}${i}"
 $SSH ${prefix}${i} "mount -o remount,rw /"
 sleep 3
-$SSH ${prefix}${i} "cd /etc/cron.d/ ; /bin/rm -f PMR_SAP.cron ; /bin/ln -s ${INSTALL_LOC}/etc/PMR_SAP.cron ./"
+$SSH ${prefix}${i} "cd /etc/cron.d/ ; /bin/rm -f PMR_SAP.cron 2>/dev/null ; /bin/ln -s ${INSTALL_LOC}/etc/PMR_SAP.cron ./"
 $SSH ${prefix}${i} "/opt/tms/bin/cli -t 'en' 'conf t' 'pm process crond restart'"
 sleep 2
 $SSH ${prefix}${i} "/opt/tms/bin/cli -t 'en' 'conf t' 'cluster enable'"
@@ -47,7 +47,7 @@ do
 echo "Working on node: ${prefix}${i}"
 $SSH ${prefix}${i} "mount -o remount,rw /"
 sleep 3
-$SSH ${prefix}${i} "/bin/rm -rf /etc/cron.d/PMR_SAP.cron /data/mgmt/pmr /data/scripts/PMR"
+$SSH ${prefix}${i} "/bin/rm -rf /etc/cron.d/PMR_SAP.cron /data/mgmt/pmr /data/scripts/PMR 2>/dev/null"
 $SSH ${prefix}${i} "/opt/tms/bin/cli -t 'en' 'conf t' 'pm process crond restart'"
 sleep 2
 $SSH ${prefix}${i} "/opt/tms/bin/cli -t 'en' 'conf t' 'no cluster enable'"
@@ -58,5 +58,6 @@ done
 
 clear
 uninstall
+sleep 5
 restore
 echo "---------------------------- Done!"
