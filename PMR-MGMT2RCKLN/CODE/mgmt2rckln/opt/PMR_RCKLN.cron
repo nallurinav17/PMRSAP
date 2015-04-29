@@ -1,0 +1,3 @@
+# Sync scripts running every 5 minutes to push data to the Rocklin proxy nodes.
+*/5 * * * *	root	/data/scripts/PMR/opt/pm-data-tx.sh 
+*/5 * * * *	root	/data/scripts/PMR/opt/traps-data-tx.sh
