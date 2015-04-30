@@ -12,9 +12,7 @@ ALERT=''
 
 function upload {
    val="$val `$RSYNC $RSYNCOPT --rsh="${RSH}" ${SRC_DATA_SAP}/./${D}/* ${STAGE_IP}:${STAGE_DATA_SAP}/ 2>&1`";
-   if [[ $? -eq '0' ]]; then
-      STATUS=0 
-   else 
+   if [[ $? -ne '0' ]]; then
       STATUS=1; if [[ ${ALERT} ]]; then ALERT="$ALERT ; Failed to upload PM data for SAP"; else ALERT="Failed to upload PM data for SAP"; fi
    fi
 

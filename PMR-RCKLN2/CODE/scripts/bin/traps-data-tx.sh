@@ -7,48 +7,37 @@ if [[ $? -eq '0' ]]; then
 fi
 #-------------------------------------------------------------
 
-STATUS=''
+STATUS='0'
 ALERT=''
 
 function upload {
-   # TRAPS
-   val="$val `$RSYNC $RSYNCOPT ${STAGE_TRAPS}/./* ${DEST_USER}@${DEST_IP}:${DEST_TRAPS}/ 2>&1`";
-   if [[ $? -eq '0' ]]; then
-      STATUS=0;
-   else
-      STATUS=2; if [[ ${ALERT} ]]; then ALERT="$ALERT ; Failed to upload traps log files."; else ALERT="Failed to upload traps log files."; fi
+   # TRAPS Logs
+   val="$val `$RSYNC $RSYNCOPT --rsh="${RSH}" ${STAGE_TRAPS}/./* ${DEST_IP}:${DEST_TRAPS}/ 2>&1`";
+   if [[ $? -ne '0' ]]; then
+      STATUS=1; if [[ ${ALERT} ]]; then ALERT="$ALERT ; Failed to upload traps log files"; else ALERT="Failed to upload traps log files"; fi
    fi
 
-}
-
-function download {
-   # TRAPS
-   val="$val `$RSYNC $RSYNCOPT ${SRC_USER}@${SRC_IP}:${SRC_TRAPS}/./snmptrapd.log* ${STAGE_TRAPS}/ 2>&1`";
-   if [[ $? -eq '0' ]]; then
-      STATUS=0
-   else
-      STATUS=1; if [[ ${ALERT} ]]; then ALERT="$ALERT ; Failed to download traps log files."; else ALERT="Failed to download traps log files."; fi
+   # PM Alarm Files.
+   val="$val `$RSYNC $RSYNCOPT --rsh="${RSH}" ${STAGE_ALARMS}/./${Y}/${M}/*$Y$M$D*.csv ${DEST_IP}:${DEST_ALARMS}/ 2>&1`";
+   if [[ $? -ne '0' ]]; then
+      STATUS=1; if [[ ${ALERT} ]]; then ALERT="$ALERT ; Failed to upload PM alarms file"; else ALERT="Failed to upload PM alarms file"; fi
    fi
 
 }
 
 # Attempt transfer
-#D=''; D=`date +%Y/%m/%d`;
-
-download
-echo "$val"
-if [[ $STATUS -ne '0' ]]; then 
-   write_alarm_status "PROXY_TRAPS_STATUS : $STATUS , ALERT_DETAILS : $ALERT"
-   exit 1
-fi 
+D=''; D=`date +%d`;
+M=''; M=`date +%m`;
+Y=''; Y=`date +%Y`;
 
 upload
 echo "$val"
 if [[ $STATUS -ne '0' ]]; then
-   write_alarm_status "PROXY_TRAPS_STATUS : $STATUS , ALERT_DETAILS : $ALERT"
+   write_alarm_status "PROXY_TRAPS_STATUS : $STATUS , ALERT_DETAILS : $ALERT."
    exit 2
 fi
 
 if [[ ! $ALERT ]]; then ALERT="NIL!"; fi
 write_alarm_status "PROXY_TRAPS_STATUS : $STATUS , ALERT_DETAILS : $ALERT"
+
 
