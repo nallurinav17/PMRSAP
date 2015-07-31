@@ -26,9 +26,9 @@ function upload {
 }
 
 # Attempt transfer
-D=''; D=`date +%d`;
-M=''; M=`date +%m`;
-Y=''; Y=`date +%Y`;
+D=''; D=`date -u +%d`;
+M=''; M=`date -u +%m`;
+Y=''; Y=`date -u +%Y`;
 
 upload
 echo "$val"
