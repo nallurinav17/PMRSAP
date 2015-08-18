@@ -5,7 +5,7 @@ s/Azusa/AZUSCA21VIS/
 s/BatonRouge/BTRHLAGRVIS/
 s/Birmingham/BRHOALTBVIS/
 s/Bloomington/BLTNMN86VIS/
-s/Branchburg/BBTPNJ02VIS/
+s/Branchburg/BBTPNJDAVIS/
 s/Bridgeville/SFTPPABQVIS/
 s/Chantilly/CHNTVAAVVIS/
 s/Charlotte/CHRXNCLHVIS/
@@ -27,7 +27,7 @@ s/Nashville/WHCKTN04VIS/
 s/NewBerlin/NWBLWICZVIS/
 s/Omaha/OMALNEXUVIS/
 #s/Ontario/ONTRCAOYVIS/
-s/Orlando/ORLHFLCFVIS/
+s/Orlando/ORLHFL01VIS/
 s/PembrokePines/PMBRFLTFCVIS/
 s/PlymouthMeeting/WMTPPAAAVIS/
 s/RedmondRidge/RDMEWA22VIS/
