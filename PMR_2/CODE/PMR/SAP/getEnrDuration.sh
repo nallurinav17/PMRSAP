@@ -139,7 +139,7 @@ for dc in ${midmDC}; do
     xfertimestring="000000"
   fi
 
-  echo "$TIMESTAMP,MIDM/BDA/$dcClli,MIDM_data_transfer_DC_duration,$xfertimestring"
+  echo "$TIMESTAMP,MIDM/BDA/$dcClli,,MIDM_data_transfer_DC_duration,$xfertimestring"
   rm -f ${TMPFILE}.dataTime
 
 done
@@ -149,7 +149,7 @@ done
 #
 ((sec=subtot%60, subtot/=60, min=subtot%60, hrs=subtot/60))
 xfertottimestring=$(printf "%02d%02d%02d" $hrs $min $sec)
-echo "$TIMESTAMP,MIDM/BDA/ALL_DC,MIDM_data_transfer_total_duration,$xfertottimestring"
+echo "$TIMESTAMP,MIDM/BDA/ALL_DC,,MIDM_data_transfer_total_duration,$xfertottimestring"
 
 #
 # midmTotalDuration - Enr Start TO BDA End time.
